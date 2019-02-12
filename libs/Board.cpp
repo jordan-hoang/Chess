@@ -5,6 +5,7 @@
 #include "Board.h"
 #include <vector>
 #include <iostream>
+#include "../termcolor.hpp"
 
 template <typename T>
 void printCont(T const& container){
@@ -20,70 +21,79 @@ void printCont(T const& container){
 
 
 //Private Functions
-void Board::createBackRank(bool IS_BLACK, vector<vector<PieceId>> &boardView) {
+void Board::createBackRank(Color color, vector<vector<PieceType>> &boardView) {
 
-    vector<PieceId> tmp;
+    vector<PieceType> tmp;
     tmp.reserve(8);
-    if(IS_BLACK){
-        tmp.push_back(ROOK);
-        tmp.push_back(KNIGHT);
-        tmp.push_back(BISHOP);
-        tmp.push_back(QUEEN);
-        tmp.push_back(KING);
-        tmp.push_back(BISHOP);
-        tmp.push_back(KNIGHT);
-        tmp.push_back(ROOK);
-    } else{
-        tmp.push_back(WHITE_ROOK);
-        tmp.push_back(WHITE_KNIGHT);
-        tmp.push_back(WHITE_BISHOP);
-        tmp.push_back(WHITE_QUEEN);
-        tmp.push_back(WHITE_KING);
-        tmp.push_back(WHITE_BISHOP);
-        tmp.push_back(WHITE_KNIGHT);
-        tmp.push_back(WHITE_ROOK);
-    }
+
+
+        tmp.push_back(PieceType{ROOK,color});
+        tmp.push_back(PieceType{KNIGHT,color});
+        tmp.push_back(PieceType{BISHOP,color});
+
+
+        tmp.push_back(PieceType{QUEEN,color});
+        tmp.push_back(PieceType{KING,color});
+
+
+        tmp.push_back(PieceType{BISHOP,color});
+        tmp.push_back(PieceType{KNIGHT,color});
+        tmp.push_back(PieceType{ROOK,color});
+
+
     boardView.push_back(tmp);
 }
 
 
-void Board::initializeGame(vector<vector<PieceId>> &boardView) {
+void Board::initializeGame(vector<vector<PieceType>> &boardView) {
 
     bool isBlack = true;
 
-    //Doing blackSide
-    createBackRank(isBlack,boardView);
+    //Doing red side
+    createBackRank(RED,boardView);
 
-    std::vector<PieceId> blackPawn;
-    blackPawn.assign(8,PAWN);
+    std::vector<PieceType> blackPawn;
+    blackPawn.assign(8,PieceType{PAWN,RED});
     boardView.push_back(blackPawn);
 
 
     for (int i = 2; i < 6; i++){
-        std::vector<PieceId> tmp;
-        tmp.assign(8,NONE);
+        std::vector<PieceType> tmp;
+        tmp.assign(8,PieceType{NONE,COLORLESS});
         boardView.push_back(tmp);
     }
 
-    //Doing white side
-    std::vector<PieceId> whitePawn;
-    whitePawn.assign(8,WHITE_PAWN);
+    //Doing blue side
+    std::vector<PieceType> whitePawn;
+    whitePawn.assign(8,PieceType{PAWN,BLUE});
     boardView.push_back(whitePawn);
 
-    createBackRank(!isBlack,boardView);
+    createBackRank(BLUE,boardView);
 
 
 }
 
 
-void Board::drawRow(vector<PieceId> &listPieceId) const {
+void Board::drawRow(vector<PieceType> &listPieceId) const {
 
-
-    for(PieceId iter: listPieceId){
-        auto search = PieceLookUp.find(iter);
+    for(PieceType iter: listPieceId){
+        auto search = PieceLookUp.find( iter.MyId );
         //We also need to know the color.....
 
-        std::cout << search->second ;
+        switch(iter.mycolor)
+        {
+            case RED:
+                std::cout << termcolor::red << search->second;
+                std::cout << termcolor::reset;
+                break;
+            case BLUE:
+                std::cout << termcolor::blue << search->second;
+                std::cout << termcolor::reset;
+                break;
+            default:
+                std::cout << search->second ;
+        }
+
     }
 
     std::cout << std::endl;
@@ -91,35 +101,22 @@ void Board::drawRow(vector<PieceId> &listPieceId) const {
 }
 
 
-
-
-
-//Non-private functions
-
 //Constructor
 Board::Board() {
-    Piece pawn(1,0,'A',PAWN);
     boardView.reserve(8);
     initializeGame(boardView);
-
-
-
-
-
 }
 
 
 
 
 void Board::drawBoard() const {
-
-    for(vector<PieceId> p : boardView){
+    for(vector<PieceType> p : boardView){
         drawRow(p);
     }
-
 }
 
-const std::unordered_map<PieceId, char> Board::PieceLookUp = {
+const std::unordered_map<PieceUnit, char> Board::PieceLookUp = {
         {NONE,         '-'},
         {PAWN,         'P'},
         {KNIGHT,       'N'},
@@ -127,10 +124,4 @@ const std::unordered_map<PieceId, char> Board::PieceLookUp = {
         {ROOK,         'R'},
         {KING,         'K'},
         {QUEEN,        'Q'},
-        {WHITE_PAWN,   'P'},
-        {WHITE_BISHOP, 'B'},
-        {WHITE_KNIGHT, 'N'},
-        {WHITE_ROOK  , 'R'},
-        {WHITE_KING  , 'K'},
-        {WHITE_QUEEN , 'Q'}
 };

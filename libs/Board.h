@@ -22,13 +22,13 @@ public:
 private:
     std::vector<Piece> blackPieces;
     std::vector<Piece> whitePieces;
-    vector< vector<PieceId> > boardView;
+    vector< vector<PieceType> > boardView;
 
-   void initializeGame(vector<vector<PieceId>> &boardView);
-   void createBackRank(bool IS_BLACK, vector<vector<PieceId>> &boardView) ;
-   void drawRow(vector<PieceId> &listPieceId) const;
+   void initializeGame(vector<vector<PieceType>> &boardView);
+   void createBackRank(Color myColor, vector<vector<PieceType>> &boardView) ;
+   void drawRow(vector<PieceType> &listPieceId) const;
 
-   const static std::unordered_map <PieceId, char> PieceLookUp;
+   const static std::unordered_map <PieceUnit, char> PieceLookUp;
 
 };
 

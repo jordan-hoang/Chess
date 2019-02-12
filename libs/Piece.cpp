@@ -24,13 +24,13 @@ char Piece::getColCharPosition() const {
 void Piece::setColCharPosition(char colCharPosition) {
     Piece::colCharPosition = colCharPosition;
 }
-PieceId Piece::getTypeOfPiece() const {
-    return typeOfPiece;
-}
-void Piece::setTypeOfPiece(PieceId typeOfPiece) {
+
+
+
+void Piece::setTypeOfPiece(PieceType typeOfPiece) {
     Piece::typeOfPiece = typeOfPiece;
 }
 
 //Constructors
-Piece::Piece(int rowPosition, int colPosition, char colCharPosition, PieceId typeOfPiece) : rowPosition(
-        rowPosition), colPosition(colPosition), colCharPosition(colCharPosition), typeOfPiece(typeOfPiece) {}
+//Piece::Piece(int rowPosition, int colPosition, char colCharPosition, PieceType typeOfPiece) : rowPosition(
+  //      rowPosition), colPosition(colPosition), colCharPosition(colCharPosition), typeOfPiece(typeOfPiece) {}
