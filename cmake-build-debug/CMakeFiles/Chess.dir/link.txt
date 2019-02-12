@@ -1,1 +1,0 @@
-/usr/bin/c++  -g   CMakeFiles/Chess.dir/main.cpp.o CMakeFiles/Chess.dir/libs/Piece.cpp.o CMakeFiles/Chess.dir/libs/Board.cpp.o  -o Chess 
