@@ -2,10 +2,13 @@
 // Created by jordanhoang on 11/02/19.
 //
 
-#include "Board.h"
+#include "../header/Board.h"
 #include <vector>
 #include <iostream>
-#include "../termcolor.hpp"
+#include "../../termcolor.hpp"
+
+
+
 
 template <typename T>
 void printCont(T const& container){
@@ -80,6 +83,8 @@ void Board::drawRow(vector<PieceType> &listPieceId) const {
         auto search = PieceLookUp.find( iter.MyId );
         //We also need to know the color.....
 
+
+        //MOVE THIS TO THE VIEW CLASS BUT LEAVE HERE FOR EASY ACCESS FOR NOW
         switch(iter.mycolor)
         {
             case RED:
@@ -93,6 +98,8 @@ void Board::drawRow(vector<PieceType> &listPieceId) const {
             default:
                 std::cout << search->second ;
         }
+
+
 
     }
 
@@ -110,11 +117,26 @@ Board::Board() {
 
 
 
+
+
 void Board::drawBoard() const {
     for(vector<PieceType> p : boardView){
         drawRow(p);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const std::unordered_map<PieceUnit, char> Board::PieceLookUp = {
         {NONE,         '-'},
