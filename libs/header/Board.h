@@ -16,17 +16,21 @@ using std::vector;
 class Board {
 public:
     Board();
-    void drawBoard() const;
+    void drawBoard() const; // SHOULD BE SPERATED INTO ANOTHER CLASS BUT LEAVE HERE FOR NOW THIS IS THE MODEL! Maybe mvc isn't what we want.
+    char pieceLookUp(PieceType piece);
+
+     vector<vector<PieceType>> &getBoard();
 
 
 private:
-    std::vector<Piece> blackPieces;
-    std::vector<Piece> whitePieces;
     vector< vector<PieceType> > boardView;
+
+
 
    void initializeGame(vector<vector<PieceType>> &boardView);
    void createBackRank(Color myColor, vector<vector<PieceType>> &boardView) ;
    void drawRow(vector<PieceType> &listPieceId) const;
+
 
    const static std::unordered_map <PieceUnit, char> PieceLookUp;
 

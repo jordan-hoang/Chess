@@ -7,6 +7,7 @@
 #include <iostream>
 
 
+
 /**
  * Converts a column to a integer Ex. the move a2 will convert the 'a' into a 0
  *
@@ -51,9 +52,49 @@ int MoveValidator::convertChessRowToInt(char input){
 }
 
 
-void MoveValidator::processChessMove(int startCol, int startRow, int finishCol, int finishRow) {
+bool MoveValidator::processChessClass(int startCol, int startRow, int finishCol, int finishRow, PieceUnit piece) {
 
-    //Retrieve the board and check the spots
+    //MATH.ABS may be useful??
+
+    int diffRow = startRow - finishRow;
+    int diffCol = startCol - finishCol;
+
+
+
+    if(piece == KING){
+
+
+
+    } else if ( piece == BISHOP ){
+
+
+
+    } else if ( piece == ROOK ){
+
+
+
+    } else if ( piece == PAWN ){
+
+
+
+    } else if ( piece == QUEEN ){
+
+
+
+
+    } else if ( piece ==  KNIGHT){
+
+
+
+
+    } else {
+        // Somehow piece unit is NONE or none of the above
+        return false;
+    }
+
+
+
+
 
 
 
@@ -61,6 +102,34 @@ void MoveValidator::processChessMove(int startCol, int startRow, int finishCol, 
 
 
 
+bool MoveValidator::processChessMove(int startCol, int startRow, int finishCol, int finishRow) {
+
+    if(startCol <= -1 || startRow <= -1 || finishCol <= -1 || finishRow <= -1){
+        std::cout << "Invalid output\n";
+        return false;
+    }
+
+
+    //Retrieve the board and check the spots
+    //gameBoard.drawBoard();
+    vector<vector<PieceType> > handle = gameBoard.getBoard();
+
+    PieceType sourcePiece = handle.at(startCol).at(startRow);
+
+    //  std::cout << startRow << " " << startCol << "  ";  //debug
+    //  std::cout << " You're looking at a " << gameBoard.pieceLookUp(sourcePiece) << " \n"; // debug
+
+    PieceType destinationPiece = handle.at(finishCol).at(finishRow);
+
+
+    if(destinationPiece.getColor() == sourcePiece.getColor() ) {
+        std::cout << "invalid move\n";
+        return false;
+    }
+
+        return processChessClass(startCol, startRow, finishCol, finishRow, sourcePiece.getPieceUnit());
+
+}
 
 
 
@@ -68,11 +137,9 @@ void MoveValidator::processChessMove(int startCol, int startRow, int finishCol, 
  * @param input - Takes in a chess move. First specify the location of a piece then specify the
  * end spot next. Example move "a2,b6"
  */
-void MoveValidator::readChessMove(std::string &input) {
+bool MoveValidator::readChessMove(std::string &input) {
 
 
-   // boost::trim_if(fullCommand, boost::is_any_of(" \t") );
-   // boost::split(splitByColon, fullCommand, boost::is_any_of(":"), boost::token_compress_on);
     boost::trim(input);
 
 
@@ -82,7 +149,8 @@ void MoveValidator::readChessMove(std::string &input) {
 
     if(result.size() != 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
         //print out error message
-        return;
+        std::cout << "Invalid move! \n";
+        return false;
     }
 
 
@@ -93,9 +161,12 @@ void MoveValidator::readChessMove(std::string &input) {
     int finishPositionRow = convertChessRowToInt(result.at(1).at(1));
 
 
+
+
     // std::cout << startPositionColumn << ", " << startPositionRow << " : " <<   //debug
     //     finishPositionColumn << ", " << finishPositionRow << std::endl;
-    processChessMove(startPositionColumn,startPositionRow,finishPositionColumn,finishPositionColumn);
-
+   return processChessMove(startPositionColumn,startPositionRow,finishPositionColumn,finishPositionColumn);
 
 }
+
+

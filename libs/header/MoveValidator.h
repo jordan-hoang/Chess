@@ -7,23 +7,22 @@
 
 
 #include <string>
+#include "Board.h"
 
 /**
  * Takes user input and sends it to board.
  */
 class MoveValidator {
     public:
-        void readChessMove(std::string &input);
-
-
+        bool readChessMove(std::string &input);
 
     private:
+        Board gameBoard;
+
         int convertCharColToInt(char input);
         int convertChessRowToInt(char input);
-        void processChessMove( int startCol ,int startRow, int finishCol ,int finishRow ) ;
-
-
-
+        bool processChessMove( int startCol ,int startRow, int finishCol ,int finishRow ) ;
+        bool processChessClass(int startCol, int startRow, int finishCol, int finishRow, PieceUnit piece);
 
 };
 

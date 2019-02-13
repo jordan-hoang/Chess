@@ -20,11 +20,26 @@ enum PieceUnit{
     NONE
 };
 
-struct PieceType
-{
-    PieceUnit MyId;
-    Color mycolor;
+class PieceType {
+    private:
+        PieceUnit MyId;
+        Color mycolor;
+
+
+    public:
+        PieceUnit getPieceUnit() { return MyId; };
+        Color getColor(){ return mycolor; };
+
+        //Color getColor(return mycolor);
+
+        PieceType(PieceUnit unit, Color color) :
+            MyId(unit), mycolor(color){}
+
 };
+
+
+
+
 
 
 

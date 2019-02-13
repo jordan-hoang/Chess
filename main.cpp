@@ -52,7 +52,6 @@ void testMoveValidator(){
     move.readChessMove(input);
 
 
-
     //Valid
     input = "a0,a0";
     move.readChessMove(input);
@@ -65,21 +64,15 @@ void testMoveValidator(){
     move.readChessMove(input);
 
 
-    input = "a";
-    move.readChessMove(input);
-
 
 }
 
 
 
 
-
-
-
 int main() {
     //    printColorExample();
-  //  testBoard();
+    testBoard();
     testMoveValidator();
 
 

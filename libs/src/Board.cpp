@@ -20,9 +20,6 @@ void printCont(T const& container){
 
 }
 
-
-
-
 //Private Functions
 void Board::createBackRank(Color color, vector<vector<PieceType>> &boardView) {
 
@@ -47,7 +44,6 @@ void Board::createBackRank(Color color, vector<vector<PieceType>> &boardView) {
     boardView.push_back(tmp);
 }
 
-
 void Board::initializeGame(vector<vector<PieceType>> &boardView) {
 
     bool isBlack = true;
@@ -56,7 +52,7 @@ void Board::initializeGame(vector<vector<PieceType>> &boardView) {
     createBackRank(RED,boardView);
 
     std::vector<PieceType> blackPawn;
-    blackPawn.assign(8,PieceType{PAWN,RED});
+    blackPawn.assign(8, PieceType{PAWN,RED});
     boardView.push_back(blackPawn);
 
 
@@ -76,16 +72,15 @@ void Board::initializeGame(vector<vector<PieceType>> &boardView) {
 
 }
 
-
+//Shouldn't be here responsibility of the view
 void Board::drawRow(vector<PieceType> &listPieceId) const {
 
     for(PieceType iter: listPieceId){
-        auto search = PieceLookUp.find( iter.MyId );
+        auto search = PieceLookUp.find( iter.getPieceUnit() );
         //We also need to know the color.....
 
-
         //MOVE THIS TO THE VIEW CLASS BUT LEAVE HERE FOR EASY ACCESS FOR NOW
-        switch(iter.mycolor)
+        switch(iter.getColor())
         {
             case RED:
                 std::cout << termcolor::red << search->second;
@@ -99,24 +94,12 @@ void Board::drawRow(vector<PieceType> &listPieceId) const {
                 std::cout << search->second ;
         }
 
-
-
     }
 
     std::cout << std::endl;
 
 }
-
-
-//Constructor
-Board::Board() {
-    boardView.reserve(8);
-    initializeGame(boardView);
-}
-
-
-
-
+/////END PRIVATE //////
 
 
 void Board::drawBoard() const {
@@ -125,7 +108,19 @@ void Board::drawBoard() const {
     }
 }
 
+char Board::pieceLookUp(PieceType piece){
+  return  PieceLookUp.find(piece.getPieceUnit())->second;
+}
 
+vector<vector<PieceType>> &Board::getBoard() {
+    return boardView;
+}
+
+//Constructor
+Board::Board() {
+    boardView.reserve(8);
+    initializeGame(boardView);
+}
 
 
 
