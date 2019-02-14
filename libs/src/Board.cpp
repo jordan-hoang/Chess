@@ -21,50 +21,50 @@ void printCont(T const& container){
 }
 
 //Private Functions
-void Board::createBackRank(Color color, vector<vector<PieceType>> &boardView) {
+void Board::createBackRank(Color color, vector<vector<Piece>> &boardView) {
 
-    vector<PieceType> tmp;
+    vector<Piece> tmp;
     tmp.reserve(8);
 
 
-        tmp.push_back(PieceType{ROOK,color});
-        tmp.push_back(PieceType{KNIGHT,color});
-        tmp.push_back(PieceType{BISHOP,color});
+        tmp.push_back(Piece{ROOK,color});
+        tmp.push_back(Piece{KNIGHT,color});
+        tmp.push_back(Piece{BISHOP,color});
 
 
-        tmp.push_back(PieceType{QUEEN,color});
-        tmp.push_back(PieceType{KING,color});
+        tmp.push_back(Piece{QUEEN,color});
+        tmp.push_back(Piece{KING,color});
 
 
-        tmp.push_back(PieceType{BISHOP,color});
-        tmp.push_back(PieceType{KNIGHT,color});
-        tmp.push_back(PieceType{ROOK,color});
+        tmp.push_back(Piece{BISHOP,color});
+        tmp.push_back(Piece{KNIGHT,color});
+        tmp.push_back(Piece{ROOK,color});
 
 
     boardView.push_back(tmp);
 }
 
-void Board::initializeGame(vector<vector<PieceType>> &boardView) {
+void Board::initializeGame(vector<vector<Piece>> &boardView) {
 
     bool isBlack = true;
 
     //Doing red side
     createBackRank(RED,boardView);
 
-    std::vector<PieceType> blackPawn;
-    blackPawn.assign(8, PieceType{PAWN,RED});
+    std::vector<Piece> blackPawn;
+    blackPawn.assign(8, Piece{PAWN,RED});
     boardView.push_back(blackPawn);
 
 
     for (int i = 2; i < 6; i++){
-        std::vector<PieceType> tmp;
-        tmp.assign(8,PieceType{NONE,COLORLESS});
+        std::vector<Piece> tmp;
+        tmp.assign(8,Piece{NONE,COLORLESS});
         boardView.push_back(tmp);
     }
 
     //Doing blue side
-    std::vector<PieceType> whitePawn;
-    whitePawn.assign(8,PieceType{PAWN,BLUE});
+    std::vector<Piece> whitePawn;
+    whitePawn.assign(8,Piece{PAWN,BLUE});
     boardView.push_back(whitePawn);
 
     createBackRank(BLUE,boardView);
@@ -73,9 +73,9 @@ void Board::initializeGame(vector<vector<PieceType>> &boardView) {
 }
 
 //Shouldn't be here responsibility of the view
-void Board::drawRow(vector<PieceType> &listPieceId) const {
+void Board::drawRow(vector<Piece> &listPieceId) const {
 
-    for(PieceType iter: listPieceId){
+    for(Piece iter: listPieceId){
         auto search = PieceLookUp.find( iter.getPieceUnit() );
         //We also need to know the color.....
 
@@ -99,30 +99,74 @@ void Board::drawRow(vector<PieceType> &listPieceId) const {
     std::cout << std::endl;
 
 }
+
 /////END PRIVATE //////
 
-
 void Board::drawBoard() const {
-    for(vector<PieceType> p : boardView){
+
+    std::cout << "   abcdefgh\n___________\n";
+
+    int num = 1;
+    for(vector<Piece> p : boardView){
+        std :: cout << num << "| ";
         drawRow(p);
+        num++;
     }
+    std::cout << "___________\n";
+
+
+
+
 }
 
-char Board::pieceLookUp(PieceType piece){
+char Board::pieceLookUp(Piece piece){
   return  PieceLookUp.find(piece.getPieceUnit())->second;
 }
 
-vector<vector<PieceType>> &Board::getBoard() {
+
+
+bool Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finish) {
+
+    Piece source = requestPiece(start);
+    Piece targetPiece = requestPiece(finish);
+    if( ( source.getColor() == targetPiece.getColor() ) || source.getPieceUnit() == NONE    ){
+        return false;
+    }
+
+
+    bool isValid = source.checkMovementIsValid(start,finish);
+
+
+    if(isValid){
+
+
+        return true;
+    } else{
+        return false;
+    }
+
+}
+
+
+
+/**
+ *  Enter's in a coordinate and returns the piece at that location
+ */
+Piece& Board::requestPiece(ChessCoordinate position) {
+    return boardView.at( position.row ).at( position.col );
+}
+
+
+vector<vector<Piece>> &Board::getBoard() {
     return boardView;
 }
+
 
 //Constructor
 Board::Board() {
     boardView.reserve(8);
     initializeGame(boardView);
 }
-
-
 
 
 

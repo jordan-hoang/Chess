@@ -1,4 +1,5 @@
 #include <iostream>
+#include <assert.h>
 #include "termcolor.hpp"
 #include "libs/header/Board.h"
 #include "libs/header/MoveValidator.h"
@@ -46,14 +47,12 @@ void testMoveValidator(){
     move.readChessMove(input);
     */
 
-
-
     input = "a0,4f";
     move.readChessMove(input);
 
 
     //Valid
-    input = "a0,a0";
+    input = "a0,a3";
     move.readChessMove(input);
 
     input = "b2,b4";
@@ -64,17 +63,33 @@ void testMoveValidator(){
     move.readChessMove(input);
 
 
+}
+
+
+void testPawn(){
+
+    MoveValidator move;
+    move.drawBoard();
+
+    std::string input = "a2,a3";
+    move.readChessMove(input) ;
+
+    move.drawBoard();
+
+
 
 }
 
 
 
 
+
+
 int main() {
     //    printColorExample();
-    testBoard();
-    testMoveValidator();
-
+    //    testBoard();
+    //testMoveValidator();
+        testPawn();
 
 
 

@@ -15,14 +15,13 @@
 class MoveValidator {
     public:
         bool readChessMove(std::string &input);
-
+        void drawBoard(); //helper
     private:
         Board gameBoard;
 
         int convertCharColToInt(char input);
         int convertChessRowToInt(char input);
-        bool processChessMove( int startCol ,int startRow, int finishCol ,int finishRow ) ;
-        bool processChessClass(int startCol, int startRow, int finishCol, int finishRow, PieceUnit piece);
+        bool processChessMove(const ChessCoordinate &startPos,const ChessCoordinate &finishPos ) ;
 
 };
 

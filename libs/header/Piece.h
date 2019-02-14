@@ -20,36 +20,35 @@ enum PieceUnit{
     NONE
 };
 
-class PieceType {
-    private:
-        PieceUnit MyId;
-        Color mycolor;
 
+struct ChessCoordinate {
+    int row;
+    int col;
+};
+
+
+
+class Piece {
+    private:
+        PieceUnit pieceId;
+        Color pieceColor;
+        bool validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish);
+        void updatePiece(Piece &source, Piece &destination);
 
     public:
-        PieceUnit getPieceUnit() { return MyId; };
-        Color getColor(){ return mycolor; };
-
-        //Color getColor(return mycolor);
-
-        PieceType(PieceUnit unit, Color color) :
-            MyId(unit), mycolor(color){}
-
-};
+        PieceUnit getPieceUnit() { return pieceId; };
+        Color getColor(){ return pieceColor; };
+        bool checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish);
 
 
 
 
 
 
+        //Color getColor(return pieceColor);
 
-
-class Piece{
-public:
-    PieceType getTypeOfPiece() const;
-    void setTypeOfPiece(PieceType typeOfPiece);
-private:
-    char colCharPosition;
-    PieceType typeOfPiece;
+        Piece(PieceUnit unit, Color color) :
+            pieceId(unit), pieceColor(color){}
 
 };
+
