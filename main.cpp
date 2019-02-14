@@ -72,7 +72,13 @@ void testPawn(){
     move.drawBoard();
 
     std::string input = "a2,a3";
-    move.readChessMove(input) ;
+
+    bool isValid = move.readChessMove(input) ;
+
+    if(isValid == false){
+        std::cout << "Invalid move " << "\n";
+    }
+
 
     move.drawBoard();
 

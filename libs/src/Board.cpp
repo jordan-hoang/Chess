@@ -5,6 +5,7 @@
 #include "../header/Board.h"
 #include <vector>
 #include <iostream>
+#include <assert.h>
 #include "../../termcolor.hpp"
 
 
@@ -127,18 +128,27 @@ char Board::pieceLookUp(Piece piece){
 
 bool Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finish) {
 
-    Piece source = requestPiece(start);
-    Piece targetPiece = requestPiece(finish);
-    if( ( source.getColor() == targetPiece.getColor() ) || source.getPieceUnit() == NONE    ){
+    Piece &sourcePiece = requestPiece(start);
+    Piece &targetPiece = requestPiece(finish);
+
+
+//    std::cout << " sourcePiece is a " << pieceLookUp(sourcePiece) << " \n"; //debug
+//    std::cout << " targetPiece is a " << pieceLookUp(targetPiece) << " \n"; //debug
+
+
+    if( ( sourcePiece.getColor() == targetPiece.getColor() ) || sourcePiece.getPieceUnit() == NONE    ){
+        std::cout << "ERROR MOVING PIECE OF SAME UNIT ON TOP OF ITSELF OR ATTEMPTING TO MOVE NOTHING \n";
         return false;
     }
 
-
-    bool isValid = source.checkMovementIsValid(start,finish);
-
+    bool isValid = sourcePiece.checkMovementIsValid(start,finish);
 
     if(isValid){
 
+        sourcePiece.updatePiece(sourcePiece,targetPiece);
+
+     //   std::cout << "Updated start unit is : " << pieceLookUp(  requestPiece(start) ) << "\n";
+     //   std::cout << "Updated finish unit is : " << pieceLookUp( requestPiece(finish) ) << " \n"; //debug
 
         return true;
     } else{
@@ -152,7 +162,7 @@ bool Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finis
 /**
  *  Enter's in a coordinate and returns the piece at that location
  */
-Piece& Board::requestPiece(ChessCoordinate position) {
+Piece& Board::requestPiece(const ChessCoordinate &position) {
     return boardView.at( position.row ).at( position.col );
 }
 

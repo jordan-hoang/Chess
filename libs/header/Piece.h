@@ -8,6 +8,8 @@
 
 #endif //CHESS_PIECE_H
 
+
+
 enum Color{ RED,BLUE,COLORLESS };
 
 enum PieceUnit{
@@ -27,25 +29,19 @@ struct ChessCoordinate {
 };
 
 
-
 class Piece {
     private:
         PieceUnit pieceId;
         Color pieceColor;
         bool validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish);
-        void updatePiece(Piece &source, Piece &destination);
 
     public:
         PieceUnit getPieceUnit() { return pieceId; };
         Color getColor(){ return pieceColor; };
         bool checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish);
+        void updatePiece(Piece &source, Piece &destination);
 
 
-
-
-
-
-        //Color getColor(return pieceColor);
 
         Piece(PieceUnit unit, Color color) :
             pieceId(unit), pieceColor(color){}

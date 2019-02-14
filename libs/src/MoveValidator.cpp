@@ -52,6 +52,11 @@ int MoveValidator::convertChessRowToInt(char input){
 }
 
 
+void MoveValidator::drawBoard() {
+    gameBoard.drawBoard();
+}
+
+
 /**
  * Checks to see if the input is valid.
  * @param startPos - The position you are starting from
@@ -64,19 +69,10 @@ bool MoveValidator::processChessMove(const ChessCoordinate &startPos, const Ches
         return false;
     }
 
-        gameBoard.movePiece(startPos, finishPos);
-
-
-
-
+       return  gameBoard.movePiece(startPos, finishPos);
 
 }
 
-
-
-void MoveValidator::drawBoard() {
-    gameBoard.drawBoard();
-}
 
 
 /**

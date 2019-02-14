@@ -17,9 +17,6 @@ bool Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &fi
     int directionTravel = (this->pieceColor == RED) ? 1 : -1;
 
 
-
-
-
     if(start.row + directionTravel == finish.row){
         return true; //GENERIC PAWN CODE SHOULD WORK FOR BOTH
     } else if(start.row == 1 && directionTravel == 1 &&  (start.row + directionTravel*2)==finish.row ){
@@ -37,7 +34,11 @@ bool Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &fi
 
 void Piece::updatePiece(Piece &source, Piece &destination) {
 
+    destination.pieceId = source.pieceId;
+    destination.pieceColor = source.pieceColor;
 
+    source.pieceId = NONE;
+    source.pieceColor = COLORLESS;
 
 }
 

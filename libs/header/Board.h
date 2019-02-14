@@ -19,7 +19,7 @@ public:
     void drawBoard() const; // SHOULD BE SPERATED INTO ANOTHER CLASS BUT LEAVE HERE FOR NOW THIS IS THE MODEL! Maybe mvc isn't what we want.
     char pieceLookUp(Piece piece);
 
-    Piece& requestPiece(ChessCoordinate position);
+    Piece& requestPiece(const ChessCoordinate &position);
     bool movePiece(const ChessCoordinate &start, const ChessCoordinate &finish);
 
 
