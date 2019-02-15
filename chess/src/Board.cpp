@@ -189,7 +189,6 @@ bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &fin
 
 
 
-
     return true;
 }
 

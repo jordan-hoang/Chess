@@ -1,8 +1,9 @@
 #include <iostream>
 #include <assert.h>
-#include "termcolor.hpp"
-#include "libs/header/Board.h"
-#include "libs/header/MoveValidator.h"
+#include "../termcolor.hpp"
+#include "../chess/header/MoveValidator.h"
+#include "../chess/header/Board.h"
+
 
 using std::cout;
 using std::endl;
@@ -66,6 +67,10 @@ void testMoveValidator(){
 }
 
 
+
+
+
+
 void testPawn(){
 
     MoveValidator move;
@@ -81,7 +86,6 @@ void testPawn(){
 
 
     move.drawBoard();
-
 
 
 }
