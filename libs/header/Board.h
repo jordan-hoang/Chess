@@ -20,15 +20,9 @@ public:
     char pieceLookUp(Piece piece);
 
     Piece& requestPiece(const ChessCoordinate &position);
-
     const PieceUnit requestUnit(const ChessCoordinate &position) const;
 
     bool movePiece(const ChessCoordinate &start, const ChessCoordinate &finish);
-
-
-    //Defunct functions in Public
-    vector<vector<Piece>> &getBoard();
-
 
 private:
     vector< vector<Piece> > boardView;

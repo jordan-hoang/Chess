@@ -104,6 +104,8 @@ void Board::drawRow(vector<Piece> &listPieceId) const {
 
 
 
+
+
 /**
  * @param start
  * @param finish
@@ -137,24 +139,15 @@ bool Board::checkHorizontalPath(const ChessCoordinate &start, const ChessCoordin
  */
 bool Board::checkVerticalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const {
 
-
     int begin = std::min(start.row,finish.row);
     int end = std::max(start.row,finish.row);
 
-
-
     for(int i = begin ; i < end; i++){
-        const ChessCoordinate tmp{i,start.col};
-
-
-
-
+        if(requestUnit({i,start.col}) != NONE ){
+            return false;
+        }
     }
-
-
     return true;
-
-
 
 }
 
@@ -225,9 +218,6 @@ char Board::pieceLookUp(Piece piece){
 
 
 
-
-
-
 bool Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finish) {
 
     //Perhaps have to requestPieces??????
@@ -284,8 +274,9 @@ Piece& Board::requestPiece(const ChessCoordinate &position) {
 }
 
 
-vector<vector<Piece>> &Board::getBoard() {
-    return boardView;
+const PieceUnit Board::requestUnit(const ChessCoordinate &position) const {
+    Piece a = boardView.at(position.row).at(position.col);
+    return a.getPieceUnit();
 }
 
 
@@ -294,10 +285,6 @@ Board::Board() {
     boardView.reserve(8);
     initializeGame(boardView);
 }
-
-
-
-
 
 
 
