@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <assert.h>
+#include <algorithm>
 #include "../../termcolor.hpp"
 
 
@@ -101,6 +102,106 @@ void Board::drawRow(vector<Piece> &listPieceId) const {
 
 }
 
+
+
+/**
+ * @param start
+ * @param finish
+ * @return True if NONE was not found else returns false.
+ *
+ */
+bool Board::checkHorizontalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+     // this assert may be wrong
+
+
+
+    const vector<Piece> &handle = boardView.at(start.row);
+    const auto iterBegin = handle.begin() + std::min(start.row,finish.row ) ;
+    const auto iterEnd = handle.begin() + std::max(start.row,finish.row) ;
+
+    //We are only searching w/e the path specifies
+    const auto result = std::find_if(iterBegin,iterEnd,
+            [&](auto i) { return i.getPieceUnit() == NONE ;} );
+
+
+    return (result == iterEnd);
+
+}
+
+
+
+/**
+ * Determines w/e the path is free vertically
+ * @param start
+ * @param finish
+ */
+bool Board::checkVerticalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+
+
+    int begin = std::min(start.row,finish.row);
+    int end = std::max(start.row,finish.row);
+
+
+
+    for(int i = begin ; i < end; i++){
+        const ChessCoordinate tmp{i,start.col};
+
+
+
+
+    }
+
+
+    return true;
+
+
+
+}
+
+
+
+/**
+ * A method that checks to see w/e the distance between 2 path's is clear.
+ * You can only do vertical, horizontal, or diagonal only lines.
+ *
+ * Ex. (2,4) to (3,4) // (3,5) to (3,7) // or (3,3) to (5,5)
+ *
+ * @param start - Starting coordinate
+ * @param finish - Finishing coordinate
+ * @return
+ */
+bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+
+
+
+    int diffRow = finish.row - start.row;
+    int diffCol = finish.col - start.col;
+
+
+    // You are moving horizontally
+    if( start.row == finish.row && start.col != finish.col ){
+       return checkHorizontalPath(start,finish);
+    }
+
+    // You are moving vertical
+    else if( start.row != finish.row && start.col == finish.col ) {
+       return checkVerticalPath(start,finish);
+    }
+
+
+    else if( diffRow == diffCol ){
+        std::cout << "Method isPathClear diagonal implementation is not implemented yet!";
+        assert(-1);
+    }
+
+
+
+
+    return true;
+}
+
+
+
 /////END PRIVATE //////
 
 void Board::drawBoard() const {
@@ -116,8 +217,6 @@ void Board::drawBoard() const {
     std::cout << "___________\n";
 
 
-
-
 }
 
 char Board::pieceLookUp(Piece piece){
@@ -126,8 +225,12 @@ char Board::pieceLookUp(Piece piece){
 
 
 
+
+
+
 bool Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finish) {
 
+    //Perhaps have to requestPieces??????
     Piece &sourcePiece = requestPiece(start);
     Piece &targetPiece = requestPiece(finish);
 
@@ -141,7 +244,21 @@ bool Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finis
         return false;
     }
 
-    bool isValid = sourcePiece.checkMovementIsValid(start,finish);
+
+    // If Piece is a Knight path is meaningless since they can jump over units
+    bool pathClear = (sourcePiece.getPieceUnit() == KNIGHT) ? true : false;
+
+    if(!pathClear){
+        pathClear = isPathClear(start,finish);
+    }
+
+    if(!pathClear){
+        return false;
+    }
+
+
+
+    bool isValid = sourcePiece.checkMovementIsValid(start,finish,targetPiece.getColor());
 
     if(isValid){
 

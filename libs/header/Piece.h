@@ -33,12 +33,12 @@ class Piece {
     private:
         PieceUnit pieceId;
         Color pieceColor;
-        bool validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish);
+        bool validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const;
 
     public:
-        PieceUnit getPieceUnit() { return pieceId; };
-        Color getColor(){ return pieceColor; };
-        bool checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish);
+        const PieceUnit getPieceUnit() { return pieceId; };
+        const Color getColor(){ return pieceColor; };
+        bool checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const Color &targetColor) const   ;
         void updatePiece(Piece &source, Piece &destination);
 
 

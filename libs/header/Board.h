@@ -20,6 +20,9 @@ public:
     char pieceLookUp(Piece piece);
 
     Piece& requestPiece(const ChessCoordinate &position);
+
+    const PieceUnit requestUnit(const ChessCoordinate &position) const;
+
     bool movePiece(const ChessCoordinate &start, const ChessCoordinate &finish);
 
 
@@ -35,6 +38,15 @@ private:
    void initializeGame(vector<vector<Piece>> &boardView);
    void createBackRank(Color myColor, vector<vector<Piece>> &boardView) ;
    void drawRow(vector<Piece> &listPieceId) const;
+
+
+   bool checkHorizontalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+   bool checkVerticalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+   //Check diagonal
+
+   bool isPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+
+
 
 
    const static std::unordered_map <PieceUnit, char> PieceLookUp;

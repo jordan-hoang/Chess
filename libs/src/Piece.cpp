@@ -11,18 +11,37 @@
 
 
 
-bool Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish) {
+/**Validates a pawn's movement, check for attempting to move a NONE piece or onto piece of same colored performed
+ * in Board.cpp
+ * @param start - starting position
+ * @param finish - finish position
+ * @param target - the color of the target you are moving to
+ * @return true if valid else false
+ */
+bool Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const {
 
-    //+ means goes up -1 means goes down the chess
+    //+ means goes up -1 means goes down the chess board
     int directionTravel = (this->pieceColor == RED) ? 1 : -1;
 
+    //Code for checking if your piece can move forward
 
-    if(start.row + directionTravel == finish.row){
-        return true; //GENERIC PAWN CODE SHOULD WORK FOR BOTH
-    } else if(start.row == 1 && directionTravel == 1 &&  (start.row + directionTravel*2)==finish.row ){
-        return true; //CODE FOR RED
-    } else if(start.row == 6 && directionTravel == -1 &&  (start.row + directionTravel*2)==finish.row   ){
-        return true; //CODE FOR BLUE
+
+
+    //Works if the path is clear
+        if (start.row + directionTravel == finish.row) {
+            return true; //GENERIC PAWN CODE SHOULD WORK FOR BOTH
+        } else if (start.row == 1 && directionTravel == 1 && (start.row + directionTravel * 2) == finish.row) {
+            return true; //CODE FOR RED
+        } else if (start.row == 6 && directionTravel == -1 && (start.row + directionTravel * 2) == finish.row) {
+            return true; //CODE FOR BLUE
+        }
+
+
+
+
+    //prevent diagonal movement
+    if(target == COLORLESS ){
+
     }
 
 
@@ -44,7 +63,7 @@ void Piece::updatePiece(Piece &source, Piece &destination) {
 
 //PUBLIC
 
-bool Piece::checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish) {
+bool Piece::checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const  Color &targetColor) const {
 
 
     PieceUnit  piece = pieceId;
@@ -62,7 +81,7 @@ bool Piece::checkMovementIsValid(const ChessCoordinate &start, const ChessCoordi
 
 
     } else if ( piece == PAWN ){
-        return validatePawn(start,finish);
+        return validatePawn(start,finish,targetColor);
 
     } else if ( piece == QUEEN ){
 
