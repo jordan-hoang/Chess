@@ -2,13 +2,13 @@
 // Created by jordanhoang on 11/02/19.
 //
 
-#include "../header/Board.h"
+#include "Board.h"
 #include <vector>
 #include <iostream>
 #include <assert.h>
 #include <algorithm>
-#include "../../termcolor.hpp"
 
+#include "termcolor.hpp"
 
 
 
@@ -48,7 +48,6 @@ void Board::createBackRank(Color color, vector<vector<Piece>> &boardView) {
 
 void Board::initializeGame(vector<vector<Piece>> &boardView) {
 
-    bool isBlack = true;
 
     //Doing red side
     createBackRank(RED,boardView);

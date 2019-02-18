@@ -1,7 +1,6 @@
-
-
 add_executable(chessTest
-        main.cpp)
+        main.cpp
+        )
 
 set_target_properties(chessTest
         PROPERTIES
@@ -12,7 +11,8 @@ set_target_properties(chessTest
 
 
 target_link_libraries(chessTest
-        chess
+        ${libchess}
+        ${libcolor}
         ${CMAKE_THREAD_LIBS_INIT}
         )
 

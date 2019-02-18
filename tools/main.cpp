@@ -1,8 +1,10 @@
 #include <iostream>
 #include <assert.h>
-#include "../termcolor.hpp"
-#include "../chess/header/MoveValidator.h"
-#include "../chess/header/Board.h"
+#include "termcolor.hpp"
+
+
+#include "Board.h"
+#include "MoveValidator.h"
 
 
 using std::cout;

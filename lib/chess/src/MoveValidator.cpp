@@ -2,7 +2,7 @@
 // Created by jordanhoang on 12/02/19.
 //
 
-#include "../header/MoveValidator.h"
+#include "MoveValidator.h"
 #include <boost/algorithm/string.hpp>
 #include <iostream>
 

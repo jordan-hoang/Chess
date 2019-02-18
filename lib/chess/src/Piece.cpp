@@ -3,8 +3,8 @@
 //
 
 #include <iostream>
-#include "../header/Piece.h"
 #include "assert.h"
+#include "Piece.h"
 
 
 //PRIVATE
