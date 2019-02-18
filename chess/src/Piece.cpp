@@ -25,8 +25,6 @@ bool Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &fi
 
     //Code for checking if your piece can move forward
 
-
-
     //Works if the path is clear
         if (start.row + directionTravel == finish.row) {
             return true; //GENERIC PAWN CODE SHOULD WORK FOR BOTH
@@ -37,20 +35,83 @@ bool Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &fi
         }
 
 
+    //prevent diagonal movement when there is no enemy on that spot
+    if(target != COLORLESS ){
+        int diffX  = abs(finish.row - start.row);
+        int diffY  = abs(finish.col - start.col);
 
-
-    //prevent diagonal movement
-    if(target == COLORLESS ){
+        //A pawn can travel at most 1 unit diagonally therefore there xPos,yPos must have changed by 1.
+        if(diffX != 1 || diffY != 1){
+            return false;
+        } else{
+            return true;
+        }
 
     }
 
+    return false;
+}
 
 
+/**
+ * Check's to see if the Rook can move in this way, Path checked in Board.cpp already
+ */
+bool Piece::validateRook(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+
+    if( start.row == finish.row && start.col != finish.col ){
+        return true;
+    }
+        // You are moving vertical
+    else if( start.row != finish.row && start.col == finish.col ) {
+        return true;
+    }
+
+    return false;
+}
+
+bool Piece::validateKnight(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+
+    //A knight has 8 possible moves from it's current position.
+    //If any of those 8 moves matches finish than it is a valid move.
+    ChessCoordinate initial = start;
+
+    // All possible moves of a knight
+    int X[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
+    int Y[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
+
+
+    for(int i = 0; i < 8 ; i++){
+        int row = start.row + Y[i];
+        int col = start.col + X[i];
+        if( ChessCoordinate{row,col} == finish ){
+            return true;
+        }
+    }
     return false;
 
 }
 
 
+bool Piece::validateBishop(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+
+
+
+
+
+}
+
+bool Piece::validateKing(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+
+
+
+}
+
+bool Piece::validateQueen(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+    return ( validateRook(start,finish) || validateBishop(start,finish) );
+}
+
+
+//Replaces the piece at destination with source, and source set to be empty
 void Piece::updatePiece(Piece &source, Piece &destination) {
 
     destination.pieceId = source.pieceId;
@@ -61,46 +122,31 @@ void Piece::updatePiece(Piece &source, Piece &destination) {
 
 }
 
-//PUBLIC
 
+//PUBLIC
 bool Piece::checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const  Color &targetColor) const {
 
 
     PieceUnit  piece = pieceId;
 
-
-    if(piece == KING){
-
-
-    } else if ( piece == BISHOP ){
-
-
-
-    } else if ( piece == ROOK ){
-
-
-
-    } else if ( piece == PAWN ){
-        return validatePawn(start,finish,targetColor);
-
-    } else if ( piece == QUEEN ){
-
-
-    } else if ( piece ==  KNIGHT) {
-
-
-
-    } else if ( piece == NONE ){
-        return false;
-    } else {
-
-        std::cout << "Somehow you are moving that a piece that doesn't have a class\n";
-        static_assert(-1);
-        return false;
-
+    switch(piece){
+        case PAWN:
+            return validatePawn(start,finish,targetColor);
+        case ROOK:
+            return validateRook(start,finish);
+        case KNIGHT:
+            return validateKnight(start,finish);
+        case BISHOP:
+            return validateBishop(start,finish);
+        case KING:
+            return validateKing(start,finish);
+        case QUEEN:
+            return validateQueen(start,finish);
+        case NONE:
+            return false;
+        default:
+            assert(-1);
     }
-
-
 
     return false;
 }

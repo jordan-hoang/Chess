@@ -116,7 +116,6 @@ bool Board::checkHorizontalPath(const ChessCoordinate &start, const ChessCoordin
      // this assert may be wrong
 
 
-
     const vector<Piece> &handle = boardView.at(start.row);
     const auto iterBegin = handle.begin() + std::min(start.row,finish.row ) ;
     const auto iterEnd = handle.begin() + std::max(start.row,finish.row) ;
@@ -125,7 +124,7 @@ bool Board::checkHorizontalPath(const ChessCoordinate &start, const ChessCoordin
     const auto result = std::find_if(iterBegin,iterEnd,
             [&](auto i) { return i.getPieceUnit() == NONE ;} );
 
-
+    //If enum NONE was not found result will be set to iterEnd.
     return (result == iterEnd);
 
 }
@@ -187,8 +186,6 @@ bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &fin
         assert(-1);
     }
 
-
-
     return true;
 }
 
@@ -216,7 +213,6 @@ char Board::pieceLookUp(Piece piece){
 }
 
 
-
 bool Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finish) {
 
     //Perhaps have to requestPieces??????
@@ -233,7 +229,6 @@ bool Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finis
         return false;
     }
 
-
     // If Piece is a Knight path is meaningless since they can jump over units
     bool pathClear = (sourcePiece.getPieceUnit() == KNIGHT) ? true : false;
 
@@ -244,8 +239,6 @@ bool Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finis
     if(!pathClear){
         return false;
     }
-
-
 
     bool isValid = sourcePiece.checkMovementIsValid(start,finish,targetPiece.getColor());
 
@@ -284,9 +277,6 @@ Board::Board() {
     boardView.reserve(8);
     initializeGame(boardView);
 }
-
-
-
 
 
 

@@ -26,6 +26,11 @@ enum PieceUnit{
 struct ChessCoordinate {
     int row;
     int col;
+
+    bool operator==(const ChessCoordinate a) const {
+        return ( row == a.row  && col == a.col );
+    }
+
 };
 
 
@@ -34,6 +39,11 @@ class Piece {
         PieceUnit pieceId;
         Color pieceColor;
         bool validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const;
+        bool validateRook(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+        bool validateBishop(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+        bool validateKnight(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+        bool validateKing(const ChessCoordinate &start, const ChessCoordinate &finish) const ;
+        bool validateQueen(const ChessCoordinate &start, const ChessCoordinate &finish) const;
 
     public:
         const PieceUnit getPieceUnit() { return pieceId; };
