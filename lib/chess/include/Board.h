@@ -36,7 +36,7 @@ private:
 
    bool checkHorizontalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const;
    bool checkVerticalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const;
-   //Check diagonal
+   bool checkDiagonalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const;
 
    bool isPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
 

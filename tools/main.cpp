@@ -3,7 +3,6 @@
 #include "termcolor.hpp"
 
 
-#include "Board.h"
 #include "MoveValidator.h"
 
 
@@ -78,18 +77,18 @@ void testPawn(){
     MoveValidator move;
     move.drawBoard();
 
-    std::string input = "a2,a3";
+    std::string input = "a2,a4";
+    move.readChessMove(input);
 
-    bool isValid = move.readChessMove(input) ;
+    input = "b7,b5";
+    move.readChessMove(input);
 
-    if(isValid == false){
-        std::cout << "Invalid move " << "\n";
-    }
+    //See if red can kill blue diagonally.
+    input = "a4,b5";
+    bool isValid = move.readChessMove(input);
 
 
     move.drawBoard();
-
-
 }
 
 

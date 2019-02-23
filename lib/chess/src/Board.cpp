@@ -101,10 +101,6 @@ void Board::drawRow(vector<Piece> &listPieceId) const {
 
 }
 
-
-
-
-
 /**
  * @param start
  * @param finish
@@ -112,23 +108,20 @@ void Board::drawRow(vector<Piece> &listPieceId) const {
  *
  */
 bool Board::checkHorizontalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const {
-     // this assert may be wrong
 
 
     const vector<Piece> &handle = boardView.at(start.row);
-    const auto iterBegin = handle.begin() + std::min(start.row,finish.row ) ;
-    const auto iterEnd = handle.begin() + std::max(start.row,finish.row) ;
+    const auto iterBegin = handle.begin() + std::min(start.col,finish.col ) + 1 ;
+    const auto iterEnd = handle.begin() + std::max(start.col,finish.col) ;
 
     //We are only searching w/e the path specifies
     const auto result = std::find_if(iterBegin,iterEnd,
-            [&](auto i) { return i.getPieceUnit() == NONE ;} );
+            [&](auto i) { return i.getPieceUnit() != NONE ;} );
+
 
     //If enum NONE was not found result will be set to iterEnd.
     return (result == iterEnd);
-
 }
-
-
 
 /**
  * Determines w/e the path is free vertically
@@ -140,7 +133,9 @@ bool Board::checkVerticalPath(const ChessCoordinate &start, const ChessCoordinat
     int begin = std::min(start.row,finish.row);
     int end = std::max(start.row,finish.row);
 
-    for(int i = begin ; i < end; i++){
+
+    // + 1 for the space in front of it
+    for(int i = begin + 1; i < end ; i++){
         if(requestUnit({i,start.col}) != NONE ){
             return false;
         }
@@ -149,7 +144,29 @@ bool Board::checkVerticalPath(const ChessCoordinate &start, const ChessCoordinat
 
 }
 
+//2 slopes + or - and 2 ways to traverse them so 4 ways in total....
+bool Board::checkDiagonalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const{
 
+    // A bishop's diagonal can be defined by y = x or y = -x
+    int endIter = abs(finish.col - start.col);
+
+    int curX = start.col;
+    int curY = start.row;
+
+    int changeX = ( (finish.col - start.col) > 0 ) ? 1 : -1;
+    int changeY = ( (finish.row - start.row) > 0 ) ? 1 : -1;
+
+
+    for(int i = 0; i < endIter - 1; i++){
+        curX += changeX;
+        curY += changeY;
+        if(requestUnit({curY,curX}) != NONE   ){
+            return false;
+        }
+    }
+
+    return true;
+}
 
 /**
  * A method that checks to see w/e the distance between 2 path's is clear.
@@ -164,13 +181,12 @@ bool Board::checkVerticalPath(const ChessCoordinate &start, const ChessCoordinat
 bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const {
 
 
-
-    int diffRow = finish.row - start.row;
-    int diffCol = finish.col - start.col;
-
+    int diffRow = abs( finish.row - start.row);
+    int diffCol = abs( finish.col - start.col);
 
     // You are moving horizontally
     if( start.row == finish.row && start.col != finish.col ){
+        std::cout << "Horizontally \n";
        return checkHorizontalPath(start,finish);
     }
 
@@ -179,13 +195,13 @@ bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &fin
        return checkVerticalPath(start,finish);
     }
 
-
     else if( diffRow == diffCol ){
-        std::cout << "Method isPathClear diagonal implementation is not implemented yet!";
-        assert(-1);
+        return checkDiagonalPath(start,finish);
     }
 
-    return true;
+
+
+    return false;
 }
 
 
@@ -218,9 +234,8 @@ bool Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finis
     Piece &sourcePiece = requestPiece(start);
     Piece &targetPiece = requestPiece(finish);
 
-
-//    std::cout << " sourcePiece is a " << pieceLookUp(sourcePiece) << " \n"; //debug
-//    std::cout << " targetPiece is a " << pieceLookUp(targetPiece) << " \n"; //debug
+ //   std::cout << " sourcePiece is a " << pieceLookUp(sourcePiece) << " \n"; //debug
+ //   std::cout << " targetPiece is a " << pieceLookUp(targetPiece) << " \n"; //debug
 
 
     if( ( sourcePiece.getColor() == targetPiece.getColor() ) || sourcePiece.getPieceUnit() == NONE    ){
@@ -228,33 +243,25 @@ bool Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finis
         return false;
     }
 
+
     // If Piece is a Knight path is meaningless since they can jump over units
-    bool pathClear = (sourcePiece.getPieceUnit() == KNIGHT) ? true : false;
+    bool pathClear = (sourcePiece.getPieceUnit() == KNIGHT);
 
-    if(!pathClear){
-        pathClear = isPathClear(start,finish);
-    }
-
-    if(!pathClear){
-        return false;
-    }
+    if(!pathClear) { pathClear = isPathClear(start,finish); }
+    if(!pathClear) {  return false; }
 
     bool isValid = sourcePiece.checkMovementIsValid(start,finish,targetPiece.getColor());
 
     if(isValid){
-
         sourcePiece.updatePiece(sourcePiece,targetPiece);
-
      //   std::cout << "Updated start unit is : " << pieceLookUp(  requestPiece(start) ) << "\n";
      //   std::cout << "Updated finish unit is : " << pieceLookUp( requestPiece(finish) ) << " \n"; //debug
-
         return true;
     } else{
         return false;
     }
 
 }
-
 
 
 /**

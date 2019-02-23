@@ -65,14 +65,13 @@ void MoveValidator::drawBoard() {
 bool MoveValidator::processChessMove(const ChessCoordinate &startPos, const ChessCoordinate &finishPos) {
 
     if(startPos.col <= -1 || startPos.row <= -1 || finishPos.col <= -1 || finishPos.row <= -1){
-        std::cout << "Invalid output\n";
+        std::cout << "Output outside of the chess board!\n";
         return false;
     }
 
-       return  gameBoard.movePiece(startPos, finishPos);
+    return  gameBoard.movePiece(startPos, finishPos);
 
 }
-
 
 
 /**
@@ -81,14 +80,16 @@ bool MoveValidator::processChessMove(const ChessCoordinate &startPos, const Ches
  */
 bool MoveValidator::readChessMove(std::string &input) {
 
+    //HOW TO CHECK FOR NULLPTR? it fails the test i made
+
     boost::trim(input);
 
     std::vector<std::string> result;
     boost::split(result,input,boost::is_any_of(","));
 
-    if(result.size() != 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
+    if(result.size() > 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
         //print out error message
-        std::cout << "Invalid move! \n";
+        std::cout << "Invalid input !!!! \n";
         return false;
     }
 
@@ -101,8 +102,9 @@ bool MoveValidator::readChessMove(std::string &input) {
     int finishPositionRow = convertChessRowToInt(result.at(1).at(1));
     ChessCoordinate finishPos{ finishPositionRow,finishPositionColumn };
 
-    return processChessMove( startPos, finishPos );
 
+
+    return processChessMove( startPos, finishPos );
 }
 
 
