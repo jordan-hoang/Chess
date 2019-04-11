@@ -6,11 +6,8 @@
 #include <boost/algorithm/string.hpp>
 #include <iostream>
 
-
-
 /**
  * Converts a column to a integer Ex. the move a2 will convert the 'a' into a 0
- *
  */
 int MoveValidator::convertCharColToInt(char input){
 
@@ -51,9 +48,16 @@ int MoveValidator::convertChessRowToInt(char input){
     return result - 1;
 }
 
+/**
+ *
+ * @return A string that you can use to draw the board
+ */
+const std::string MoveValidator::getBoardView() const {
+    return  gameBoard.getBoardView();
+}
 
-void MoveValidator::drawBoard() {
-    gameBoard.drawBoard();
+const std::string MoveValidator::getReverseBoardView() const{
+    return gameBoard.getReverseBoardView();
 }
 
 
@@ -65,46 +69,192 @@ void MoveValidator::drawBoard() {
 bool MoveValidator::processChessMove(const ChessCoordinate &startPos, const ChessCoordinate &finishPos) {
 
     if(startPos.col <= -1 || startPos.row <= -1 || finishPos.col <= -1 || finishPos.row <= -1){
-        std::cout << "Output outside of the chess board!\n";
+        return false;
+    }
+
+    if(startPos.col >= 8 || startPos.row >= 8 || finishPos.row >= 8 || finishPos.col >= 8){
         return false;
     }
 
     return  gameBoard.movePiece(startPos, finishPos);
+}
 
+
+/**
+ * @return A message on how to play the game
+ */
+std::string MoveValidator::helpMessage() const{
+
+    //std::string msg = stringManager.getString(Internationalization::STRING_CODE::MINIGAME_CHESS_WELCOME_MESSAGE);
+    return "insert helpful message here";
+
+}
+
+
+
+bool MoveValidator::isGameFinished() const {
+    const Piece &a = gameBoard.getLastPieceKilled();
+    if(a.getPieceUnit() == KING){
+        return true;
+    }
+    return false;
+}
+
+//Should be called after isGameFinished.
+std::string MoveValidator::gameOverMessage() const {
+
+    std::string stream = "";
+    const Piece &piece = gameBoard.getLastPieceKilled();
+
+    if(piece.getPieceUnit() != KING){
+        //send message here
+    }
+    else if( piece.getColor() == RED_LOWERCASE ){
+        //
+    } else {
+        //
+    }
+    return std::move(stream);
+}
+
+
+
+void MoveValidator::initializeSide(const std::string &playerOne, const std::string &playerTwo) {
+
+    this->playerOne.playerName  = playerOne;
+    this->playerOne.playerColor = RED_LOWERCASE;
+
+    this->playerTwo.playerName  = playerTwo;
+    this->playerTwo.playerColor = BLUE_UPPERCASE;
+
+}
+
+void MoveValidator::setPlayerOne(const std::string &playerOne) {
+
+    this->playerOne.playerName  = playerOne;
+    this->playerOne.playerColor = RED_LOWERCASE;
+
+}
+
+void MoveValidator::setPlayerTwo(const std::string &playerTwo) {
+
+    this->playerTwo.playerName = playerTwo;
+    this->playerTwo.playerColor = BLUE_UPPERCASE;
+
+}
+
+
+//Checks to see if a red player doesn't attempt to move a piece that doesn't belong to them.
+bool MoveValidator::validatePlayer(const std::string &playerName, const Color &color) const {
+
+    if(playerOne.playerName == playerName){
+        return (playerOne.playerColor == color);
+    }
+    if(playerTwo.playerName == playerName){
+        return (playerTwo.playerColor == color);
+    }
+
+    static_assert(-1 && "No playerId matches the one assigned to this game???? you shouldn't see this message");
+    return false;
 }
 
 
 /**
  * @param input - Takes in a chess move. First specify the location of a piece then specify the
- * end spot next. Example move "a2,b6"
+ * end spot next.
+ *
  */
-bool MoveValidator::readChessMove(std::string &input) {
-
-    //HOW TO CHECK FOR NULLPTR? it fails the test i made
-
-    boost::trim(input);
+bool MoveValidator::readChessMove(std::string &moveFrom, std::string &moveTo, const std::string &player) {
 
     std::vector<std::string> result;
-    boost::split(result,input,boost::is_any_of(","));
+    result.push_back(moveFrom);
+    result.push_back(moveTo);
 
     if(result.size() > 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
-        //print out error message
-        std::cout << "Invalid input !!!! \n";
         return false;
     }
 
 
     int sCol =  convertCharColToInt(result.at(0).at(0));
     int sRow = convertChessRowToInt(result.at(0).at(1));
+    if(sCol == -1 || sRow == -1){
+        return false;
+    }
+
+
     ChessCoordinate startPos{sRow,sCol};
 
     int finishPositionColumn = convertCharColToInt(result.at(1).at(0));
     int finishPositionRow = convertChessRowToInt(result.at(1).at(1));
+    if(finishPositionColumn == -1 || finishPositionRow == -1){
+        return false;
+    }
+
     ChessCoordinate finishPos{ finishPositionRow,finishPositionColumn };
 
+    const Color &pieceColor = gameBoard.requestPiece(startPos).getColor();
+    if( !validatePlayer(player, pieceColor) ) {
+        return false ;
+    }
+    return processChessMove( startPos, finishPos );
+
+}
+
+
+/**
+ * Move's piece regardless of color, left here for test class.
+ * @param moveFrom - ChessCoordinate you are from
+ * @param moveTo   - ChessCoordinate you are moving to.
+ */
+bool MoveValidator::readChessMove(std::string &moveFrom, std::string &moveTo) {
+
+    std::vector<std::string> result;
+    result.push_back(moveFrom);
+    result.push_back(moveTo);
+
+
+
+
+    if(result.size() > 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
+        return false;
+    }
+
+    int sCol =  convertCharColToInt(result.at(0).at(0));
+    int sRow = convertChessRowToInt(result.at(0).at(1));
+
+    if(sCol == -1 || sRow == -1){
+        return false;
+    }
+
+    ChessCoordinate startPos{sRow,sCol};
+
+    int finishPositionColumn = convertCharColToInt(result.at(1).at(0));
+    int finishPositionRow = convertChessRowToInt(result.at(1).at(1));
+
+    if(finishPositionColumn == -1 || finishPositionRow == -1){
+        return false;
+    }
+    ChessCoordinate finishPos{ finishPositionRow,finishPositionColumn };
 
 
     return processChessMove( startPos, finishPos );
 }
 
+MoveValidator::MoveValidator(const std::string &playerOne) {
+    this->playerOne.playerName = playerOne;
+    this->playerOne.playerColor = RED_LOWERCASE;
 
+}
+
+MoveValidator::MoveValidator(const std::string &playerOne, const std::string &playerTwo) {
+
+    this->playerOne.playerName = playerOne;
+    this->playerOne.playerColor = RED_LOWERCASE;
+
+    this->playerTwo.playerName = playerTwo;
+    this->playerTwo.playerColor = BLUE_UPPERCASE;
+}
+
+MoveValidator::MoveValidator() {
+    this->gameBoard = gameBoard;
+}

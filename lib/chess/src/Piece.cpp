@@ -10,6 +10,8 @@
 //PRIVATE
 
 
+
+
 /**Validates a pawn's movement, check for attempting to move a NONE piece or onto piece of same colored performed
  * in Board.cpp
  * @param start - starting position
@@ -21,7 +23,7 @@ bool Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &fi
 
 
     //+ means goes up -1 means goes down the chess board
-    int directionTravel = (this->pieceColor == RED) ? 1 : -1;
+    int directionTravel = (this->pieceColor == RED_LOWERCASE) ? 1 : -1;
 
     int difY = finish.row - start.row;
     int difX = finish.col - start.col;
@@ -54,26 +56,15 @@ bool Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &fi
         return false;
     }
 
-}
 
+}
 
 /**
- * Check's to see if the Rook can move in this way, Path checked in Board.cpp already
+ * Check's to see if the Rook can move in this way, Path checked in Board.cpp already, is here for consistency???
  */
 bool Piece::validateRook(const ChessCoordinate &start, const ChessCoordinate &finish) const {
-
-    //moving horizontally
-    if( start.row == finish.row && start.col != finish.col ){
-        return true;
-    }
-        // You are moving vertical
-    else if( start.row != finish.row && start.col == finish.col ) {
-        return true;
-    }
-
-    return false;
+    return true;
 }
-
 
 bool Piece::validateKnight(const ChessCoordinate &start, const ChessCoordinate &finish) const {
 
@@ -121,6 +112,14 @@ bool Piece::validateQueen(const ChessCoordinate &start, const ChessCoordinate &f
 }
 
 
+
+
+void Piece::setPiece(PieceUnit pieceUnit, Color color) {
+    this->pieceId = pieceUnit;
+    this->pieceColor = color;
+}
+
+
 //Replaces the piece at destination with source, and source set to be empty
 void Piece::updatePiece(Piece &source, Piece &destination) {
 
@@ -129,9 +128,7 @@ void Piece::updatePiece(Piece &source, Piece &destination) {
 
     source.pieceId = NONE;
     source.pieceColor = COLORLESS;
-
 }
-
 
 //PUBLIC
 bool Piece::checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const  Color &targetColor) const {
@@ -154,8 +151,14 @@ bool Piece::checkMovementIsValid(const ChessCoordinate &start, const ChessCoordi
         case NONE:
             return false;
         default:
-            assert(-1);
+            assert(false && "Somehow there is an invalid piece");
     }
 
     return false;
+}
+
+
+Piece::Piece() {
+    this->pieceColor = COLORLESS;
+    this->pieceId = NONE;
 }

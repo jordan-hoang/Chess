@@ -8,19 +8,12 @@
 #include <assert.h>
 #include <algorithm>
 
-#include "termcolor.hpp"
 
-
-
-template <typename T>
-void printCont(T const& container){
-
-    for(auto it = container.begin() ; it!=container.end() ; it++){
-        std::cout << *it << ' ';
-    }
-    std::cout << std::endl;
-
+//getters and setters
+const Piece Board::getLastPieceKilled() const {
+    return lastPieceKilled;
 }
+
 
 //Private Functions
 void Board::createBackRank(Color color, vector<vector<Piece>> &boardView) {
@@ -28,19 +21,18 @@ void Board::createBackRank(Color color, vector<vector<Piece>> &boardView) {
     vector<Piece> tmp;
     tmp.reserve(8);
 
-
-        tmp.push_back(Piece{ROOK,color});
-        tmp.push_back(Piece{KNIGHT,color});
-        tmp.push_back(Piece{BISHOP,color});
-
-
-        tmp.push_back(Piece{QUEEN,color});
-        tmp.push_back(Piece{KING,color});
+        tmp.emplace_back(Piece{ROOK,color});
+        tmp.emplace_back(Piece{KNIGHT,color});
+        tmp.emplace_back(Piece{BISHOP,color});
 
 
-        tmp.push_back(Piece{BISHOP,color});
-        tmp.push_back(Piece{KNIGHT,color});
-        tmp.push_back(Piece{ROOK,color});
+        tmp.emplace_back(Piece{QUEEN,color});
+        tmp.emplace_back(Piece{KING,color});
+
+
+        tmp.emplace_back(Piece{BISHOP,color});
+        tmp.emplace_back(Piece{KNIGHT,color});
+        tmp.emplace_back(Piece{ROOK,color});
 
 
     boardView.push_back(tmp);
@@ -50,10 +42,10 @@ void Board::initializeGame(vector<vector<Piece>> &boardView) {
 
 
     //Doing red side
-    createBackRank(RED,boardView);
+    createBackRank(RED_LOWERCASE,boardView);
 
     std::vector<Piece> blackPawn;
-    blackPawn.assign(8, Piece{PAWN,RED});
+    blackPawn.assign(8, Piece{PAWN,RED_LOWERCASE});
     boardView.push_back(blackPawn);
 
 
@@ -65,39 +57,55 @@ void Board::initializeGame(vector<vector<Piece>> &boardView) {
 
     //Doing blue side
     std::vector<Piece> whitePawn;
-    whitePawn.assign(8,Piece{PAWN,BLUE});
+    whitePawn.assign(8,Piece{PAWN,BLUE_UPPERCASE});
     boardView.push_back(whitePawn);
 
-    createBackRank(BLUE,boardView);
+    createBackRank(BLUE_UPPERCASE,boardView);
 
 
 }
 
-//Shouldn't be here responsibility of the view
-void Board::drawRow(vector<Piece> &listPieceId) const {
 
+void Board::drawRow(const vector<Piece> &listPieceId, std::stringstream &stream) const {
     for(Piece iter: listPieceId){
         auto search = PieceLookUp.find( iter.getPieceUnit() );
-        //We also need to know the color.....
 
-        //MOVE THIS TO THE VIEW CLASS BUT LEAVE HERE FOR EASY ACCESS FOR NOW
+        //Since printing out color doesn't work, we will make 1 side lower case
         switch(iter.getColor())
         {
-            case RED:
-                std::cout << termcolor::red << search->second;
-                std::cout << termcolor::reset;
+            case RED_LOWERCASE:
+                stream  << (char)tolower(search->second);
                 break;
-            case BLUE:
-                std::cout << termcolor::blue << search->second;
-                std::cout << termcolor::reset;
+            case BLUE_UPPERCASE:
+                stream << search->second;
                 break;
             default:
-                std::cout << search->second ;
+                stream << search->second ;
         }
 
     }
+    stream << '\n';
+}
 
-    std::cout << std::endl;
+void Board::drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &stream) const {
+
+    for(int i = 7; i >= 0 ; i--){
+        auto iter = listPieceId.at(i);
+        auto search = PieceLookUp.find(iter.getPieceUnit());
+        //Since printing out color doesn't work, we will make 1 side lower case
+        switch(iter.getColor())
+        {
+            case RED_LOWERCASE:
+                stream  << (char)tolower(search->second);
+                break;
+            case BLUE_UPPERCASE:
+                stream << search->second;
+                break;
+            default:
+                stream << search->second ;
+        }
+    }
+    stream << '\n';
 
 }
 
@@ -180,13 +188,11 @@ bool Board::checkDiagonalPath(const ChessCoordinate &start, const ChessCoordinat
  */
 bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const {
 
-
     int diffRow = abs( finish.row - start.row);
     int diffCol = abs( finish.col - start.col);
 
     // You are moving horizontally
     if( start.row == finish.row && start.col != finish.col ){
-        std::cout << "Horizontally \n";
        return checkHorizontalPath(start,finish);
     }
 
@@ -200,49 +206,62 @@ bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &fin
     }
 
 
-
     return false;
 }
 
+//Automatically promotes pawn at edge of board.
+void Board::promotePawnToQueen(Piece &source, const ChessCoordinate &target){
+    if( (target.row == 0 || target.row == 7) && (source.getPieceUnit() == PAWN) ){
+        source.setPiece(QUEEN,source.getColor());
+    }
 
-
+}
 /////END PRIVATE //////
 
-void Board::drawBoard() const {
+// BEGIN PUBLIC METHODS ///
+const std::string Board::getBoardView() const {
 
-    std::cout << "   abcdefgh\n___________\n";
+    std::stringstream stream;
+
+    stream << "   abcdefgh\n___________\n";
 
     int num = 1;
-    for(vector<Piece> p : boardView){
-        std :: cout << num << "| ";
-        drawRow(p);
+    for(const vector<Piece> row : boardView){
+        stream << num << "| ";
+        drawRow(row,stream);
         num++;
     }
-    std::cout << "___________\n";
+    stream << "___________\n";
 
+    return std::move(stream.str());
+}
+
+
+const std::string Board::getReverseBoardView() const {
+    std::stringstream stream;
+
+    stream << "   hgfedcba\n___________\n";
+
+    for(int num = 8 ; num > 0 ; num--){
+        stream << num << "| ";
+        const vector<Piece> &row = boardView.at(num - 1);
+        drawRowReverse(row,stream);
+    }
+
+    return std::move(stream.str());
 
 }
 
-char Board::pieceLookUp(Piece piece){
-  return  PieceLookUp.find(piece.getPieceUnit())->second;
-}
 
 
 bool Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finish) {
 
-    //Perhaps have to requestPieces??????
     Piece &sourcePiece = requestPiece(start);
     Piece &targetPiece = requestPiece(finish);
 
- //   std::cout << " sourcePiece is a " << pieceLookUp(sourcePiece) << " \n"; //debug
- //   std::cout << " targetPiece is a " << pieceLookUp(targetPiece) << " \n"; //debug
-
-
     if( ( sourcePiece.getColor() == targetPiece.getColor() ) || sourcePiece.getPieceUnit() == NONE    ){
-        std::cout << "ERROR MOVING PIECE OF SAME UNIT ON TOP OF ITSELF OR ATTEMPTING TO MOVE NOTHING \n";
         return false;
     }
-
 
     // If Piece is a Knight path is meaningless since they can jump over units
     bool pathClear = (sourcePiece.getPieceUnit() == KNIGHT);
@@ -253,16 +272,15 @@ bool Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finis
     bool isValid = sourcePiece.checkMovementIsValid(start,finish,targetPiece.getColor());
 
     if(isValid){
+        promotePawnToQueen(sourcePiece, finish);
+        lastPieceKilled.setPiece( targetPiece.getPieceUnit() , targetPiece.getColor() );
         sourcePiece.updatePiece(sourcePiece,targetPiece);
-     //   std::cout << "Updated start unit is : " << pieceLookUp(  requestPiece(start) ) << "\n";
-     //   std::cout << "Updated finish unit is : " << pieceLookUp( requestPiece(finish) ) << " \n"; //debug
         return true;
     } else{
         return false;
     }
 
 }
-
 
 /**
  *  Enter's in a coordinate and returns the piece at that location
@@ -271,19 +289,17 @@ Piece& Board::requestPiece(const ChessCoordinate &position) {
     return boardView.at( position.row ).at( position.col );
 }
 
-
 const PieceUnit Board::requestUnit(const ChessCoordinate &position) const {
     Piece a = boardView.at(position.row).at(position.col);
     return a.getPieceUnit();
 }
 
-
 //Constructor
 Board::Board() {
     boardView.reserve(8);
     initializeGame(boardView);
+    lastPieceKilled = Piece{NONE,COLORLESS};
 }
-
 
 
 const std::unordered_map<PieceUnit, char> Board::PieceLookUp = {
