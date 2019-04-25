@@ -45,5 +45,6 @@ int main(){
 
         }
 
+        std::cout << chessGame.gameOverMessage();
 
 }

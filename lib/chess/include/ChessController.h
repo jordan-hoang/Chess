@@ -26,13 +26,12 @@ struct ChessPlayer {
  */
 class ChessController {
     public:
-        bool executeMove(std::string &moveFrom, std::string &moveTo);
-
-        bool executeMove(std::string &moveFrom, std::string &moveTo,
-                         const std::string &player);
 
         bool readInput(std::string &input, const std::string &player);
 
+        bool executeMove(std::string &moveFrom, std::string &moveTo);
+        bool executeMove(std::string &moveFrom, std::string &moveTo,
+                         const std::string &player);
 
         void initializeSide(const std::string &playerOne, const std::string &playerTwo);
         bool isGameFinished() const;
@@ -44,7 +43,7 @@ class ChessController {
         ChessController();
 
 private:
-        Board gameBoard;
+        Board _gameBoard;
         ChessPlayer _playerOne;
         ChessPlayer _playerTwo;
 

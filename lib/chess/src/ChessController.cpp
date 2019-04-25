@@ -53,11 +53,11 @@ int ChessController::convertChessRowToInt(char input){
  * @return A string that you can use to draw the board
  */
 const std::string ChessController::getBoardView() const {
-    return  gameBoard.getBoardView();
+    return  _gameBoard.getBoardView();
 }
 
 const std::string ChessController::getReverseBoardView() const{
-    return gameBoard.getReverseBoardView();
+    return _gameBoard.getReverseBoardView();
 }
 
 
@@ -76,7 +76,7 @@ bool ChessController::processChessMove(const ChessCoordinate &startPos, const Ch
         return false;
     }
 
-    return  gameBoard.movePiece(startPos, finishPos);
+    return  _gameBoard.movePiece(startPos, finishPos);
 }
 
 
@@ -96,7 +96,7 @@ std::string ChessController::helpMessage() const{
  * @return True  - If the last piece killed is a king.
  */
 bool ChessController::isGameFinished() const {
-    const Piece &a = gameBoard.getLastPieceKilled();
+    const Piece &a = _gameBoard.getLastPieceKilled();
     if(a.getPieceUnit() == KING){
         return true;
     }
@@ -107,7 +107,7 @@ bool ChessController::isGameFinished() const {
 std::string ChessController::gameOverMessage() const {
 
     std::string stream = "";
-    const Piece &piece = gameBoard.getLastPieceKilled();
+    const Piece &piece = _gameBoard.getLastPieceKilled();
 
     if(piece.getPieceUnit() != KING){
         //send message here
@@ -212,7 +212,7 @@ bool ChessController::executeMove(std::string &moveFrom, std::string &moveTo, co
 
     ChessCoordinate finishPos{ finishPositionRow,finishPositionColumn };
 
-    const Color &pieceColor = gameBoard.requestPiece(startPos).getColor();
+    const Color &pieceColor = _gameBoard.requestPiece(startPos).getColor();
     if( !validatePlayer(player, pieceColor) ) {
         return false ;
     }
@@ -262,5 +262,5 @@ bool ChessController::executeMove(std::string &moveFrom, std::string &moveTo) {
 ChessController::ChessController() {
     this->_playerOne = ChessPlayer( "playerOne", RED_LOWERCASE  );
     this->_playerTwo = ChessPlayer( "playerTwo", BLUE_UPPERCASE );
-    this->gameBoard  = Board();
+    this->_gameBoard  = Board();
 }
