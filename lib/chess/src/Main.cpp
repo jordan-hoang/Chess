@@ -7,7 +7,7 @@
 
 /**
  * Runs the chess program itself.
- * 
+ *
  */
 int main(){
 
