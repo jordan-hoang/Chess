@@ -14,7 +14,9 @@ struct ChessPlayer {
     std::string playerName;
     Color playerColor;
 
-    ChessPlayer() : playerName(""),playerColor(RED_LOWERCASE){}
+    ChessPlayer() : playerName(""),playerColor(RED_LOWERCASE){};
+    explicit ChessPlayer( std::string playerName, Color color) :
+        playerName(std::move(playerName)),playerColor(color){};
 
 };
 
@@ -22,39 +24,34 @@ struct ChessPlayer {
 /**
  * Takes user input and sends it to board.
  */
-class MoveValidator {
+class ChessController {
     public:
-        bool readChessMove(std::string &moveFrom, std::string &moveTo);
 
-        bool readChessMove(std::string &moveFrom, std::string &moveTo,
-                const std::string &player);
+        bool readInput(std::string &input, const std::string &player);
 
+        bool executeMove(std::string &moveFrom, std::string &moveTo);
+        bool executeMove(std::string &moveFrom, std::string &moveTo,
+                         const std::string &player);
 
-    void initializeSide(const std::string &playerOne, const std::string &playerTwo);
-
+        void initializeSide(const std::string &playerOne, const std::string &playerTwo);
         bool isGameFinished() const;
         std::string gameOverMessage() const;
         const std::string getBoardView() const;
         const std::string getReverseBoardView() const;
-
         std::string helpMessage() const;
-        void setPlayerOne(const std::string &playerOne);
-        void setPlayerTwo(const std::string &playerTwo);
 
-        MoveValidator(const std::string &playerOne);
-        MoveValidator(const std::string &playerOne, const std::string &playerTwo);
-        MoveValidator();
-
+        ChessController();
 
 private:
-        Board gameBoard;
-        ChessPlayer playerOne;
-        ChessPlayer playerTwo;
+        Board _gameBoard;
+        ChessPlayer _playerOne;
+        ChessPlayer _playerTwo;
 
 
         int convertCharColToInt(char input);
         int convertChessRowToInt(char input);
         bool validatePlayer(const std::string &playerName, const Color &color) const;
+        bool validatePlayerInput(std::string &input, std::vector<std::string> &result);
         bool processChessMove(const ChessCoordinate &startPos,const ChessCoordinate &finishPos ) ;
 
 };

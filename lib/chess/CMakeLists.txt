@@ -1,5 +1,5 @@
 add_library(${libchess}
-        src/MoveValidator.cpp
+        src/ChessController.cpp
         src/Piece.cpp
         src/Board.cpp
         )
@@ -17,7 +17,6 @@ target_include_directories(${libchess}
 
 
 target_link_libraries(${libchess}
-        ${libcolor}
         ${Boost_LIBRARIES}
         )
 

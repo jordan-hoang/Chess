@@ -7,8 +7,8 @@ set(PACKAGE_VERSION 0.1)
 set(PACKAGE_STRING "${PACKAGE_NAME} ${PACKAGE_VERSION}")
 
 # Libraries
-set(libcolor "color")
 set(libchess "chess")
+
 
 # Debug
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

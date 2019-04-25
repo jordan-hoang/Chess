@@ -1,8 +1,8 @@
-add_executable(chessTest
-        main.cpp
+add_executable(chessGame
+        Main.cpp
         )
 
-set_target_properties(chessTest
+set_target_properties(chessGame
         PROPERTIES
         LINKER_LANGUAGE CXX
         CXX_STANDARD 17
@@ -10,12 +10,12 @@ set_target_properties(chessTest
         )
 
 
-target_link_libraries(chessTest
+target_link_libraries(chessGame
         ${libchess}
         ${libcolor}
         ${CMAKE_THREAD_LIBS_INIT}
         )
 
-install(TARGETS chessTest
+install(TARGETS chessGame
         RUNTIME DESTINATION bin
         )
