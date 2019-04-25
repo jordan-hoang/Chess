@@ -148,7 +148,7 @@ bool ChessController::validatePlayer(const std::string &playerName, const Color 
 }
 
 
-bool validateString(std::string &input, std::vector<std::string> &result) {
+bool ChessController::validatePlayerInput(std::string &input, std::vector<std::string> &result) {
 
     if(input.size() >= 10){
         return false;
@@ -168,13 +168,13 @@ bool validateString(std::string &input, std::vector<std::string> &result) {
 bool ChessController::readInput(std::string &input, const std::string &player) {
 
     std::vector<std::string> result;
-    validateString(input,result);
+    validatePlayerInput(input, result);
 
-    if(result.size() > 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
+    if(result.size() != 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
         return false;
     }
 
-    return executeMove(result.at(1),result.at(2),player);
+    return executeMove(result.at(0),result.at(1),player);
 }
 
 
@@ -233,8 +233,6 @@ bool ChessController::executeMove(std::string &moveFrom, std::string &moveTo) {
     result.push_back(moveTo);
 
 
-
-
     if(result.size() > 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
         return false;
     }
@@ -256,13 +254,13 @@ bool ChessController::executeMove(std::string &moveFrom, std::string &moveTo) {
     }
     ChessCoordinate finishPos{ finishPositionRow,finishPositionColumn };
 
-
     return processChessMove( startPos, finishPos );
 }
 
 
+//Constructor
 ChessController::ChessController() {
     this->_playerOne = ChessPlayer( "playerOne", RED_LOWERCASE  );
     this->_playerTwo = ChessPlayer( "playerTwo", BLUE_UPPERCASE );
-
+    this->gameBoard  = Board();
 }

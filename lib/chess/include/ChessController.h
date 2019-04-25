@@ -34,13 +34,11 @@ class ChessController {
         bool readInput(std::string &input, const std::string &player);
 
 
-    void initializeSide(const std::string &playerOne, const std::string &playerTwo);
-
+        void initializeSide(const std::string &playerOne, const std::string &playerTwo);
         bool isGameFinished() const;
         std::string gameOverMessage() const;
         const std::string getBoardView() const;
         const std::string getReverseBoardView() const;
-
         std::string helpMessage() const;
 
         ChessController();
@@ -54,6 +52,7 @@ private:
         int convertCharColToInt(char input);
         int convertChessRowToInt(char input);
         bool validatePlayer(const std::string &playerName, const Color &color) const;
+        bool validatePlayerInput(std::string &input, std::vector<std::string> &result);
         bool processChessMove(const ChessCoordinate &startPos,const ChessCoordinate &finishPos ) ;
 
 };
