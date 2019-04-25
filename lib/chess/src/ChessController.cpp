@@ -91,7 +91,10 @@ std::string ChessController::helpMessage() const{
 }
 
 
-
+/**
+ * Checks if the chessGame has ended
+ * @return True  - If the last piece killed is a king.
+ */
 bool ChessController::isGameFinished() const {
     const Piece &a = gameBoard.getLastPieceKilled();
     if(a.getPieceUnit() == KING){
@@ -121,45 +124,67 @@ std::string ChessController::gameOverMessage() const {
 
 void ChessController::initializeSide(const std::string &playerOne, const std::string &playerTwo) {
 
-    this->playerOne.playerName  = playerOne;
-    this->playerOne.playerColor = RED_LOWERCASE;
+    this->_playerOne.playerName  = playerOne;
+    this->_playerOne.playerColor = RED_LOWERCASE;
 
-    this->playerTwo.playerName  = playerTwo;
-    this->playerTwo.playerColor = BLUE_UPPERCASE;
+    this->_playerTwo.playerName  = playerTwo;
+    this->_playerTwo.playerColor = BLUE_UPPERCASE;
 
-}
-
-void ChessController::setPlayerOne(const std::string &playerOne) {
-    this->playerOne.playerName  = playerOne;
-    this->playerOne.playerColor = RED_LOWERCASE;
-}
-
-void ChessController::setPlayerTwo(const std::string &playerTwo) {
-    this->playerTwo.playerName = playerTwo;
-    this->playerTwo.playerColor = BLUE_UPPERCASE;
 }
 
 
 //Checks to see if a red player doesn't attempt to move a piece that doesn't belong to them.
 bool ChessController::validatePlayer(const std::string &playerName, const Color &color) const {
 
-    if(playerOne.playerName == playerName){
-        return (playerOne.playerColor == color);
+    if(_playerOne.playerName == playerName){
+        return (_playerOne.playerColor == color);
     }
-    if(playerTwo.playerName == playerName){
-        return (playerTwo.playerColor == color);
+    if(_playerTwo.playerName == playerName){
+        return (_playerTwo.playerColor == color);
     }
 
     static_assert(-1 && "No playerId matches the one assigned to this game???? you shouldn't see this message");
     return false;
 }
 
+
+bool validateString(std::string &input, std::vector<std::string> &result) {
+
+    if(input.size() >= 10){
+        return false;
+    }
+    boost::trim(input);
+    boost::split(result,input,boost::is_any_of(","));
+
+    if(result.size() != 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
+        //print out error message
+        return false;
+    }
+
+    return true;
+}
+
+
+bool ChessController::readInput(std::string &input, const std::string &player) {
+
+    std::vector<std::string> result;
+    validateString(input,result);
+
+    if(result.size() > 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
+        return false;
+    }
+
+    return executeMove(result.at(1),result.at(2),player);
+}
+
+
+
 /**
  * @param input - Takes in a chess move. First specify the location of a piece then specify the
  * end spot next.
  *
  */
-bool ChessController::readChessMove(std::string &moveFrom, std::string &moveTo, const std::string &player) {
+bool ChessController::executeMove(std::string &moveFrom, std::string &moveTo, const std::string &player) {
 
     std::vector<std::string> result;
     result.push_back(moveFrom);
@@ -201,7 +226,7 @@ bool ChessController::readChessMove(std::string &moveFrom, std::string &moveTo, 
  * @param moveFrom - ChessCoordinate you are from
  * @param moveTo   - ChessCoordinate you are moving to.
  */
-bool ChessController::readChessMove(std::string &moveFrom, std::string &moveTo) {
+bool ChessController::executeMove(std::string &moveFrom, std::string &moveTo) {
 
     std::vector<std::string> result;
     result.push_back(moveFrom);
@@ -235,24 +260,9 @@ bool ChessController::readChessMove(std::string &moveFrom, std::string &moveTo) 
     return processChessMove( startPos, finishPos );
 }
 
-ChessController::ChessController(const std::string &playerOne) {
-    this->playerOne.playerName = playerOne;
-    this->playerOne.playerColor = RED_LOWERCASE;
-
-}
-
-ChessController::ChessController(const std::string &playerOne, const std::string &playerTwo) {
-
-    this->playerOne.playerName = playerOne;
-    this->playerOne.playerColor = RED_LOWERCASE;
-
-    this->playerTwo.playerName = playerTwo;
-    this->playerTwo.playerColor = BLUE_UPPERCASE;
-}
 
 ChessController::ChessController() {
-    this->playerOne = ChessPlayer(RED_LOWERCASE);
-    this->playerTwo = ChessPlayer(BLUE_UPPERCASE);
-
+    this->_playerOne = ChessPlayer( "playerOne", RED_LOWERCASE  );
+    this->_playerTwo = ChessPlayer( "playerTwo", BLUE_UPPERCASE );
 
 }

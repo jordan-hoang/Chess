@@ -1,2 +1,0 @@
-/usr/bin/ar qc ../libcolor.a  
-/usr/bin/ranlib ../libcolor.a

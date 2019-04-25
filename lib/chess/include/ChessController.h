@@ -15,7 +15,8 @@ struct ChessPlayer {
     Color playerColor;
 
     ChessPlayer() : playerName(""),playerColor(RED_LOWERCASE){};
-    explicit ChessPlayer(Color color) : playerName(""),playerColor(color){};
+    explicit ChessPlayer( std::string playerName, Color color) :
+        playerName(std::move(playerName)),playerColor(color){};
 
 };
 
@@ -25,10 +26,12 @@ struct ChessPlayer {
  */
 class ChessController {
     public:
-        bool readChessMove(std::string &moveFrom, std::string &moveTo);
+        bool executeMove(std::string &moveFrom, std::string &moveTo);
 
-        bool readChessMove(std::string &moveFrom, std::string &moveTo,
-                const std::string &player);
+        bool executeMove(std::string &moveFrom, std::string &moveTo,
+                         const std::string &player);
+
+        bool readInput(std::string &input, const std::string &player);
 
 
     void initializeSide(const std::string &playerOne, const std::string &playerTwo);
@@ -39,18 +42,13 @@ class ChessController {
         const std::string getReverseBoardView() const;
 
         std::string helpMessage() const;
-        void setPlayerOne(const std::string &playerOne);
-        void setPlayerTwo(const std::string &playerTwo);
 
-        ChessController(const std::string &playerOne);
-        ChessController(const std::string &playerOne, const std::string &playerTwo);
         ChessController();
-
 
 private:
         Board gameBoard;
-        ChessPlayer playerOne;
-        ChessPlayer playerTwo;
+        ChessPlayer _playerOne;
+        ChessPlayer _playerTwo;
 
 
         int convertCharColToInt(char input);

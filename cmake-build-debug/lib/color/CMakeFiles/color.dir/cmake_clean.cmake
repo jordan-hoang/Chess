@@ -1,9 +1,0 @@
-file(REMOVE_RECURSE
-  "../libcolor.pdb"
-  "../libcolor.a"
-)
-
-# Per-language clean rules from dependency scanning.
-foreach(lang )
-  include(CMakeFiles/color.dir/cmake_clean_${lang}.cmake OPTIONAL)
-endforeach()
