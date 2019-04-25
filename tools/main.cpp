@@ -3,7 +3,7 @@
 #include "termcolor.hpp"
 
 
-#include "MoveValidator.h"
+#include "ChessController.h"
 
 
 using std::cout;
@@ -27,7 +27,7 @@ void testBoard(){
 
 void testMoveValidator(){
 
-    MoveValidator move;
+    ChessController move;
 
     std::string input = "ab,52";
     /*
@@ -74,7 +74,7 @@ void testMoveValidator(){
 
 void testPawn(){
 
-    MoveValidator move;
+    ChessController move;
     move.drawBoard();
 
     std::string input = "a2,a4";

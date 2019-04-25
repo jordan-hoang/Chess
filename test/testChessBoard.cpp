@@ -3,7 +3,7 @@
 
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "MoveValidator.h"
+#include "ChessController.h"
 #include "Board.h"
 
 using std::string;
@@ -14,7 +14,7 @@ using std::string;
 //Test's the pawns in the chess game
 TEST(BoardTest,  pawn){
 
-    MoveValidator move;
+    ChessController move;
     std::string input = "a2";
     std::string target= "a3";
 
@@ -78,7 +78,7 @@ TEST(BoardTest,  pawn){
 
 TEST(BoardTest, pawnDiagonal){
 
-    MoveValidator move;
+    ChessController move;
     //move.getBoardView();
 
     std::string moveFrom = "a2";
@@ -140,7 +140,7 @@ TEST(BoardTest, pawnDiagonal){
 
 TEST(BoardTest,pawnDiagonalTwo){
 
-    MoveValidator move;
+    ChessController move;
     std::string input = "c2";
     std::string target = "c4";
     move.readChessMove(input,target);
@@ -169,7 +169,7 @@ TEST(BoardTest,pawnDiagonalTwo){
 TEST(BoardTest, Rook){
 
 
-    MoveValidator move;
+    ChessController move;
 
     string input = "a8";
     string target = "a7";
@@ -235,7 +235,7 @@ TEST(BoardTest, Rook){
 }
 
 TEST(BoardTest, knight){
-    MoveValidator move;
+    ChessController move;
     //TESTING ALL THE POSSIBLE MOVES OF THE KNIGHT
 
     string input = "b1";
@@ -370,7 +370,7 @@ TEST(MoveValidatorTest, testTurn){
     std::string p1 = "playerOne";
     std::string p2 = "playerTwo";
 
-    MoveValidator testGame;
+    ChessController testGame;
 
     //PLAYER 1 is red_LOWERCASE, PLAYER 2 is blue_UPPERCASE
     testGame.initializeSide(p1,p2);
@@ -402,7 +402,7 @@ TEST(MoveValidatorTest, reversePrint){
     std::string p1 = "playerOne";
     std::string p2 = "playerTwo";
 
-    MoveValidator testGame;
+    ChessController testGame;
 
     //PLAYER 1 is red_LOWERCASE, PLAYER 2 is blue_UPPERCASE
     testGame.initializeSide(p1,p2);
@@ -433,7 +433,7 @@ TEST(MoveValidatorTest, reversePrint){
 // Queen is RookAndBishop combined so we don't really need to test, since we reuse function/method.
 
 TEST(InvalidInputTest, invalidMoveInput) {
-    MoveValidator test;
+    ChessController test;
     std::string start, finish, player;
 
     start = "12";

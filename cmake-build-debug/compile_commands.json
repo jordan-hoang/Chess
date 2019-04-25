@@ -1,0 +1,52 @@
+[
+{
+  "directory": "/home/jordan/CLionProjects/Chess/cmake-build-debug/tools",
+  "command": "/usr/bin/c++   -I/home/jordan/CLionProjects/Chess/lib/chess/include   -Wall -fno-rtti -g -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer   -std=gnu++1z -o CMakeFiles/chessTest.dir/main.cpp.o -c /home/jordan/CLionProjects/Chess/tools/main.cpp",
+  "file": "/home/jordan/CLionProjects/Chess/tools/main.cpp"
+},
+{
+  "directory": "/home/jordan/CLionProjects/Chess/cmake-build-debug/lib/chess",
+  "command": "/usr/bin/c++   -I/home/jordan/CLionProjects/Chess/lib/chess/include -I/home/jordan/CLionProjects/Chess/lib/chess/src   -Wall -fno-rtti -g -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer   -std=gnu++1z -o CMakeFiles/chess.dir/src/ChessController.cpp.o -c /home/jordan/CLionProjects/Chess/lib/chess/src/ChessController.cpp",
+  "file": "/home/jordan/CLionProjects/Chess/lib/chess/src/ChessController.cpp"
+},
+{
+  "directory": "/home/jordan/CLionProjects/Chess/cmake-build-debug/lib/chess",
+  "command": "/usr/bin/c++   -I/home/jordan/CLionProjects/Chess/lib/chess/include -I/home/jordan/CLionProjects/Chess/lib/chess/src   -Wall -fno-rtti -g -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer   -std=gnu++1z -o CMakeFiles/chess.dir/src/Piece.cpp.o -c /home/jordan/CLionProjects/Chess/lib/chess/src/Piece.cpp",
+  "file": "/home/jordan/CLionProjects/Chess/lib/chess/src/Piece.cpp"
+},
+{
+  "directory": "/home/jordan/CLionProjects/Chess/cmake-build-debug/lib/chess",
+  "command": "/usr/bin/c++   -I/home/jordan/CLionProjects/Chess/lib/chess/include -I/home/jordan/CLionProjects/Chess/lib/chess/src   -Wall -fno-rtti -g -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer   -std=gnu++1z -o CMakeFiles/chess.dir/src/Board.cpp.o -c /home/jordan/CLionProjects/Chess/lib/chess/src/Board.cpp",
+  "file": "/home/jordan/CLionProjects/Chess/lib/chess/src/Board.cpp"
+},
+{
+  "directory": "/home/jordan/CLionProjects/Chess/cmake-build-debug/lib/chess",
+  "command": "/usr/bin/c++   -I/home/jordan/CLionProjects/Chess/lib/chess/include -I/home/jordan/CLionProjects/Chess/lib/chess/src   -Wall -fno-rtti -g -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer   -std=gnu++1z -o CMakeFiles/chess.dir/src/Main.cpp.o -c /home/jordan/CLionProjects/Chess/lib/chess/src/Main.cpp",
+  "file": "/home/jordan/CLionProjects/Chess/lib/chess/src/Main.cpp"
+},
+{
+  "directory": "/home/jordan/CLionProjects/Chess/cmake-build-debug/test",
+  "command": "/usr/bin/c++   -I/home/jordan/CLionProjects/Chess/lib/chess/include -isystem /home/jordan/CLionProjects/Chess/test/lib/googlemock/include -isystem /home/jordan/CLionProjects/Chess/test/lib/googlemock -isystem /home/jordan/CLionProjects/Chess/test/lib/googletest/include -isystem /home/jordan/CLionProjects/Chess/test/lib/googletest   -Wall -fno-rtti -g -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer   -o CMakeFiles/runAllTests.dir/testChessBoard.cpp.o -c /home/jordan/CLionProjects/Chess/test/testChessBoard.cpp",
+  "file": "/home/jordan/CLionProjects/Chess/test/testChessBoard.cpp"
+},
+{
+  "directory": "/home/jordan/CLionProjects/Chess/cmake-build-debug/test/lib/googlemock",
+  "command": "/usr/bin/c++   -isystem /home/jordan/CLionProjects/Chess/test/lib/googlemock/include -isystem /home/jordan/CLionProjects/Chess/test/lib/googlemock -isystem /home/jordan/CLionProjects/Chess/test/lib/googletest/include -isystem /home/jordan/CLionProjects/Chess/test/lib/googletest   -Wall -fno-rtti -g -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer   -Wall -Wshadow -Werror -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -std=c++11 -o CMakeFiles/gmock_main.dir/src/gmock_main.cc.o -c /home/jordan/CLionProjects/Chess/test/lib/googlemock/src/gmock_main.cc",
+  "file": "/home/jordan/CLionProjects/Chess/test/lib/googlemock/src/gmock_main.cc"
+},
+{
+  "directory": "/home/jordan/CLionProjects/Chess/cmake-build-debug/test/lib/googlemock",
+  "command": "/usr/bin/c++   -I/home/jordan/CLionProjects/Chess/test/lib/googlemock/include -I/home/jordan/CLionProjects/Chess/test/lib/googlemock -isystem /home/jordan/CLionProjects/Chess/test/lib/googletest/include -isystem /home/jordan/CLionProjects/Chess/test/lib/googletest   -Wall -fno-rtti -g -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer   -Wall -Wshadow -Werror -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -std=c++11 -o CMakeFiles/gmock.dir/src/gmock-all.cc.o -c /home/jordan/CLionProjects/Chess/test/lib/googlemock/src/gmock-all.cc",
+  "file": "/home/jordan/CLionProjects/Chess/test/lib/googlemock/src/gmock-all.cc"
+},
+{
+  "directory": "/home/jordan/CLionProjects/Chess/cmake-build-debug/test/lib/googlemock/gtest",
+  "command": "/usr/bin/c++   -isystem /home/jordan/CLionProjects/Chess/test/lib/googletest/include -isystem /home/jordan/CLionProjects/Chess/test/lib/googletest   -Wall -fno-rtti -g -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer   -Wall -Wshadow -Werror -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -std=c++11 -o CMakeFiles/gtest_main.dir/src/gtest_main.cc.o -c /home/jordan/CLionProjects/Chess/test/lib/googletest/src/gtest_main.cc",
+  "file": "/home/jordan/CLionProjects/Chess/test/lib/googletest/src/gtest_main.cc"
+},
+{
+  "directory": "/home/jordan/CLionProjects/Chess/cmake-build-debug/test/lib/googlemock/gtest",
+  "command": "/usr/bin/c++   -I/home/jordan/CLionProjects/Chess/test/lib/googletest/include -I/home/jordan/CLionProjects/Chess/test/lib/googletest   -Wall -fno-rtti -g -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer   -Wall -Wshadow -Werror -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -std=c++11 -o CMakeFiles/gtest.dir/src/gtest-all.cc.o -c /home/jordan/CLionProjects/Chess/test/lib/googletest/src/gtest-all.cc",
+  "file": "/home/jordan/CLionProjects/Chess/test/lib/googletest/src/gtest-all.cc"
+}
+]

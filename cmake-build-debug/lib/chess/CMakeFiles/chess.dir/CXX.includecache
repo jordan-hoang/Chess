@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../lib/chess/include/Board.h
+vector
+-
+array
+-
+Piece.h
+../lib/chess/include/Piece.h
+unordered_map
+-
+sstream
+-
+
+../lib/chess/include/ChessController.h
+string
+-
+Board.h
+../lib/chess/include/Board.h
+
+../lib/chess/include/Piece.h
+
+/home/jordan/CLionProjects/Chess/lib/chess/src/ChessController.cpp
+ChessController.h
+/home/jordan/CLionProjects/Chess/lib/chess/src/ChessController.h
+boost/algorithm/string.hpp
+-
+iostream
+-
+
+/home/jordan/CLionProjects/Chess/lib/chess/src/Main.cpp
+

@@ -1,0 +1,1 @@
+/usr/bin/c++   -Wall -fno-rtti -g -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer   CMakeFiles/runAllTests.dir/testChessBoard.cpp.o  -o ../bin/runAllTests -Wl,-rpath,/usr/local/lib ../lib/libgmockd.a ../lib/libgtestd.a ../lib/libgtest_maind.a ../lib/libchess.a ../lib/libgtestd.a -lpthread /usr/local/lib/libboost_system.so 
