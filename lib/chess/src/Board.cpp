@@ -14,7 +14,6 @@ const Piece Board::getLastPieceKilled() const {
     return lastPieceKilled;
 }
 
-
 //Private Functions
 void Board::createBackRank(Color color, vector<vector<Piece>> &boardView) {
 
@@ -64,7 +63,6 @@ void Board::initializeGame(vector<vector<Piece>> &boardView) {
 
 
 }
-
 
 void Board::drawRow(const vector<Piece> &listPieceId, std::stringstream &stream) const {
     for(Piece iter: listPieceId){
@@ -141,7 +139,6 @@ bool Board::checkVerticalPath(const ChessCoordinate &start, const ChessCoordinat
     int begin = std::min(start.row,finish.row);
     int end = std::max(start.row,finish.row);
 
-
     // + 1 for the space in front of it
     for(int i = begin + 1; i < end ; i++){
         if(requestUnit({i,start.col}) != NONE ){
@@ -163,7 +160,6 @@ bool Board::checkDiagonalPath(const ChessCoordinate &start, const ChessCoordinat
 
     int changeX = ( (finish.col - start.col) > 0 ) ? 1 : -1;
     int changeY = ( (finish.row - start.row) > 0 ) ? 1 : -1;
-
 
     for(int i = 0; i < endIter - 1; i++){
         curX += changeX;
@@ -236,7 +232,6 @@ const std::string Board::getBoardView() const {
     return std::move(stream.str());
 }
 
-
 const std::string Board::getReverseBoardView() const {
     std::stringstream stream;
 
@@ -254,30 +249,30 @@ const std::string Board::getReverseBoardView() const {
 
 
 
-bool Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finish) {
+ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finish) {
 
     Piece &sourcePiece = requestPiece(start);
     Piece &targetPiece = requestPiece(finish);
 
     if( ( sourcePiece.getColor() == targetPiece.getColor() ) || sourcePiece.getPieceUnit() == NONE    ){
-        return false;
+        return ChessErrorCode::INVALID_PIECE;
     }
 
     // If Piece is a Knight path is meaningless since they can jump over units
     bool pathClear = (sourcePiece.getPieceUnit() == KNIGHT);
 
     if(!pathClear) { pathClear = isPathClear(start,finish); }
-    if(!pathClear) {  return false; }
+    if(!pathClear) {  return ChessErrorCode::INVALID_MOVE; }
 
-    bool isValid = sourcePiece.checkMovementIsValid(start,finish,targetPiece.getColor());
+    ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start,finish,targetPiece.getColor());
 
-    if(isValid){
+    if(ChessCode == ChessErrorCode::VALID_MOVE){
         promotePawnToQueen(sourcePiece, finish);
         lastPieceKilled.setPiece( targetPiece.getPieceUnit() , targetPiece.getColor() );
         sourcePiece.updatePiece(sourcePiece,targetPiece);
-        return true;
+        return ChessCode;
     } else{
-        return false;
+        return ChessCode;
     }
 
 }

@@ -19,7 +19,7 @@
  * @param target - the color of the target you are moving to
  * @return true if valid else false
  */
-bool Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const {
+ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const {
 
 
     //+ means goes up -1 means goes down the chess board
@@ -32,15 +32,15 @@ bool Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &fi
     if(target == COLORLESS) {
 
         if (start.row + directionTravel == finish.row && ( difX == 0 || difY == 0 ) ) {
-            return true; //GENERIC PAWN CODE SHOULD WORK FOR BOTH
+            return ChessErrorCode::VALID_MOVE; //GENERIC PAWN CODE SHOULD WORK FOR BOTH
 
 
         } else if (start.row == 1 && directionTravel == 1 && (start.row + directionTravel * 2) == finish.row) {
-            return true; //CODE FOR RED
+            return ChessErrorCode::VALID_MOVE; //CODE FOR RED
         } else if (start.row == 6 && directionTravel == -1 && (start.row + directionTravel * 2) == finish.row) {
-            return true; //CODE FOR BLUE
+            return ChessErrorCode::VALID_MOVE; //CODE FOR BLUE
         } else{
-            return false;
+            return ChessErrorCode::INVALID_MOVE;
         }
 
     }
@@ -51,9 +51,9 @@ bool Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &fi
 
         //A pawn can travel at most 1 unit diagonally therefore there xPos,yPos must have changed by 1.
         if(diffX == 1 && diffY == 1){
-            return true;
+            return ChessErrorCode::VALID_MOVE;
         }
-        return false;
+        return ChessErrorCode::INVALID_MOVE;
     }
 
 
@@ -62,11 +62,11 @@ bool Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &fi
 /**
  * Check's to see if the Rook can move in this way, Path checked in Board.cpp already, is here for consistency???
  */
-bool Piece::validateRook(const ChessCoordinate &start, const ChessCoordinate &finish) const {
-    return true;
+ChessErrorCode Piece::validateRook(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+    return ChessErrorCode::VALID_MOVE;
 }
 
-bool Piece::validateKnight(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+ChessErrorCode Piece::validateKnight(const ChessCoordinate &start, const ChessCoordinate &finish) const {
 
     //A knight has 8 possible moves from it's current position.
     //If any of those 8 moves matches finish than it is a valid move.
@@ -78,18 +78,18 @@ bool Piece::validateKnight(const ChessCoordinate &start, const ChessCoordinate &
         int row = start.row + moveY[i];
         int col = start.col + moveX[i];
         if( ChessCoordinate{row,col} == finish ){
-            return true;
+            return ChessErrorCode::VALID_MOVE;
         }
     }
-    return false;
+    return ChessErrorCode::INVALID_MOVE;
 
 }
 
-bool Piece::validateBishop(const ChessCoordinate &start, const ChessCoordinate &finish) const {
-    return true; //This method doesn't really need to exist validateDiagonal in Board determines if move is allowed
+ChessErrorCode Piece::validateBishop(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+    return ChessErrorCode::VALID_MOVE; //This method doesn't really need to exist validateDiagonal in Board determines if move is allowed
 }
 
-bool Piece::validateKing(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+ChessErrorCode Piece::validateKing(const ChessCoordinate &start, const ChessCoordinate &finish) const {
 
     int moveX[8] = { 0, 0, 1 , 1 , 1 , -1 , -1 ,-1 };
     int moveY[8] = { 1, -1, 0, 1 , -1,  1,  0 ,-1  };
@@ -99,19 +99,21 @@ bool Piece::validateKing(const ChessCoordinate &start, const ChessCoordinate &fi
         int row = start.row + moveY[i];
         int col = start.col + moveX[i];
         if(ChessCoordinate{row,col} == finish){
-            return true;
+            return ChessErrorCode::VALID_MOVE;
         }
     }
 
-    return false;
+    return ChessErrorCode::INVALID_MOVE;
 
 }
 
-bool Piece::validateQueen(const ChessCoordinate &start, const ChessCoordinate &finish) const {
-    return (validateRook(start,finish) || validateBishop(start,finish));
+ChessErrorCode Piece::validateQueen(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+
+    if( (validateRook(start,finish) == ChessErrorCode::VALID_MOVE) || validateBishop(start,finish) == ChessErrorCode::VALID_MOVE ){
+        return ChessErrorCode::VALID_MOVE;
+    }
+    return ChessErrorCode::VALID_MOVE;
 }
-
-
 
 
 void Piece::setPiece(PieceUnit pieceUnit, Color color) {
@@ -121,6 +123,7 @@ void Piece::setPiece(PieceUnit pieceUnit, Color color) {
 
 
 //Replaces the piece at destination with source, and source set to be empty
+//Note that you can just actually use std::swap..... instead of having this function.
 void Piece::updatePiece(Piece &source, Piece &destination) {
 
     destination.pieceId = source.pieceId;
@@ -131,7 +134,7 @@ void Piece::updatePiece(Piece &source, Piece &destination) {
 }
 
 //PUBLIC
-bool Piece::checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const  Color &targetColor) const {
+ChessErrorCode Piece::checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const  Color &targetColor) const {
 
     PieceUnit  piece = pieceId;
 
@@ -149,12 +152,11 @@ bool Piece::checkMovementIsValid(const ChessCoordinate &start, const ChessCoordi
         case QUEEN:
             return validateQueen(start,finish);
         case NONE:
-            return false;
+            return ChessErrorCode::INVALID_PIECE;
         default:
             assert(false && "Somehow there is an invalid piece");
     }
 
-    return false;
 }
 
 

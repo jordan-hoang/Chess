@@ -8,7 +8,12 @@
 
 #endif //CHESS_PIECE_H
 
-
+/**Chess error codes,
+ * INVALID_MOVE means that piece can't move in that way
+ * INVALID_INPUT - Bad input from user
+ * INVALID_PIECE - Attempting to move a piece that isn't yours, moving a piece that is "NONE"
+ */
+enum class ChessErrorCode {INVALID_MOVE, INVALID_INPUT, INVALID_PIECE, VALID_MOVE};
 
 enum Color{ RED_LOWERCASE,BLUE_UPPERCASE,COLORLESS };
 
@@ -36,17 +41,17 @@ class Piece {
     private:
         PieceUnit pieceId;
         Color pieceColor;
-        bool validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const;
-        bool validateRook(const ChessCoordinate &start, const ChessCoordinate &finish) const;
-        bool validateBishop(const ChessCoordinate &start, const ChessCoordinate &finish) const;
-        bool validateKnight(const ChessCoordinate &start, const ChessCoordinate &finish) const;
-        bool validateKing(const ChessCoordinate &start, const ChessCoordinate &finish) const ;
-        bool validateQueen(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+        enum ChessErrorCode validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const;
+        enum ChessErrorCode validateRook(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+        enum ChessErrorCode validateBishop(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+        enum ChessErrorCode validateKnight(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+        enum ChessErrorCode validateKing(const ChessCoordinate &start, const ChessCoordinate &finish) const ;
+        enum ChessErrorCode validateQueen(const ChessCoordinate &start, const ChessCoordinate &finish) const;
 
     public:
-        const PieceUnit getPieceUnit() const { return pieceId; };
-        const Color getColor() const { return pieceColor; };
-        bool checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const Color &targetColor) const   ;
+        const enum PieceUnit getPieceUnit() const { return pieceId; };
+        const enum Color getColor() const { return pieceColor; };
+        enum ChessErrorCode checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const Color &targetColor) const   ;
         void updatePiece(Piece &source, Piece &destination);
         void setPiece(PieceUnit pieceUnit, Color color);
 

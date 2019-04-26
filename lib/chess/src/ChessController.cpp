@@ -66,14 +66,14 @@ const std::string ChessController::getReverseBoardView() const{
  * @param startPos - The position you are starting from
  * @param finishPos - The position you expect to finish at.
  */
-bool ChessController::processChessMove(const ChessCoordinate &startPos, const ChessCoordinate &finishPos) {
+ChessErrorCode ChessController::processChessMove(const ChessCoordinate &startPos, const ChessCoordinate &finishPos) {
 
     if(startPos.col <= -1 || startPos.row <= -1 || finishPos.col <= -1 || finishPos.row <= -1){
-        return false;
+        return ChessErrorCode::INVALID_INPUT;
     }
 
     if(startPos.col >= 8 || startPos.row >= 8 || finishPos.row >= 8 || finishPos.col >= 8){
-        return false;
+        return ChessErrorCode::INVALID_INPUT;
     }
 
     return  _gameBoard.movePiece(startPos, finishPos);
@@ -148,30 +148,30 @@ bool ChessController::validatePlayer(const std::string &playerName, const Color 
 }
 
 
-bool ChessController::validatePlayerInput(std::string &input, std::vector<std::string> &result) {
+ChessErrorCode ChessController::validatePlayerInput(std::string &input, std::vector<std::string> &result) {
 
     if(input.size() >= 10){
-        return false;
+        return ChessErrorCode::INVALID_INPUT;
     }
     boost::trim(input);
     boost::split(result,input,boost::is_any_of(","));
 
     if(result.size() != 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
         //print out error message
-        return false;
+        return ChessErrorCode::INVALID_INPUT;
     }
 
-    return true;
+    return ChessErrorCode::VALID_MOVE;
 }
 
 
-bool ChessController::readInput(std::string &input, const std::string &player) {
+ChessErrorCode ChessController::readInput(std::string &input, const std::string &player) {
 
     std::vector<std::string> result;
     validatePlayerInput(input, result);
 
     if(result.size() != 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
-        return false;
+        return ChessErrorCode::INVALID_INPUT;
     }
 
     return executeMove(result.at(0),result.at(1),player);
@@ -184,21 +184,21 @@ bool ChessController::readInput(std::string &input, const std::string &player) {
  * end spot next.
  *
  */
-bool ChessController::executeMove(std::string &moveFrom, std::string &moveTo, const std::string &player) {
+ChessErrorCode ChessController::executeMove(std::string &moveFrom, std::string &moveTo, const std::string &player) {
 
     std::vector<std::string> result;
     result.push_back(moveFrom);
     result.push_back(moveTo);
 
     if(result.size() > 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
-        return false;
+        return ChessErrorCode::INVALID_INPUT;
     }
 
 
     int sCol =  convertCharColToInt(result.at(0).at(0));
     int sRow = convertChessRowToInt(result.at(0).at(1));
     if(sCol == -1 || sRow == -1){
-        return false;
+        return ChessErrorCode::INVALID_INPUT;
     }
 
 
@@ -207,14 +207,14 @@ bool ChessController::executeMove(std::string &moveFrom, std::string &moveTo, co
     int finishPositionColumn = convertCharColToInt(result.at(1).at(0));
     int finishPositionRow = convertChessRowToInt(result.at(1).at(1));
     if(finishPositionColumn == -1 || finishPositionRow == -1){
-        return false;
+        return ChessErrorCode::INVALID_INPUT;
     }
 
     ChessCoordinate finishPos{ finishPositionRow,finishPositionColumn };
 
     const Color &pieceColor = _gameBoard.requestPiece(startPos).getColor();
     if( !validatePlayer(player, pieceColor) ) {
-        return false ;
+        return ChessErrorCode::INVALID_INPUT;
     }
     return processChessMove( startPos, finishPos );
 
@@ -226,7 +226,7 @@ bool ChessController::executeMove(std::string &moveFrom, std::string &moveTo, co
  * @param moveFrom - ChessCoordinate you are from
  * @param moveTo   - ChessCoordinate you are moving to.
  */
-bool ChessController::executeMove(std::string &moveFrom, std::string &moveTo) {
+ChessErrorCode ChessController::executeMove(std::string &moveFrom, std::string &moveTo) {
 
     std::vector<std::string> result;
     result.push_back(moveFrom);
@@ -234,14 +234,14 @@ bool ChessController::executeMove(std::string &moveFrom, std::string &moveTo) {
 
 
     if(result.size() > 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
-        return false;
+        return ChessErrorCode::INVALID_INPUT;
     }
 
     int sCol =  convertCharColToInt(result.at(0).at(0));
     int sRow = convertChessRowToInt(result.at(0).at(1));
 
     if(sCol == -1 || sRow == -1){
-        return false;
+        return ChessErrorCode::INVALID_INPUT;
     }
 
     ChessCoordinate startPos{sRow,sCol};
@@ -250,7 +250,7 @@ bool ChessController::executeMove(std::string &moveFrom, std::string &moveTo) {
     int finishPositionRow = convertChessRowToInt(result.at(1).at(1));
 
     if(finishPositionColumn == -1 || finishPositionRow == -1){
-        return false;
+        return ChessErrorCode::INVALID_INPUT;
     }
     ChessCoordinate finishPos{ finishPositionRow,finishPositionColumn };
 

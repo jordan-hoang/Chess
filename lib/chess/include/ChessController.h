@@ -27,10 +27,10 @@ struct ChessPlayer {
 class ChessController {
     public:
 
-        bool readInput(std::string &input, const std::string &player);
+        ChessErrorCode readInput(std::string &input, const std::string &player);
 
-        bool executeMove(std::string &moveFrom, std::string &moveTo);
-        bool executeMove(std::string &moveFrom, std::string &moveTo,
+        ChessErrorCode executeMove(std::string &moveFrom, std::string &moveTo);
+        ChessErrorCode executeMove(std::string &moveFrom, std::string &moveTo,
                          const std::string &player);
 
         void initializeSide(const std::string &playerOne, const std::string &playerTwo);
@@ -51,8 +51,8 @@ private:
         int convertCharColToInt(char input);
         int convertChessRowToInt(char input);
         bool validatePlayer(const std::string &playerName, const Color &color) const;
-        bool validatePlayerInput(std::string &input, std::vector<std::string> &result);
-        bool processChessMove(const ChessCoordinate &startPos,const ChessCoordinate &finishPos ) ;
+        ChessErrorCode validatePlayerInput(std::string &input, std::vector<std::string> &result);
+        ChessErrorCode processChessMove(const ChessCoordinate &startPos,const ChessCoordinate &finishPos ) ;
 
 };
 

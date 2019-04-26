@@ -18,61 +18,61 @@ TEST(BoardTest,  pawn){
     std::string input = "a2";
     std::string target= "a3";
 
-    bool isValid = move.executeMove(input, target) ;
-    EXPECT_EQ(isValid, true);
+    ChessErrorCode isValid = move.executeMove(input, target) ;
+    EXPECT_EQ(isValid, ChessErrorCode::VALID_MOVE);
 
     //Move red pawn from a3 to a5 move is invalid cannot jump 2 squares
     input = "a3";
     target = "a5";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(isValid, false);
+    EXPECT_EQ(isValid, ChessErrorCode::INVALID_MOVE);
 
     //Move blue pawn in 'a' column down valid
     input = "a7";
     target = "a6";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(isValid, true);
+    EXPECT_EQ(isValid, ChessErrorCode::VALID_MOVE);
 
     input = "a3";
     target = "a4";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(isValid, true);
+    EXPECT_EQ(isValid, ChessErrorCode::VALID_MOVE);
 
     input = "a4";
     target = "a5";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(isValid, true);
+    EXPECT_EQ(isValid, ChessErrorCode::VALID_MOVE);
 
     //Invalid move pawns can only kill diagonally
     input = "a5";
     target = "a6";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(isValid, false);
+    EXPECT_EQ(isValid, ChessErrorCode::INVALID_MOVE);
     // move.getBoardView();
 
 
     input = "h7";
     target = "h5";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(true,isValid);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE,isValid);
 
 
     input = "h2";
     target = "h4";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(true,isValid);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE,isValid);
 
     //Now move the attempt to move the pawns directly on top of each other, should be invalid.
     input = "h4";
     target = "h5";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(true,!isValid);
+    EXPECT_EQ(ChessErrorCode::INVALID_MOVE,isValid);
 
 
     input = "h5";
     target = "h4";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(true,!isValid);
+    EXPECT_EQ(ChessErrorCode::INVALID_MOVE, isValid);
 
 }
 
@@ -92,8 +92,8 @@ TEST(BoardTest, pawnDiagonal){
     //See if red can kill blue diagonally.
     moveFrom = "a4";
     moveTo = "b5";
-    bool isValid = move.executeMove(moveFrom, moveTo);
-    EXPECT_EQ(true,isValid);
+    ChessErrorCode isValid = move.executeMove(moveFrom, moveTo);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE,ChessErrorCode::VALID_MOVE);
 
     moveFrom = "a7";
     moveTo = "a6";
@@ -105,7 +105,7 @@ TEST(BoardTest, pawnDiagonal){
     moveTo = "a6";
     isValid = move.executeMove(moveFrom, moveTo);
 
-    EXPECT_EQ(isValid,true);
+    EXPECT_EQ(isValid,ChessErrorCode::VALID_MOVE);
 
     //move.getBoardView();
 
@@ -122,7 +122,7 @@ TEST(BoardTest, pawnDiagonal){
     moveFrom = "c5";
     moveTo = "b4";
     isValid = move.executeMove(moveFrom, moveTo);
-    EXPECT_EQ(true, isValid);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE, isValid);
     // move.getBoardView();
 
     moveFrom = "c2";
@@ -134,7 +134,7 @@ TEST(BoardTest, pawnDiagonal){
     moveFrom = "b4";
     moveTo = "c3";
     isValid = move.executeMove(moveFrom, moveTo);
-    EXPECT_EQ(true,isValid);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE,isValid);
 
 }
 
@@ -152,16 +152,16 @@ TEST(BoardTest,pawnDiagonalTwo){
     // move.getBoardView();
 
     //Illegal move pawn cannot move in this direction.
-    input = "d5,e4";
+    input = "d5";
     target = "e4";
-    bool isValid = move.executeMove(input, target);
+    ChessErrorCode isValid = move.executeMove(input, target);
     //move.getBoardView();
-    EXPECT_EQ(isValid,false);
+    EXPECT_EQ(isValid,ChessErrorCode::INVALID_MOVE);
 
     input = "d5";
     target = "e6";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(isValid,false);
+    EXPECT_EQ(isValid,ChessErrorCode::INVALID_MOVE);
 
 }
 
@@ -173,8 +173,8 @@ TEST(BoardTest, Rook){
 
     string input = "a8";
     string target = "a7";
-    bool isValid = move.executeMove(input, target);
-    EXPECT_EQ(false,isValid);
+    ChessErrorCode isValid = move.executeMove(input, target);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE, isValid);
 
     input = "a7";
     target = "a5";
@@ -183,18 +183,18 @@ TEST(BoardTest, Rook){
     input = "a8";
     target = "a6";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(isValid,true);
+    EXPECT_EQ(isValid,ChessErrorCode::VALID_MOVE);
 
     input = "a6";
     target = "h6";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(true,isValid);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE,isValid);
 
 
     input = "h6";
     target = "h2";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(isValid,true);
+    EXPECT_EQ(isValid,ChessErrorCode::VALID_MOVE);
 
     //Now attempt to have rook attack piece behind it.
     input = "h2";
@@ -202,24 +202,24 @@ TEST(BoardTest, Rook){
     isValid = move.executeMove(input, target);
 
     // move.getBoardView();
-    EXPECT_EQ(false,isValid);
+    EXPECT_EQ(ChessErrorCode::INVALID_MOVE,isValid);
 
     //Now test if the red rook can "Illegaly go through the blue rook. If you want to see the board do move.getBoardView//
     input = "h1";
     target = "h4";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(false,isValid);
+    EXPECT_EQ(ChessErrorCode::INVALID_MOVE,isValid);
 
     input = "h2";
     target = "g2";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(true,isValid);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE,isValid);
 
 
     input = "h1";
     target = "h2";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(true,isValid);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE,isValid);
 
     input = "g7";
     target = "g6";
@@ -229,7 +229,7 @@ TEST(BoardTest, Rook){
     input = "g2";
     target = "g6";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(false,isValid);
+    EXPECT_EQ(ChessErrorCode::INVALID_MOVE,isValid);
 
 
 }
@@ -240,57 +240,57 @@ TEST(BoardTest, knight){
 
     string input = "b1";
     string target = "c3";
-    bool isValid = move.executeMove(input, target);
-    EXPECT_EQ(true,isValid);
+    ChessErrorCode isValid = move.executeMove(input, target);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE,isValid);
 
     input = "c3";
     target = "b1";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(true,isValid);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE,isValid);
 
     input = "b1";
     target = "a3";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(true,isValid);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE,isValid);
 
     input = "a3";
     target = "b1";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(true,isValid);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE,isValid);
 
     //Duplicate move
     input = "b1";
     target = "a3";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(true,isValid);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE,isValid);
 
 
     input = "a3";
     target = "c4";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(true,isValid);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE,isValid);
 
     input = "c4";
     target = "e3";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(true,isValid);
+    EXPECT_EQ(ChessErrorCode::VALID_MOVE,isValid);
 
 
     input = "e3";
     target = "g4";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(isValid,true);
+    EXPECT_EQ(isValid,ChessErrorCode::VALID_MOVE);
     //move.getBoardView();
 
     input = "g4";
     target = "e3";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(isValid,true);
+    EXPECT_EQ(isValid,ChessErrorCode::VALID_MOVE);
 
     input = "e3";
     target = "c4";
     isValid = move.executeMove(input, target);
-    EXPECT_EQ(isValid,true);
+    EXPECT_EQ(isValid,ChessErrorCode::VALID_MOVE);
 
 }
 
@@ -377,21 +377,21 @@ TEST(MoveValidatorTest, testTurn){
 
     string source = "a7";
     string target = "a6";
-    bool isValid = testGame.executeMove(source, target, p1);
-    EXPECT_EQ(isValid,false);
+    ChessErrorCode isValid = testGame.executeMove(source, target, p1);
+    EXPECT_EQ(isValid,ChessErrorCode::INVALID_MOVE);
 
     //Execute the same move, but with the proper player executing it
     isValid = testGame.executeMove(source, target, p2);
-    EXPECT_EQ(isValid,true);
+    EXPECT_EQ(isValid,ChessErrorCode::VALID_MOVE);
 
     source = "a2";
     target = "a4";
     isValid = testGame.executeMove(source, target, p2);
-    EXPECT_EQ(isValid,false);
+    EXPECT_EQ(isValid,ChessErrorCode::INVALID_MOVE);
 
 
     isValid = testGame.executeMove(source, target, p1);
-    EXPECT_EQ(isValid,true);
+    EXPECT_EQ(isValid,ChessErrorCode::VALID_MOVE);
 
 
 }
@@ -409,8 +409,8 @@ TEST(MoveValidatorTest, reversePrint){
 
     string source = "a7";
     string target = "a6";
-    bool isValid = testGame.executeMove(source, target, p1);
-    EXPECT_EQ(isValid,false);
+    ChessErrorCode isValid = testGame.executeMove(source, target, p1);
+    EXPECT_EQ(isValid,ChessErrorCode::INVALID_MOVE);
 
 
 
@@ -439,15 +439,15 @@ TEST(InvalidInputTest, invalidMoveInput) {
     start = "12";
     finish = "12";
     player = "tester";
-    EXPECT_FALSE(test.executeMove(start, finish, player));
+    EXPECT_EQ(test.executeMove(start, finish, player), ChessErrorCode::INVALID_INPUT);
 
     start = "a2";
     finish = "12";
     player = "tester";
-    EXPECT_FALSE(test.executeMove(start, finish, player));
+    EXPECT_EQ(test.executeMove(start, finish, player), ChessErrorCode::INVALID_INPUT);
 
     start = "12";
     finish = "a2";
     player = "tester";
-    EXPECT_FALSE(test.executeMove(start, finish, player));
+    EXPECT_EQ(test.executeMove(start, finish, player), ChessErrorCode::INVALID_INPUT);
 }

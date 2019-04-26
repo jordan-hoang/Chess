@@ -11,6 +11,11 @@
 #include <unordered_map>
 #include <sstream>
 
+
+
+
+
+
 using std::vector;
 
 //Contains an instance of a game
@@ -24,7 +29,7 @@ public:
     const PieceUnit requestUnit(const ChessCoordinate &position) const;
 
 
-    bool movePiece(const ChessCoordinate &start, const ChessCoordinate &finish);
+    ChessErrorCode movePiece(const ChessCoordinate &start, const ChessCoordinate &finish);
 
     const Piece getLastPieceKilled() const;
 
