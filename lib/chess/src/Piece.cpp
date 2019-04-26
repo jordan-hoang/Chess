@@ -23,13 +23,13 @@ ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoor
 
 
     //+ means goes up -1 means goes down the chess board
-    int directionTravel = (this->pieceColor == RED_LOWERCASE) ? 1 : -1;
+    int directionTravel = (this->pieceColor == Color::RED_LOWERCASE) ? 1 : -1;
 
     int difY = finish.row - start.row;
     int difX = finish.col - start.col;
 
     //Works if the path is clear
-    if(target == COLORLESS) {
+    if(target == Color::COLORLESS) {
 
         if (start.row + directionTravel == finish.row && ( difX == 0 || difY == 0 ) ) {
             return ChessErrorCode::VALID_MOVE; //GENERIC PAWN CODE SHOULD WORK FOR BOTH
@@ -129,8 +129,8 @@ void Piece::updatePiece(Piece &source, Piece &destination) {
     destination.pieceId = source.pieceId;
     destination.pieceColor = source.pieceColor;
 
-    source.pieceId = NONE;
-    source.pieceColor = COLORLESS;
+    source.pieceId = PieceUnit::NONE;
+    source.pieceColor = Color::COLORLESS;
 }
 
 //PUBLIC
@@ -139,19 +139,19 @@ ChessErrorCode Piece::checkMovementIsValid(const ChessCoordinate &start, const C
     PieceUnit  piece = pieceId;
 
     switch(piece){
-        case PAWN:
+        case PieceUnit::PAWN:
             return validatePawn(start,finish,targetColor);
-        case ROOK:
+        case PieceUnit::ROOK:
             return validateRook(start,finish);
-        case KNIGHT:
+        case PieceUnit::KNIGHT:
             return validateKnight(start,finish);
-        case BISHOP:
+        case PieceUnit::BISHOP:
             return validateBishop(start,finish); //this code is unneccessary fix in future
-        case KING:
+        case PieceUnit::KING:
             return validateKing(start,finish);
-        case QUEEN:
+        case PieceUnit::QUEEN:
             return validateQueen(start,finish);
-        case NONE:
+        case PieceUnit::NONE:
             return ChessErrorCode::INVALID_PIECE;
         default:
             assert(false && "Somehow there is an invalid piece");
@@ -161,6 +161,6 @@ ChessErrorCode Piece::checkMovementIsValid(const ChessCoordinate &start, const C
 
 
 Piece::Piece() {
-    this->pieceColor = COLORLESS;
-    this->pieceId = NONE;
+    this->pieceColor = Color::COLORLESS;
+    this->pieceId = PieceUnit::NONE;
 }

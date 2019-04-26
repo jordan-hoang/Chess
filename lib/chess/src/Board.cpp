@@ -20,18 +20,18 @@ void Board::createBackRank(Color color, vector<vector<Piece>> &boardView) {
     vector<Piece> tmp;
     tmp.reserve(8);
 
-        tmp.emplace_back(Piece{ROOK,color});
-        tmp.emplace_back(Piece{KNIGHT,color});
-        tmp.emplace_back(Piece{BISHOP,color});
+        tmp.emplace_back(Piece{PieceUnit::ROOK,color});
+        tmp.emplace_back(Piece{PieceUnit::KNIGHT,color});
+        tmp.emplace_back(Piece{PieceUnit::BISHOP,color});
 
 
-        tmp.emplace_back(Piece{QUEEN,color});
-        tmp.emplace_back(Piece{KING,color});
+        tmp.emplace_back(Piece{PieceUnit::QUEEN,color});
+        tmp.emplace_back(Piece{PieceUnit::KING,color});
 
 
-        tmp.emplace_back(Piece{BISHOP,color});
-        tmp.emplace_back(Piece{KNIGHT,color});
-        tmp.emplace_back(Piece{ROOK,color});
+        tmp.emplace_back(Piece{PieceUnit::BISHOP,color});
+        tmp.emplace_back(Piece{PieceUnit::KNIGHT,color});
+        tmp.emplace_back(Piece{PieceUnit::ROOK,color});
 
 
     boardView.push_back(tmp);
@@ -41,25 +41,25 @@ void Board::initializeGame(vector<vector<Piece>> &boardView) {
 
 
     //Doing red side
-    createBackRank(RED_LOWERCASE,boardView);
+    createBackRank(Color::RED_LOWERCASE,boardView);
 
     std::vector<Piece> blackPawn;
-    blackPawn.assign(8, Piece{PAWN,RED_LOWERCASE});
+    blackPawn.assign(8, Piece{PieceUnit::PAWN, Color::RED_LOWERCASE});
     boardView.push_back(blackPawn);
 
 
     for (int i = 2; i < 6; i++){
         std::vector<Piece> tmp;
-        tmp.assign(8,Piece{NONE,COLORLESS});
+        tmp.assign(8,Piece{PieceUnit::NONE, Color::COLORLESS});
         boardView.push_back(tmp);
     }
 
     //Doing blue side
     std::vector<Piece> whitePawn;
-    whitePawn.assign(8,Piece{PAWN,BLUE_UPPERCASE});
+    whitePawn.assign(8,Piece{PieceUnit::PAWN, Color::BLUE_UPPERCASE});
     boardView.push_back(whitePawn);
 
-    createBackRank(BLUE_UPPERCASE,boardView);
+    createBackRank(Color::BLUE_UPPERCASE,boardView);
 
 
 }
@@ -71,10 +71,10 @@ void Board::drawRow(const vector<Piece> &listPieceId, std::stringstream &stream)
         //Since printing out color doesn't work, we will make 1 side lower case
         switch(iter.getColor())
         {
-            case RED_LOWERCASE:
+            case Color::RED_LOWERCASE:
                 stream  << (char)tolower(search->second);
                 break;
-            case BLUE_UPPERCASE:
+            case Color::BLUE_UPPERCASE:
                 stream << search->second;
                 break;
             default:
@@ -93,10 +93,10 @@ void Board::drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &
         //Since printing out color doesn't work, we will make 1 side lower case
         switch(iter.getColor())
         {
-            case RED_LOWERCASE:
+            case Color::RED_LOWERCASE:
                 stream  << (char)tolower(search->second);
                 break;
-            case BLUE_UPPERCASE:
+            case Color::BLUE_UPPERCASE:
                 stream << search->second;
                 break;
             default:
@@ -122,7 +122,7 @@ bool Board::checkHorizontalPath(const ChessCoordinate &start, const ChessCoordin
 
     //We are only searching w/e the path specifies
     const auto result = std::find_if(iterBegin,iterEnd,
-            [&](auto i) { return i.getPieceUnit() != NONE ;} );
+            [&](auto i) { return i.getPieceUnit() != PieceUnit ::NONE ;} );
 
 
     //If enum NONE was not found result will be set to iterEnd.
@@ -141,7 +141,7 @@ bool Board::checkVerticalPath(const ChessCoordinate &start, const ChessCoordinat
 
     // + 1 for the space in front of it
     for(int i = begin + 1; i < end ; i++){
-        if(requestUnit({i,start.col}) != NONE ){
+        if(requestUnit({i,start.col}) != PieceUnit::NONE ){
             return false;
         }
     }
@@ -164,7 +164,7 @@ bool Board::checkDiagonalPath(const ChessCoordinate &start, const ChessCoordinat
     for(int i = 0; i < endIter - 1; i++){
         curX += changeX;
         curY += changeY;
-        if(requestUnit({curY,curX}) != NONE   ){
+        if(requestUnit({curY,curX}) != PieceUnit::NONE   ){
             return false;
         }
     }
@@ -207,8 +207,8 @@ bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &fin
 
 //Automatically promotes pawn at edge of board.
 void Board::promotePawnToQueen(Piece &source, const ChessCoordinate &target){
-    if( (target.row == 0 || target.row == 7) && (source.getPieceUnit() == PAWN) ){
-        source.setPiece(QUEEN,source.getColor());
+    if( (target.row == 0 || target.row == 7) && (source.getPieceUnit() == PieceUnit::PAWN) ){
+        source.setPiece(PieceUnit::QUEEN,source.getColor());
     }
 
 }
@@ -254,12 +254,12 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     Piece &sourcePiece = requestPiece(start);
     Piece &targetPiece = requestPiece(finish);
 
-    if( ( sourcePiece.getColor() == targetPiece.getColor() ) || sourcePiece.getPieceUnit() == NONE    ){
+    if( ( sourcePiece.getColor() == targetPiece.getColor() ) || sourcePiece.getPieceUnit() == PieceUnit::NONE    ){
         return ChessErrorCode::INVALID_PIECE;
     }
 
     // If Piece is a Knight path is meaningless since they can jump over units
-    bool pathClear = (sourcePiece.getPieceUnit() == KNIGHT);
+    bool pathClear = (sourcePiece.getPieceUnit() == PieceUnit::KNIGHT);
 
     if(!pathClear) { pathClear = isPathClear(start,finish); }
     if(!pathClear) {  return ChessErrorCode::INVALID_MOVE; }
@@ -293,16 +293,16 @@ const PieceUnit Board::requestUnit(const ChessCoordinate &position) const {
 Board::Board() {
     boardView.reserve(8);
     initializeGame(boardView);
-    lastPieceKilled = Piece{NONE,COLORLESS};
+    lastPieceKilled = Piece{PieceUnit::NONE,Color::COLORLESS};
 }
 
 
 const std::unordered_map<PieceUnit, char> Board::PieceLookUp = {
-        {NONE,         '-'},
-        {PAWN,         'P'},
-        {KNIGHT,       'N'},
-        {BISHOP,       'B'},
-        {ROOK,         'R'},
-        {KING,         'K'},
-        {QUEEN,        'Q'},
+        {PieceUnit::NONE,         '-'},
+        {PieceUnit::PAWN,         'P'},
+        {PieceUnit::KNIGHT,       'N'},
+        {PieceUnit::BISHOP,       'B'},
+        {PieceUnit::ROOK,         'R'},
+        {PieceUnit::KING,         'K'},
+        {PieceUnit::QUEEN,        'Q'},
 };

@@ -14,7 +14,7 @@ struct ChessPlayer {
     std::string playerName;
     Color playerColor;
 
-    ChessPlayer() : playerName(""),playerColor(RED_LOWERCASE){};
+    ChessPlayer() : playerName(""),playerColor(Color::RED_LOWERCASE){};
     explicit ChessPlayer( std::string playerName, Color color) :
         playerName(std::move(playerName)),playerColor(color){};
 

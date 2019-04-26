@@ -306,21 +306,21 @@ TEST(BoardTest, testBishop){
 
     bishop.movePiece({1,1},{2,1});
     PieceUnit  tmp = bishop.requestUnit({2,1});
-    EXPECT_EQ(tmp,PAWN);
+    EXPECT_EQ(tmp,PieceUnit::PAWN);
 
     bishop.movePiece({0,2},{2,0});
-    EXPECT_EQ(bishop.requestUnit({2,0}),BISHOP);
+    EXPECT_EQ(bishop.requestUnit({2,0}),PieceUnit::BISHOP);
 
 
     bishop.movePiece({2,0},{7,4});
-    EXPECT_EQ(bishop.requestUnit({2,0}), BISHOP);
+    EXPECT_EQ(bishop.requestUnit({2,0}), PieceUnit::BISHOP);
 
 
     bishop.movePiece({2,0},{7,5});
-    EXPECT_EQ(bishop.requestUnit({2,0}), BISHOP); //Move should have failed bishop cannot go through units.
+    EXPECT_EQ(bishop.requestUnit({2,0}), PieceUnit::BISHOP); //Move should have failed bishop cannot go through units.
 
     bishop.movePiece({2,0},{6,4});
-    EXPECT_EQ(bishop.requestUnit({2,0}),NONE);
+    EXPECT_EQ(bishop.requestUnit({2,0}),PieceUnit::NONE);
 
 
 }
@@ -335,7 +335,7 @@ TEST(BoardTest, testPromotionAndKillKing){
     board.movePiece({5,1},{6,2});
     board.movePiece({6,2},{7,3});
 
-    EXPECT_EQ(board.requestUnit({7,3}), QUEEN );
+    EXPECT_EQ(board.requestUnit({7,3}), PieceUnit::QUEEN );
 
 
     board.movePiece({6,4},{4,4});
@@ -346,12 +346,12 @@ TEST(BoardTest, testPromotionAndKillKing){
     board.movePiece({1,3},{0,2});
 
 
-    EXPECT_EQ(board.requestUnit({0,2}), QUEEN );
+    EXPECT_EQ(board.requestUnit({0,2}), PieceUnit::QUEEN );
     board.movePiece({0,2},{0,3});
-    EXPECT_EQ(board.getLastPieceKilled().getPieceUnit(), QUEEN);
+    EXPECT_EQ(board.getLastPieceKilled().getPieceUnit(), PieceUnit::QUEEN);
 
     board.movePiece({0,3},{0,4});
-    EXPECT_EQ(board.getLastPieceKilled().getPieceUnit(),KING);
+    EXPECT_EQ(board.getLastPieceKilled().getPieceUnit(), PieceUnit::KING);
 
 }
 

@@ -15,9 +15,9 @@
  */
 enum class ChessErrorCode {INVALID_MOVE, INVALID_INPUT, INVALID_PIECE, VALID_MOVE};
 
-enum Color{ RED_LOWERCASE,BLUE_UPPERCASE,COLORLESS };
+enum class Color{ RED_LOWERCASE,BLUE_UPPERCASE,COLORLESS };
 
-enum PieceUnit{
+enum class PieceUnit{
     PAWN,
     BISHOP,
     KNIGHT,

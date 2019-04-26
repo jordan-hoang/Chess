@@ -97,7 +97,7 @@ std::string ChessController::helpMessage() const{
  */
 bool ChessController::isGameFinished() const {
     const Piece &a = _gameBoard.getLastPieceKilled();
-    if(a.getPieceUnit() == KING){
+    if(a.getPieceUnit() == PieceUnit::KING){
         return true;
     }
     return false;
@@ -109,10 +109,10 @@ std::string ChessController::gameOverMessage() const {
     std::string stream = "";
     const Piece &piece = _gameBoard.getLastPieceKilled();
 
-    if(piece.getPieceUnit() != KING){
+    if(piece.getPieceUnit() != PieceUnit::KING){
         //send message here
     }
-    else if( piece.getColor() == RED_LOWERCASE ){
+    else if( piece.getColor() == Color::RED_LOWERCASE ){
         //
     } else {
         //
@@ -125,10 +125,10 @@ std::string ChessController::gameOverMessage() const {
 void ChessController::initializeSide(const std::string &playerOne, const std::string &playerTwo) {
 
     this->_playerOne.playerName  = playerOne;
-    this->_playerOne.playerColor = RED_LOWERCASE;
+    this->_playerOne.playerColor = Color::RED_LOWERCASE;
 
     this->_playerTwo.playerName  = playerTwo;
-    this->_playerTwo.playerColor = BLUE_UPPERCASE;
+    this->_playerTwo.playerColor = Color::BLUE_UPPERCASE;
 
 }
 
@@ -260,7 +260,7 @@ ChessErrorCode ChessController::executeMove(std::string &moveFrom, std::string &
 
 //Constructor
 ChessController::ChessController() {
-    this->_playerOne = ChessPlayer( "playerOne", RED_LOWERCASE  );
-    this->_playerTwo = ChessPlayer( "playerTwo", BLUE_UPPERCASE );
+    this->_playerOne = ChessPlayer( "playerOne", Color::RED_LOWERCASE  );
+    this->_playerTwo = ChessPlayer( "playerTwo", Color::BLUE_UPPERCASE );
     this->_gameBoard  = Board();
 }
