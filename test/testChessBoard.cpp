@@ -347,22 +347,11 @@ TEST(BoardTest, testPromotionAndKillKing){
 
 
     EXPECT_EQ(board.requestUnit({0,2}), QUEEN );
-
-
-
     board.movePiece({0,2},{0,3});
-
     EXPECT_EQ(board.getLastPieceKilled().getPieceUnit(), QUEEN);
 
-
     board.movePiece({0,3},{0,4});
-
-
     EXPECT_EQ(board.getLastPieceKilled().getPieceUnit(),KING);
-
-
-
-
 
 }
 
