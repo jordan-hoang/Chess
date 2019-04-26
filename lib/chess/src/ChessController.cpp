@@ -143,7 +143,6 @@ bool ChessController::validatePlayer(const std::string &playerName, const Color 
         return (_playerTwo.playerColor == color);
     }
 
-    static_assert(-1 && "No playerId matches the one assigned to this game???? you shouldn't see this message");
     return false;
 }
 
@@ -198,6 +197,7 @@ ChessErrorCode ChessController::executeMove(std::string &moveFrom, std::string &
     int sCol =  convertCharColToInt(result.at(0).at(0));
     int sRow = convertChessRowToInt(result.at(0).at(1));
     if(sCol == -1 || sRow == -1){
+
         return ChessErrorCode::INVALID_INPUT;
     }
 
@@ -214,7 +214,7 @@ ChessErrorCode ChessController::executeMove(std::string &moveFrom, std::string &
 
     const Color &pieceColor = _gameBoard.requestPiece(startPos).getColor();
     if( !validatePlayer(player, pieceColor) ) {
-        return ChessErrorCode::INVALID_INPUT;
+        return ChessErrorCode::INVALID_PIECE;
     }
     return processChessMove( startPos, finishPos );
 
@@ -252,8 +252,8 @@ ChessErrorCode ChessController::executeMove(std::string &moveFrom, std::string &
     if(finishPositionColumn == -1 || finishPositionRow == -1){
         return ChessErrorCode::INVALID_INPUT;
     }
-    ChessCoordinate finishPos{ finishPositionRow,finishPositionColumn };
 
+    ChessCoordinate finishPos{ finishPositionRow,finishPositionColumn };
     return processChessMove( startPos, finishPos );
 }
 
