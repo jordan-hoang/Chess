@@ -14,7 +14,11 @@ const Piece Board::getLastPieceKilled() const {
     return lastPieceKilled;
 }
 
-//Private Functions
+/**
+ * Helper method for initializeGame
+ * @param color - Chess piece color
+ * @param boardView - The board itself. Called chessBoard.
+ */
 void Board::createBackRank(Color color, vector<vector<Piece>> &boardView) {
 
     vector<Piece> tmp;
@@ -37,6 +41,10 @@ void Board::createBackRank(Color color, vector<vector<Piece>> &boardView) {
     boardView.push_back(tmp);
 }
 
+/**
+ * Initializes the chess game by setting all the pieces.
+ * @param chessBoard
+ */
 void Board::initializeGame(vector<vector<Piece>> &boardView) {
 
 
@@ -64,6 +72,9 @@ void Board::initializeGame(vector<vector<Piece>> &boardView) {
 
 }
 
+/**
+ * Draw's a row of chess pieces to a stringstream.
+ */
 void Board::drawRow(const vector<Piece> &listPieceId, std::stringstream &stream) const {
     for(Piece iter: listPieceId){
         auto search = PieceLookUp.find( iter.getPieceUnit() );
@@ -85,6 +96,11 @@ void Board::drawRow(const vector<Piece> &listPieceId, std::stringstream &stream)
     stream << '\n';
 }
 
+/**
+ * Draw's a row backward. Helper method for getReverseBoardView().
+ * @param listPieceId - A row of chess pieces.
+ * @param stream
+ */
 void Board::drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &stream) const {
 
     for(int i = 7; i >= 0 ; i--){
@@ -116,7 +132,7 @@ void Board::drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &
 bool Board::checkHorizontalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const {
 
 
-    const vector<Piece> &handle = boardView.at(start.row);
+    const vector<Piece> &handle = chessBoard.at(start.row);
     const auto iterBegin = handle.begin() + std::min(start.col,finish.col ) + 1 ;
     const auto iterEnd = handle.begin() + std::max(start.col,finish.col) ;
 
@@ -205,16 +221,22 @@ bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &fin
     return false;
 }
 
-//Automatically promotes pawn at edge of board.
+
 void Board::promotePawnToQueen(Piece &source, const ChessCoordinate &target){
     if( (target.row == 0 || target.row == 7) && (source.getPieceUnit() == PieceUnit::PAWN) ){
         source.setPiece(PieceUnit::QUEEN,source.getColor());
     }
 
 }
-/////END PRIVATE //////
 
-// BEGIN PUBLIC METHODS ///
+/////END PRIVATE          //////
+
+
+/// -------------------------------- BEGIN PUBLIC METHODS ------------------------------------////
+
+/**
+ * @return A picture of the board as a string to output to console.
+ */
 const std::string Board::getBoardView() const {
 
     std::stringstream stream;
@@ -222,7 +244,7 @@ const std::string Board::getBoardView() const {
     stream << "   abcdefgh\n___________\n";
 
     int num = 1;
-    for(const vector<Piece> row : boardView){
+    for(const vector<Piece> row : chessBoard){
         stream << num << "| ";
         drawRow(row,stream);
         num++;
@@ -232,6 +254,9 @@ const std::string Board::getBoardView() const {
     return std::move(stream.str());
 }
 
+/**
+ * Gets a flipped view of the board for the second player to look at.
+ */
 const std::string Board::getReverseBoardView() const {
     std::stringstream stream;
 
@@ -239,7 +264,7 @@ const std::string Board::getReverseBoardView() const {
 
     for(int num = 8 ; num > 0 ; num--){
         stream << num << "| ";
-        const vector<Piece> &row = boardView.at(num - 1);
+        const vector<Piece> &row = chessBoard.at(num - 1);
         drawRowReverse(row,stream);
     }
 
@@ -247,7 +272,12 @@ const std::string Board::getReverseBoardView() const {
 
 }
 
-
+/***
+ *
+ * @param start - The coordinates of the piece you want to move
+ * @param finish - The spot you want to want that piece to end up at.
+ * @return - An ChessErrorCode that specifies whether the move succeded or failed
+ */
 ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finish) {
 
     Piece &sourcePiece = requestPiece(start);
@@ -280,18 +310,18 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
  *  Enter's in a coordinate and returns the piece at that location
  */
 Piece& Board::requestPiece(const ChessCoordinate &position) {
-    return boardView.at( position.row ).at( position.col );
+    return chessBoard.at( position.row ).at( position.col );
 }
 
 const PieceUnit Board::requestUnit(const ChessCoordinate &position) const {
-    Piece a = boardView.at(position.row).at(position.col);
+    Piece a = chessBoard.at(position.row).at(position.col);
     return a.getPieceUnit();
 }
 
 //Constructor
 Board::Board() {
-    boardView.reserve(8);
-    initializeGame(boardView);
+    chessBoard.reserve(8);
+    initializeGame(chessBoard);
     lastPieceKilled = Piece{PieceUnit::NONE,Color::COLORLESS};
 }
 

@@ -110,14 +110,14 @@ std::string ChessController::gameOverMessage() const {
     const Piece &piece = _gameBoard.getLastPieceKilled();
 
     if(piece.getPieceUnit() != PieceUnit::KING){
-        //send message here
+        assert(-1 && "This function shouldn't be called yet! game hasn't ended");
     }
     else if( piece.getColor() == Color::RED_LOWERCASE ){
-        //
+        stream =  "Blue wins!";
     } else {
-        //
+        stream = "Red wins";
     }
-    return std::move(stream);
+    return stream;
 }
 
 
@@ -147,7 +147,17 @@ bool ChessController::validatePlayer(const std::string &playerName, const Color 
 }
 
 
-ChessErrorCode ChessController::validatePlayerInput(std::string &input, std::vector<std::string> &result) {
+
+
+/**
+ * Player inputs move into this function.
+ * @param input - Player's input
+ * @param player - The playerName that has entered this input
+ * @return - Code on whether it was sucessful or not
+ */
+ChessErrorCode ChessController::readInput(std::string &input, const std::string &player) {
+
+    std::vector<std::string> result;
 
     if(input.size() >= 10){
         return ChessErrorCode::INVALID_INPUT;
@@ -160,15 +170,6 @@ ChessErrorCode ChessController::validatePlayerInput(std::string &input, std::vec
         return ChessErrorCode::INVALID_INPUT;
     }
 
-    return ChessErrorCode::VALID_MOVE;
-}
-
-
-ChessErrorCode ChessController::readInput(std::string &input, const std::string &player) {
-
-    std::vector<std::string> result;
-    validatePlayerInput(input, result);
-
     if(result.size() != 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
         return ChessErrorCode::INVALID_INPUT;
     }
@@ -176,6 +177,45 @@ ChessErrorCode ChessController::readInput(std::string &input, const std::string 
     return executeMove(result.at(0),result.at(1),player);
 }
 
+/**
+ * Helper function for both versions of executeMove since they share alot of duplicate code.
+ * @param moveFrom - Starting piece
+ * @param moveTo  - Ending coordinate of starting piece
+ * @param startPos - Converts moveFrom to a ChessCoordinate
+ * @param finishPos - ""
+ * @return
+ */
+ChessErrorCode ChessController::executeMoveHelper(std::string &moveFrom, std::string &moveTo, ChessCoordinate &startPos,
+                                                  ChessCoordinate &finishPos)  {
+    std::vector<std::string> result;
+    result.push_back(moveFrom);
+    result.push_back(moveTo);
+
+    if(result.size() > 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
+        return ChessErrorCode::INVALID_INPUT;
+    }
+
+    int sCol = convertCharColToInt(result.at(0).at(0));
+    int sRow = convertChessRowToInt(result.at(0).at(1));
+    if(sCol == -1 || sRow == -1){
+        return ChessErrorCode::INVALID_INPUT;
+    }
+
+    startPos.row = sRow;
+    startPos.col = sCol;
+
+
+    int finishPositionColumn = convertCharColToInt(result.at(1).at(0));
+    int finishPositionRow = convertChessRowToInt(result.at(1).at(1));
+    if(finishPositionColumn == -1 || finishPositionRow == -1){
+        return ChessErrorCode::INVALID_INPUT;
+    }
+
+    finishPos.row = finishPositionRow;
+    finishPos.col = finishPositionColumn;
+
+    return ChessErrorCode::VALID_MOVE;
+}
 
 
 /**
@@ -185,32 +225,13 @@ ChessErrorCode ChessController::readInput(std::string &input, const std::string 
  */
 ChessErrorCode ChessController::executeMove(std::string &moveFrom, std::string &moveTo, const std::string &player) {
 
-    std::vector<std::string> result;
-    result.push_back(moveFrom);
-    result.push_back(moveTo);
+    ChessCoordinate startPos = {-1,-1};
+    ChessCoordinate finishPos = {-1,-1};
 
-    if(result.size() > 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
-        return ChessErrorCode::INVALID_INPUT;
+    ChessErrorCode chessCode = executeMoveHelper(moveFrom, moveTo, startPos, finishPos);
+    if(chessCode != ChessErrorCode::VALID_MOVE) {
+        return chessCode;
     }
-
-
-    int sCol =  convertCharColToInt(result.at(0).at(0));
-    int sRow = convertChessRowToInt(result.at(0).at(1));
-    if(sCol == -1 || sRow == -1){
-
-        return ChessErrorCode::INVALID_INPUT;
-    }
-
-
-    ChessCoordinate startPos{sRow,sCol};
-
-    int finishPositionColumn = convertCharColToInt(result.at(1).at(0));
-    int finishPositionRow = convertChessRowToInt(result.at(1).at(1));
-    if(finishPositionColumn == -1 || finishPositionRow == -1){
-        return ChessErrorCode::INVALID_INPUT;
-    }
-
-    ChessCoordinate finishPos{ finishPositionRow,finishPositionColumn };
 
     const Color &pieceColor = _gameBoard.requestPiece(startPos).getColor();
     if( !validatePlayer(player, pieceColor) ) {
@@ -227,38 +248,15 @@ ChessErrorCode ChessController::executeMove(std::string &moveFrom, std::string &
  * @param moveTo   - ChessCoordinate you are moving to.
  */
 ChessErrorCode ChessController::executeMove(std::string &moveFrom, std::string &moveTo) {
-
-    std::vector<std::string> result;
-    result.push_back(moveFrom);
-    result.push_back(moveTo);
-
-
-    if(result.size() > 2  || result.at(0).size() != 2 || result.at(1).size() != 2 ){
-        return ChessErrorCode::INVALID_INPUT;
-    }
-
-    int sCol =  convertCharColToInt(result.at(0).at(0));
-    int sRow = convertChessRowToInt(result.at(0).at(1));
-
-    if(sCol == -1 || sRow == -1){
-        return ChessErrorCode::INVALID_INPUT;
-    }
-
-    ChessCoordinate startPos{sRow,sCol};
-
-    int finishPositionColumn = convertCharColToInt(result.at(1).at(0));
-    int finishPositionRow = convertChessRowToInt(result.at(1).at(1));
-
-    if(finishPositionColumn == -1 || finishPositionRow == -1){
-        return ChessErrorCode::INVALID_INPUT;
-    }
-
-    ChessCoordinate finishPos{ finishPositionRow,finishPositionColumn };
+    ChessCoordinate startPos = {-1,-1};
+    ChessCoordinate finishPos = {-1,-1};
+    executeMoveHelper(moveFrom, moveTo, startPos, finishPos);
     return processChessMove( startPos, finishPos );
+
 }
 
 
-//Constructor
+//Constructor that generates the game
 ChessController::ChessController() {
     this->_playerOne = ChessPlayer( "playerOne", Color::RED_LOWERCASE  );
     this->_playerTwo = ChessPlayer( "playerTwo", Color::BLUE_UPPERCASE );

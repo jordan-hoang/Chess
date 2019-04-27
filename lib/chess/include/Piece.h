@@ -15,8 +15,14 @@
  */
 enum class ChessErrorCode {INVALID_MOVE, INVALID_INPUT, INVALID_PIECE, VALID_MOVE};
 
+/**
+ * The color of the piece
+ */
 enum class Color{ RED_LOWERCASE,BLUE_UPPERCASE,COLORLESS };
 
+/**
+ * The unit of a piece
+ */
 enum class PieceUnit{
     PAWN,
     BISHOP,

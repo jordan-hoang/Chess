@@ -115,6 +115,9 @@ ChessErrorCode Piece::validateQueen(const ChessCoordinate &start, const ChessCoo
     return ChessErrorCode::VALID_MOVE;
 }
 
+// All the validate methods above do the same thing
+// they validate to see if the move is possible then send a code when it happens
+// All of them are helper methods of checkMovementIsValid
 
 void Piece::setPiece(PieceUnit pieceUnit, Color color) {
     this->pieceId = pieceUnit;
@@ -133,10 +136,16 @@ void Piece::updatePiece(Piece &source, Piece &destination) {
     source.pieceColor = Color::COLORLESS;
 }
 
-//PUBLIC
+/***
+ * Check's to see if that piece can move in that way.
+ * @param start - startCoordinate of the piece you want to move.
+ * @param finish  - EndCoordinate of where the piece should end up
+ * @param targetColor - Color of the endCoordinate.
+ * @return
+ */
 ChessErrorCode Piece::checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const  Color &targetColor) const {
 
-    PieceUnit  piece = pieceId;
+    PieceUnit piece = pieceId;
 
     switch(piece){
         case PieceUnit::PAWN:

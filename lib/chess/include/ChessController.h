@@ -50,10 +50,11 @@ private:
         ChessPlayer _playerTwo;
 
 
+        ChessErrorCode executeMoveHelper(std::string &moveFrom, std::string &moveTo, ChessCoordinate &startPos,
+                                         ChessCoordinate &finishPos);
         int convertCharColToInt(char input);
         int convertChessRowToInt(char input);
         bool validatePlayer(const std::string &playerName, const Color &color) const;
-        ChessErrorCode validatePlayerInput(std::string &input, std::vector<std::string> &result);
         ChessErrorCode processChessMove(const ChessCoordinate &startPos,const ChessCoordinate &finishPos ) ;
 
 };

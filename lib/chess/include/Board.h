@@ -34,7 +34,7 @@ public:
     const Piece getLastPieceKilled() const;
 
 private:
-    vector< vector<Piece> > boardView;
+    vector< vector<Piece> > chessBoard;
     Piece lastPieceKilled;
 
    void initializeGame(vector<vector<Piece>> &boardView);
