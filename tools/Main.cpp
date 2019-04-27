@@ -51,8 +51,8 @@ int main(){
             std::cout << chessGame.getBoardView();
             std::string userInput = takeUserInput();
 
-            ChessErrorCode isValid = chessGame.readInput(userInput,playerName);
-            if(isValid == ChessErrorCode::VALID_MOVE){
+            ChessErrorCode gameMessage = chessGame.readInput(userInput,playerName);
+            if(gameMessage == ChessErrorCode::VALID_MOVE){
                 if(isPlayerOneTurn){
                     isPlayerOneTurn = false;
                     playerName = "playerTwo";
@@ -61,7 +61,7 @@ int main(){
                     playerName = "playerOne";
                 }
             } else {
-
+              std::cout << invalidMessage(gameMessage);
             }
 
         }

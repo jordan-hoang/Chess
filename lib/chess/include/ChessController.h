@@ -9,7 +9,9 @@
 #include <string>
 #include "Board.h"
 
-
+/**Originally was used for online play in "TextAdventure"
+ * Main program just passes in 2 seperate players.
+ */
 struct ChessPlayer {
     std::string playerName;
     Color playerColor;
@@ -22,7 +24,7 @@ struct ChessPlayer {
 
 
 /**
- * Takes user input and sends it to board.
+ * Takes user input and manipulates the board(model).
  */
 class ChessController {
     public:

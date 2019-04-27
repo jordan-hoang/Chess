@@ -248,7 +248,6 @@ const std::string Board::getReverseBoardView() const {
 }
 
 
-
 ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finish) {
 
     Piece &sourcePiece = requestPiece(start);
