@@ -43,6 +43,7 @@ class ChessController {
         std::string helpMessage() const;
 
         ChessController();
+        ChessController( vector<vector<Piece>> a);
 
 private:
         Board _gameBoard;

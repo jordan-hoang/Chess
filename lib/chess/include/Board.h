@@ -22,6 +22,8 @@ using std::vector;
 class Board {
 public:
     Board();
+
+    Board(vector<vector<Piece>> &chessBoard); // Pass in your own chessBoard, used for testing.
     const std::string getBoardView() const;
     const std::string getReverseBoardView() const;
 
@@ -37,7 +39,7 @@ private:
     vector< vector<Piece> > chessBoard;
     Piece lastPieceKilled;
 
-   void initializeGame(vector<vector<Piece>> &boardView);
+   void initializeGame(vector<vector<Piece>> &chessBoard);
    void createBackRank(Color myColor, vector<vector<Piece>> &boardView) ;
    void drawRow(const vector<Piece> &listPieceId, std::stringstream &stream) const;
    void drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &stream) const;

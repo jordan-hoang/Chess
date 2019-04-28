@@ -262,3 +262,11 @@ ChessController::ChessController() {
     this->_playerTwo = ChessPlayer( "playerTwo", Color::BLUE_UPPERCASE );
     this->_gameBoard  = Board();
 }
+
+//Constructor used for testing
+ChessController::ChessController(vector<vector<Piece>> a) {
+    this->_playerOne = ChessPlayer( "playerOne", Color::RED_LOWERCASE  );
+    this->_playerTwo = ChessPlayer( "playerTwo", Color::BLUE_UPPERCASE );
+    this->_gameBoard = Board(a);
+
+}

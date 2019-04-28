@@ -38,36 +38,36 @@ void Board::createBackRank(Color color, vector<vector<Piece>> &boardView) {
         tmp.emplace_back(Piece{PieceUnit::ROOK,color});
 
 
-    boardView.push_back(tmp);
+        boardView.push_back(tmp);
 }
 
 /**
  * Initializes the chess game by setting all the pieces.
  * @param chessBoard
  */
-void Board::initializeGame(vector<vector<Piece>> &boardView) {
+void Board::initializeGame(vector<vector<Piece>> &chessBoard) {
 
 
     //Doing red side
-    createBackRank(Color::RED_LOWERCASE,boardView);
+    createBackRank(Color::RED_LOWERCASE,chessBoard);
 
     std::vector<Piece> blackPawn;
     blackPawn.assign(8, Piece{PieceUnit::PAWN, Color::RED_LOWERCASE});
-    boardView.push_back(blackPawn);
+    chessBoard.push_back(blackPawn);
 
 
     for (int i = 2; i < 6; i++){
         std::vector<Piece> tmp;
         tmp.assign(8,Piece{PieceUnit::NONE, Color::COLORLESS});
-        boardView.push_back(tmp);
+        chessBoard.push_back(tmp);
     }
 
     //Doing blue side
     std::vector<Piece> whitePawn;
     whitePawn.assign(8,Piece{PieceUnit::PAWN, Color::BLUE_UPPERCASE});
-    boardView.push_back(whitePawn);
+    chessBoard.push_back(whitePawn);
 
-    createBackRank(Color::BLUE_UPPERCASE,boardView);
+    createBackRank(Color::BLUE_UPPERCASE,chessBoard);
 
 
 }
@@ -275,6 +275,14 @@ const std::string Board::getReverseBoardView() const {
 
 ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoordinate &finish){
 
+    // We also need to check if the path is clear here
+    //
+    //
+
+
+
+
+
     int direction = start.col - finish.col;
     int rookRow = 0;
     rookRow = (direction > 0) ? 1 : -1;
@@ -350,6 +358,18 @@ Board::Board() {
     chessBoard.reserve(8);
     initializeGame(chessBoard);
     lastPieceKilled = Piece{PieceUnit::NONE,Color::COLORLESS};
+}
+
+Board::Board(vector<vector<Piece>> &chessBoard) {
+    this->chessBoard = chessBoard;
+    lastPieceKilled = Piece{PieceUnit::NONE, Color::COLORLESS};
+
+
+    assert(chessBoard.size() == 8);
+    for(int i = 0; i<7; i++){
+        assert(chessBoard.at(i).size() == 8);
+    }
+
 }
 
 
