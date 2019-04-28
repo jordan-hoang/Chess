@@ -272,6 +272,26 @@ const std::string Board::getReverseBoardView() const {
 
 }
 
+
+ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoordinate &finish){
+
+    int direction = start.col - finish.col;
+    int rookRow = 0;
+    rookRow = (direction > 0) ? 1 : -1;
+    int rookCol = (rookRow == 1) ? 0 : 7;
+
+    Piece &rookPiece = requestPiece({finish.row,rookCol});
+    Piece &endSpot = requestPiece({finish.row,finish.col + rookRow});
+
+    if(rookPiece.getHasMoved()){
+        return ChessErrorCode::INVALID_MOVE;
+    }
+
+    Piece::updatePiece(rookPiece,endSpot);
+    return ChessErrorCode::VALID_MOVE;
+
+}
+
 /***
  *
  * @param start - The coordinates of the piece you want to move
@@ -295,14 +315,21 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
 
     ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start,finish,targetPiece.getColor());
 
-    if(ChessCode == ChessErrorCode::VALID_MOVE){
+    //Special case for when user attempts to CASTLE
+    if(ChessCode == ChessErrorCode::CASTLE) {
+        ChessCode = executeCastle(start, finish);
+        if (ChessCode == ChessErrorCode::VALID_MOVE) {
+            Piece::updatePiece(sourcePiece, targetPiece);
+        }
+
+        return ChessCode;
+    } else if(ChessCode == ChessErrorCode::VALID_MOVE){
         promotePawnToQueen(sourcePiece, finish);
         lastPieceKilled.setPiece( targetPiece.getPieceUnit() , targetPiece.getColor() );
         sourcePiece.updatePiece(sourcePiece,targetPiece);
         return ChessCode;
-    } else{
-        return ChessCode;
     }
+    return ChessCode;
 
 }
 

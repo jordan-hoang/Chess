@@ -103,6 +103,17 @@ ChessErrorCode Piece::validateKing(const ChessCoordinate &start, const ChessCoor
         }
     }
 
+
+    //Implement castling here
+    if(!hasMoved){
+        if( ( (start.col - 2 == finish.col) || (start.col + 2 == finish.col) ) && (finish.row == start.row) ){
+            return ChessErrorCode::CASTLE;
+        }
+    }
+
+
+
+
     return ChessErrorCode::INVALID_MOVE;
 
 }
@@ -127,13 +138,16 @@ void Piece::setPiece(PieceUnit pieceUnit, Color color) {
 
 //Replaces the piece at destination with source, and source set to be empty
 //Note that you can just actually use std::swap..... instead of having this function.
+//This function shouldn't need a piece to be executed
 void Piece::updatePiece(Piece &source, Piece &destination) {
 
     destination.pieceId = source.pieceId;
     destination.pieceColor = source.pieceColor;
+    destination.hasMoved = true;
 
     source.pieceId = PieceUnit::NONE;
     source.pieceColor = Color::COLORLESS;
+
 }
 
 /***
@@ -172,4 +186,5 @@ ChessErrorCode Piece::checkMovementIsValid(const ChessCoordinate &start, const C
 Piece::Piece() {
     this->pieceColor = Color::COLORLESS;
     this->pieceId = PieceUnit::NONE;
+    this->hasMoved = false;
 }

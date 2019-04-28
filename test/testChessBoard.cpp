@@ -443,3 +443,167 @@ TEST(InvalidInputTest, invalidMoveInput) {
     player = "tester";
    // EXPECT_FALSE(test.executeMove(start, finish, player));
 }
+
+
+void setUpCastling(ChessController &a){
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+
+    std::string move = "a2,a4";
+    a.readInput(move,p1);
+    //std::cout << a.getBoardView();
+
+    move = "a7,a5";
+    a.readInput(move,p2);
+    //std::cout << a.getBoardView();
+
+    move = "b1,c3";
+    a.readInput(move,p1);
+    //std::cout << a.getBoardView();
+
+
+    move = "d7,d6";
+    a.readInput(move,p2);
+    //std::cout << a.getBoardView();
+
+
+    move = "d7,d6";
+    a.readInput(move,p2);
+    //std::cout << a.getBoardView();
+
+
+    move = "d2,d3";
+    a.readInput(move,p1);
+    //std::cout << a.getBoardView();
+
+
+    move = "c8,e6";
+    a.readInput(move,p2);
+    //std::cout << a.getBoardView();
+
+
+    move = "c1,e3";
+    a.readInput(move,p1);
+    //std::cout << a.getBoardView();
+
+
+    move = "d8,d7";
+    a.readInput(move,p2);
+    //std::cout << a.getBoardView();
+
+
+    move = "d1,d2";
+    a.readInput(move,p1);
+    //std::cout << a.getBoardView();
+
+
+    move = "b8,c6";
+    a.readInput(move,p2);
+    //std::cout << a.getBoardView();
+
+}
+
+/**
+ * Test a castle
+ */
+TEST(CASTLING, testCastle){
+
+    ChessController a;
+
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+    std::string move;
+
+    setUpCastling(a);
+
+    //MOVED ROOK, EXECUTED CASTLE HERE!
+    move = "e1,c1";
+    EXPECT_EQ(a.readInput(move,p1), ChessErrorCode::VALID_MOVE);
+
+    //MOVED ROOK!
+    move = "e8,c8";
+    EXPECT_EQ(a.readInput(move,p2), ChessErrorCode::VALID_MOVE);
+
+}
+
+/**
+ * Test if the game will let you castle if the king has moved.
+ */
+TEST(CASTLING, movedKing){
+    ChessController a;
+
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+    std::string move;
+
+    setUpCastling(a);
+
+    move = "e1,c1";
+    EXPECT_EQ(a.readInput(move,p1), ChessErrorCode::VALID_MOVE);
+
+
+
+}
+
+
+
+/**
+ * Test if game lets you castle if you have moved the rook. Castle should not be allowed to work
+ */
+TEST(CASTLING, testKing){
+    ChessController a;
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+
+    std::string move = "a2,a4";
+    EXPECT_EQ(a.readInput(move,p1), ChessErrorCode::VALID_MOVE);
+    //std::cout << a.getBoardView();
+
+    move = "a7,a5";
+    EXPECT_EQ(a.readInput(move,p2), ChessErrorCode::VALID_MOVE);
+    //std::cout << a.getBoardView();
+
+    //MOVED ROOK!
+    move = "a1,a3";
+    a.readInput(move,p1);
+    //std::cout << a.getBoardView();
+
+    //MOVED ROOK!
+    move = "a8,a6";
+    a.readInput(move,p2);
+    //std::cout << a.getBoardView();
+
+
+
+    setUpCastling(a);
+
+    ///// Entire row has been moved! ///// Now we can finally castle, but first we must move rook back (for now try castling while ignoring the rook)
+
+    //MOVED ROOK!
+    move = "a3,a1";
+    a.readInput(move,p1);
+    //std::cout << a.getBoardView();
+
+    //MOVED ROOK!
+    move = "a6,a8";
+    a.readInput(move,p2);
+   // std::cout << a.getBoardView();
+
+
+    //Invalid move because the rook has already moved.
+    move = "e1,c1";
+    EXPECT_EQ(a.readInput(move,p1), ChessErrorCode::INVALID_MOVE);
+    //std::cout << a.getBoardView();
+
+    move = "e8,c8";
+    EXPECT_EQ(a.readInput(move,p2), ChessErrorCode::INVALID_MOVE);
+    // std::cout << a.getBoardView();
+
+
+}
+
+
+
+
+
+

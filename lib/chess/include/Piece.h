@@ -13,7 +13,7 @@
  * INVALID_INPUT - Bad input from user
  * INVALID_PIECE - Attempting to move a piece that isn't yours, moving a piece that is "NONE"
  */
-enum class ChessErrorCode {INVALID_MOVE, INVALID_INPUT, INVALID_PIECE, VALID_MOVE};
+enum class ChessErrorCode {INVALID_MOVE, INVALID_INPUT, INVALID_PIECE, VALID_MOVE, CASTLE};
 
 /**
  * The color of the piece
@@ -47,6 +47,8 @@ class Piece {
     private:
         PieceUnit pieceId;
         Color pieceColor;
+        bool hasMoved = false;
+
         enum ChessErrorCode validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const;
         enum ChessErrorCode validateRook(const ChessCoordinate &start, const ChessCoordinate &finish) const;
         enum ChessErrorCode validateBishop(const ChessCoordinate &start, const ChessCoordinate &finish) const;
@@ -57,14 +59,16 @@ class Piece {
     public:
         const enum PieceUnit getPieceUnit() const { return pieceId; };
         const enum Color getColor() const { return pieceColor; };
+        const bool getHasMoved() const { return hasMoved; } ;
+
         enum ChessErrorCode checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const Color &targetColor) const   ;
-        void updatePiece(Piece &source, Piece &destination);
+        static void updatePiece(Piece &source, Piece &destination);
         void setPiece(PieceUnit pieceUnit, Color color);
 
 
     Piece();
     Piece(PieceUnit unit, Color color) :
-            pieceId(unit), pieceColor(color){}
+            pieceId(unit), pieceColor(color),hasMoved(false){}
 
 };
 

@@ -49,6 +49,7 @@ private:
    bool isPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
 
    void promotePawnToQueen(Piece &source, const ChessCoordinate &target);
+   ChessErrorCode executeCastle(const ChessCoordinate &start, const ChessCoordinate &finish);
 
    const static std::unordered_map <PieceUnit, char> PieceLookUp;
 
