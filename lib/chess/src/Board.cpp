@@ -220,54 +220,73 @@ bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &king
     //Need code for bishops and pawns,pawns are special case.
     //RED PAWNS Travel upwards, BLUE PAWNS Travel downwards from Piece.cpp
 
-
     if(kingColor == Color::BLUE_UPPERCASE){
 
-    }
         //bottom left of start and bottom right of start if contain pawn will mean that spot is dangerous
         ChessCoordinate bottomLeft{start.row + 1, start.col - 1};
         if(bottomLeft.isValid()){
-            Piece tmp = chessBoard.at(bottomLeft.row).at(bottomLeft.col);
+            Piece tmp = getPiece(bottomLeft);
             if(tmp.getColor() == Color::RED_LOWERCASE && tmp.getPieceUnit() == PieceUnit::PAWN){
                 return true;
             }
         }
 
         ChessCoordinate bottomRight{start.row + 1, start.col + 1};
-        if(bottomRight.isValid()){
-            if(bottomLeft.isValid()){
-                Piece tmp = chessBoard.at(bottomRight.row).at(bottomRight.col);
-                if(tmp.getColor() == Color::RED_LOWERCASE && tmp.getPieceUnit() == PieceUnit::PAWN){
-                    return true;
-                }
+        if(bottomRight.isValid()) {
+            Piece tmp = getPiece(bottomRight);
+            if (tmp.getColor() == Color::RED_LOWERCASE && tmp.getPieceUnit() == PieceUnit::PAWN) {
+                return true;
+            }
         }
 
-
     } else if(kingColor == Color::RED_LOWERCASE){
-        //watch out for pawns coming from above!
 
+        //watch out for pawns coming from above!
         ChessCoordinate topLeft{start.row - 1, start.col - 1};
         if(topLeft.isValid()){
-
-
+            Piece tmp = getPiece(topLeft);
+            if(tmp.getColor() == Color::BLUE_UPPERCASE && tmp.getPieceUnit() == PieceUnit::PAWN){
+                return true;
+            }
         }
         ChessCoordinate topRight{start.row - 1, start.col + 1};
         if(topRight.isValid()){
-
-            
+            Piece tmp = getPiece(topRight);
+            if(tmp.getPieceUnit() == PieceUnit::PAWN && tmp.getColor() == Color::BLUE_UPPERCASE){
+                return true;
+            }
         }
-
-
 
     }
 
     //Check + slope for bishops and queens that can kill you.
     //Check - slope for bishops and queens that can kill you.
+    //All possible directions diagonally to check in.
+    int dirX[4] = {1,-1,1,-1};
+    int dirY[4] = {1,-1,-1,1};
+
+    for(int i = 0 ; i < 4; i++){
+        ChessCoordinate startingPosition{start.row,start.col};
+        bool isValid = true;
+
+        while( isValid && startingPosition.isValid()){
+            if(getPieceColor(startingPosition) != kingColor) {
+                if ((requestUnit(startingPosition) == PieceUnit::QUEEN) ||
+                    requestUnit(startingPosition) == PieceUnit::BISHOP) {
+                    return true;
+                }
+            } else if(getPiece(startingPosition).getPieceUnit() != PieceUnit::NONE){
+                isValid = false;
+            }
+            startingPosition.row += dirX[i];
+            startingPosition.col += dirY[i];
+        }
+
+    }
 
 
     return false;
 }
-
 
 
 
@@ -363,6 +382,12 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor
     //Function doesn't cover attacks from pawns, and other kings.
     //Now we need to test the position vertically, horizontally, and attacks from knights.
 
+    //First check if the square is empty since it's supposed to be where you want to "move to"
+    if(getPiece(position).getPieceUnit() != PieceUnit::NONE){
+        return true;
+    }
+
+
     //All possible moves of a knight
     int knightMoveX[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
     int knightMoveY[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
@@ -404,8 +429,15 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
      //INPUT THE CORRECT COORDINATES
      int dirSquare  = (finish.col - start.col > 0 ) ? 1 : -1;
 
-     isSquareUnderAttack({start.row, start.col + dirSquare}, getPieceColor(start));
-     isSquareUnderAttack({start.row, start.col + dirSquare*2}, getPieceColor(start));
+     bool isAttacked = isSquareUnderAttack({start.row, start.col + dirSquare}, getPieceColor(start));
+     if(isAttacked){
+        return ChessErrorCode::INVALID_CASTLE;
+     }
+     isAttacked = isSquareUnderAttack({start.row, start.col + dirSquare*2}, getPieceColor(start));
+     if(isAttacked){
+        return ChessErrorCode::INVALID_CASTLE;
+     }
+
 
 
      int direction = start.col - finish.col;
@@ -417,7 +449,7 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
      Piece &endSpot = requestPiece({finish.row,finish.col + rookRow});
 
      if(rookPiece.getHasMoved() || rookPiece.getPieceUnit() != PieceUnit::ROOK){
-        return ChessErrorCode::INVALID_MOVE;
+        return ChessErrorCode::INVALID_CASTLE;
      }
 
      Piece::updatePiece(rookPiece,endSpot);
@@ -491,6 +523,15 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     if(!pathClear) { pathClear = isPathClear(start,finish); }
     if(!pathClear) {  return ChessErrorCode::INVALID_MOVE; }
 
+    //Code for king movement, since king have special rules.
+    if(sourcePiece.getPieceUnit() == PieceUnit::KING){
+        bool isSquareAttacked = isSquareUnderAttack(finish,sourcePiece.getColor());
+        if(isSquareAttacked){
+            return ChessErrorCode::INVALID_KING_MOVE;
+        }
+    }
+
+
     ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start,finish,targetPiece.getColor());
 
     //Special case for when user attempts to CASTLE
@@ -499,7 +540,6 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
         if (ChessCode == ChessErrorCode::VALID_MOVE) {
             Piece::updatePiece(sourcePiece, targetPiece);
         }
-
         return ChessCode;
     } else if(ChessCode == ChessErrorCode::VALID_MOVE){
         promotePawnToQueen(sourcePiece, finish);
@@ -518,6 +558,12 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
 Piece& Board::requestPiece(const ChessCoordinate &position) {
     return chessBoard.at( position.row ).at( position.col );
 }
+
+const Piece& Board::getPiece(const ChessCoordinate &position) const {
+    return chessBoard.at( position.row ).at( position.col );
+}
+
+
 
 const PieceUnit Board::requestUnit(const ChessCoordinate &position) const {
     Piece a = chessBoard.at(position.row).at(position.col);

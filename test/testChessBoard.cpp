@@ -596,11 +596,11 @@ TEST(CASTLING, testKing){
 
     //Invalid move because the rook has already moved.
     move = "e1,c1";
-    EXPECT_EQ(a.readInput(move,p1), ChessErrorCode::INVALID_MOVE);
+    EXPECT_EQ(a.readInput(move,p1), ChessErrorCode::INVALID_CASTLE);
     //std::cout << a.getBoardView();
 
     move = "e8,c8";
-    EXPECT_EQ(a.readInput(move,p2), ChessErrorCode::INVALID_MOVE);
+    EXPECT_EQ(a.readInput(move,p2), ChessErrorCode::INVALID_CASTLE);
     // std::cout << a.getBoardView();
 
 
@@ -665,10 +665,9 @@ TEST(CASTLING, testPathBlocked){
     std::string p2 = "playerTwo";
 
     //User should not be able to castle since the path is under attak by the enemy rook.
-    EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::INVALID_MOVE);
+    EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::INVALID_CASTLE);
 
-
-    std::cout << chessGame.getBoardView();
+    //std::cout << chessGame.getBoardView();
 
 
 

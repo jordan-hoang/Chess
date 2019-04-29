@@ -28,6 +28,7 @@ public:
     const std::string getReverseBoardView() const;
 
     Piece& requestPiece(const ChessCoordinate &position);
+    const Piece &getPiece(const ChessCoordinate &position) const;
     const PieceUnit requestUnit(const ChessCoordinate &position) const;
     const Color getPieceColor(const ChessCoordinate &position) const;
 
