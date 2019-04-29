@@ -146,12 +146,12 @@ bool Board::isHorizontalPathClear(const ChessCoordinate &start, const ChessCoord
 }
 
 /**
- * DOESN"T WORK SINCE WE DON"T KNOW THE COLOR
+ * NEEDS TESTING
  * @param start - coordinates of the square you want to check is under attack
  * @param finish - end/begin of the row
  * @return True if can be attacked else returns false.
  */
-bool Board::isAttackedHorizontally(const ChessCoordinate &start, const ChessCoordinate &finish, Color enemyColor) const {
+bool Board::isAttackedHorizontally(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &kingColor) const {
 
     const vector<Piece> &handle = chessBoard.at(start.row);
     const auto iterBegin = handle.begin() + std::min(start.col,finish.col ) + 1 ;
@@ -170,25 +170,62 @@ bool Board::isAttackedHorizontally(const ChessCoordinate &start, const ChessCoor
 
     PieceUnit foundPiece = (*result).getPieceUnit();
     //They belong on the same team so impossible for them to attack each other.
-    if( (*result).getColor() == enemyColor){
-        return true;
+    if( (*result).getColor() == kingColor){
+        return false;
     }
 
     return ( foundPiece == PieceUnit::ROOK || foundPiece == PieceUnit::QUEEN ) ;
 
 }
 
-bool Board::isAttackedVertically(const ChessCoordinate &start) const {
+/**
+ *
+ * @param start - The square you want to check
+ * @param kingColor - Color of the king that is trying to castle.
+ * @return - If that square can be attacked
+ */
+bool Board::isAttackedVertically(const ChessCoordinate &start, const Color &kingColor) const {
 
+    //We need to check vertically upwards, then vertically downwards, from the position START
+    for(int i = start.row ; i < 8 ; i++) {
+        Piece tmp = chessBoard.at(i).at(start.col);
+        if(tmp.getPieceUnit() == PieceUnit::ROOK || tmp.getPieceUnit() == PieceUnit::QUEEN){
+            if(tmp.getColor() != kingColor){
+                return true;
+            }
+        } else if(tmp.getPieceUnit() != PieceUnit::NONE){  //but we need to stop checking if the piece we encounter is not
+            break;
+        }
+    }
 
+    //Now we check downwards, almost duplicated code, only for parameters changed
+    for(int i = start.row ; i >= 0; i--) {
+        Piece tmp = chessBoard.at(i).at(start.col);
+        if(tmp.getPieceUnit() == PieceUnit::ROOK || tmp.getPieceUnit() == PieceUnit::QUEEN){
+            if(tmp.getColor() != kingColor){
+                return true;
+            }
+        } else if(tmp.getPieceUnit() != PieceUnit::NONE){  //but we need to stop checking if the piece we encounter is not
+            break;
+        }
+    }
 
-
-
-
-
+    return false;
 
 
 }
+
+
+bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor) const {
+
+    //Need code for bishops and pawns.
+
+    
+
+
+}
+
+
 
 
 
@@ -277,7 +314,7 @@ void Board::promotePawnToQueen(Piece &source, const ChessCoordinate &target){
 }
 
 //Check's if a square is under attack
-bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color enemyColor) const {
+bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor) const {
 
 
     //Function doesn't cover attacks from pawns, and other kings.
@@ -293,7 +330,7 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color enemyColo
         int col = knightMoveY[i] + position.col;
         if(row >= 0 && row <= 7 && col >= 0 && col <= 7){
             Piece potentialEnemy = chessBoard.at(row).at(col);
-            if( potentialEnemy.getColor() == enemyColor && potentialEnemy.getPieceUnit() == PieceUnit::KNIGHT){
+            if( potentialEnemy.getColor() != kingColor && potentialEnemy.getPieceUnit() == PieceUnit::KNIGHT){
                 return true;
             }
         }
@@ -301,11 +338,13 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color enemyColo
 
 
 
-    if( isAttackedHorizontally(position, ChessCoordinate{position.row,7}, enemyColor  ) ){
+    if( isAttackedHorizontally(position, ChessCoordinate{position.row,7}, kingColor  ) ){
         return true;
-    } else if( isAttackedHorizontally(position, ChessCoordinate{position.row,0}, enemyColor) ){
+    } else if( isAttackedHorizontally(position, ChessCoordinate{position.row,0}, kingColor) ){
         return true;
-    } else if( isAttackedVertically(position) ){
+    } else if( isAttackedVertically(position, kingColor) ){
+        return true;
+    } else if( isAttackedDiagonally(position, kingColor)){
         return true;
     }
 
@@ -323,26 +362,26 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
     // We also need to check if the path is clear here
 
      //INPUT THE CORRECT COORDINATES
-     isSquareUnderAttack({start.row,0}, getPieceColor(start));
-     isSquareUnderAttack({start.row,0}, getPieceColor(start));
+     int dirSquare  = (finish.col - start.col > 0 ) ? 1 : -1;
+
+     isSquareUnderAttack({start.row, start.col + dirSquare}, getPieceColor(start));
+     isSquareUnderAttack({start.row, start.col + dirSquare*2}, getPieceColor(start));
 
 
+     int direction = start.col - finish.col;
+     int rookRow = 0;
+     rookRow = (direction > 0) ? 1 : -1;
+     int rookCol = (rookRow == 1) ? 0 : 7;
 
+     Piece &rookPiece = requestPiece({finish.row,rookCol});
+     Piece &endSpot = requestPiece({finish.row,finish.col + rookRow});
 
-    int direction = start.col - finish.col;
-    int rookRow = 0;
-    rookRow = (direction > 0) ? 1 : -1;
-    int rookCol = (rookRow == 1) ? 0 : 7;
-
-    Piece &rookPiece = requestPiece({finish.row,rookCol});
-    Piece &endSpot = requestPiece({finish.row,finish.col + rookRow});
-
-    if(rookPiece.getHasMoved()){
+     if(rookPiece.getHasMoved() || rookPiece.getPieceUnit() != PieceUnit::ROOK){
         return ChessErrorCode::INVALID_MOVE;
-    }
+     }
 
-    Piece::updatePiece(rookPiece,endSpot);
-    return ChessErrorCode::VALID_MOVE;
+     Piece::updatePiece(rookPiece,endSpot);
+     return ChessErrorCode::VALID_MOVE;
 
 }
 
@@ -428,6 +467,7 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
         sourcePiece.updatePiece(sourcePiece,targetPiece);
         return ChessCode;
     }
+
     return ChessCode;
 
 }

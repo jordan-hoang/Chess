@@ -46,8 +46,11 @@ private:
    void drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &stream) const;
 
 
-   bool isAttackedHorizontally(const ChessCoordinate &start, const ChessCoordinate &finish, const Color c) const;
-   bool isAttackedVertically(const ChessCoordinate &start) const;
+   bool isAttackedHorizontally(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &c) const;
+
+   bool isAttackedVertically(const ChessCoordinate &start, const Color &c) const;
+
+   bool isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor) const;
 
 
    bool isHorizontalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
