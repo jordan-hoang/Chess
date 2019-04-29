@@ -212,17 +212,60 @@ bool Board::isAttackedVertically(const ChessCoordinate &start, const Color &king
 
     return false;
 
-
 }
 
 
 bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor) const {
 
-    //Need code for bishops and pawns.
+    //Need code for bishops and pawns,pawns are special case.
+    //RED PAWNS Travel upwards, BLUE PAWNS Travel downwards from Piece.cpp
 
-    
+
+    if(kingColor == Color::BLUE_UPPERCASE){
+
+    }
+        //bottom left of start and bottom right of start if contain pawn will mean that spot is dangerous
+        ChessCoordinate bottomLeft{start.row + 1, start.col - 1};
+        if(bottomLeft.isValid()){
+            Piece tmp = chessBoard.at(bottomLeft.row).at(bottomLeft.col);
+            if(tmp.getColor() == Color::RED_LOWERCASE && tmp.getPieceUnit() == PieceUnit::PAWN){
+                return true;
+            }
+        }
+
+        ChessCoordinate bottomRight{start.row + 1, start.col + 1};
+        if(bottomRight.isValid()){
+            if(bottomLeft.isValid()){
+                Piece tmp = chessBoard.at(bottomRight.row).at(bottomRight.col);
+                if(tmp.getColor() == Color::RED_LOWERCASE && tmp.getPieceUnit() == PieceUnit::PAWN){
+                    return true;
+                }
+        }
 
 
+    } else if(kingColor == Color::RED_LOWERCASE){
+        //watch out for pawns coming from above!
+
+        ChessCoordinate topLeft{start.row - 1, start.col - 1};
+        if(topLeft.isValid()){
+
+
+        }
+        ChessCoordinate topRight{start.row - 1, start.col + 1};
+        if(topRight.isValid()){
+
+            
+        }
+
+
+
+    }
+
+    //Check + slope for bishops and queens that can kill you.
+    //Check - slope for bishops and queens that can kill you.
+
+
+    return false;
 }
 
 
@@ -347,9 +390,6 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor
     } else if( isAttackedDiagonally(position, kingColor)){
         return true;
     }
-
-
-
 
 
 

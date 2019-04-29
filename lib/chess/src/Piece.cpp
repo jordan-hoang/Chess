@@ -147,6 +147,7 @@ void Piece::updatePiece(Piece &source, Piece &destination) {
 
     source.pieceId = PieceUnit::NONE;
     source.pieceColor = Color::COLORLESS;
+    source.hasMoved = false; //Empty squares "can't move"
 
 }
 

@@ -41,6 +41,17 @@ struct ChessCoordinate {
         return ( row == a.row  && col == a.col );
     }
 
+    bool isValid(){
+        if(row < 0 || row >= 8){
+            return false;
+        }
+        if(col < 0 || col >= 8 ){
+            return false;
+        }
+        return true;
+    }
+
+
 };
 
 class Piece {
