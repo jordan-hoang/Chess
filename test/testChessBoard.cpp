@@ -617,6 +617,7 @@ vector<Piece> emptyRow(){
     return tmp;
 }
 
+
 TEST(CASTLING, testPathBlocked){
     vector<vector<Piece>> a;
 
@@ -663,12 +664,11 @@ TEST(CASTLING, testPathBlocked){
     std::string p1 = "playerOne";
     std::string p2 = "playerTwo";
 
-
+    //User should not be able to castle since the path is under attak by the enemy rook.
     EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::INVALID_MOVE);
 
 
     std::cout << chessGame.getBoardView();
-
 
 
 

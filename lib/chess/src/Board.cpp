@@ -126,10 +126,10 @@ void Board::drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &
 /**
  * @param start
  * @param finish
- * @return True if NONE was not found else returns false.
+ * @return True if the path is clear (no units were found).
  *
  */
-bool Board::checkHorizontalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+bool Board::isHorizontalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const {
 
 
     const vector<Piece> &handle = chessBoard.at(start.row);
@@ -146,11 +146,58 @@ bool Board::checkHorizontalPath(const ChessCoordinate &start, const ChessCoordin
 }
 
 /**
+ * DOESN"T WORK SINCE WE DON"T KNOW THE COLOR
+ * @param start - coordinates of the square you want to check is under attack
+ * @param finish - end/begin of the row
+ * @return True if can be attacked else returns false.
+ */
+bool Board::isAttackedHorizontally(const ChessCoordinate &start, const ChessCoordinate &finish, Color enemyColor) const {
+
+    const vector<Piece> &handle = chessBoard.at(start.row);
+    const auto iterBegin = handle.begin() + std::min(start.col,finish.col ) + 1 ;
+    const auto iterEnd = handle.begin() + std::max(start.col,finish.col) ;
+
+
+    //If the piece you are looking for is not None and the piece isn't the attack piece then......
+    //Stops looking if it finds a piece that isn't none
+    const auto result = std::find_if(iterBegin,iterEnd,
+                                     [&](auto i) { return i.getPieceUnit() != PieceUnit::NONE ;} );
+
+    //Now we check for the piece that we are supposed to be looking for
+    if( result == iterEnd){
+        return false;
+    }
+
+    PieceUnit foundPiece = (*result).getPieceUnit();
+    //They belong on the same team so impossible for them to attack each other.
+    if( (*result).getColor() == enemyColor){
+        return true;
+    }
+
+    return ( foundPiece == PieceUnit::ROOK || foundPiece == PieceUnit::QUEEN ) ;
+
+}
+
+bool Board::isAttackedVertically(const ChessCoordinate &start) const {
+
+
+
+
+
+
+
+
+
+}
+
+
+
+/**
  * Determines w/e the path is free vertically
  * @param start
  * @param finish
  */
-bool Board::checkVerticalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+bool Board::isVerticalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const {
 
     int begin = std::min(start.row,finish.row);
     int end = std::max(start.row,finish.row);
@@ -166,7 +213,7 @@ bool Board::checkVerticalPath(const ChessCoordinate &start, const ChessCoordinat
 }
 
 //2 slopes + or - and 2 ways to traverse them so 4 ways in total....
-bool Board::checkDiagonalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const{
+bool Board::isDiagonalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const{
 
     // A bishop's diagonal can be defined by y = x or y = -x
     int endIter = abs(finish.col - start.col);
@@ -205,16 +252,16 @@ bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &fin
 
     // You are moving horizontally
     if( start.row == finish.row && start.col != finish.col ){
-       return checkHorizontalPath(start,finish);
+       return isHorizontalPathClear(start, finish);
     }
 
     // You are moving vertical
     else if( start.row != finish.row && start.col == finish.col ) {
-       return checkVerticalPath(start,finish);
+       return isVerticalPathClear(start, finish);
     }
 
     else if( diffRow == diffCol ){
-        return checkDiagonalPath(start,finish);
+        return isDiagonalPathClear(start, finish);
     }
 
 
@@ -228,6 +275,77 @@ void Board::promotePawnToQueen(Piece &source, const ChessCoordinate &target){
     }
 
 }
+
+//Check's if a square is under attack
+bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color enemyColor) const {
+
+
+    //Function doesn't cover attacks from pawns, and other kings.
+    //Now we need to test the position vertically, horizontally, and attacks from knights.
+
+    //All possible moves of a knight
+    int knightMoveX[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
+    int knightMoveY[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
+
+    //Checking if any of these squares has an enemy knight
+    for(int i = 0; i < 8; i++){
+        int row = knightMoveX[i] + position.row;
+        int col = knightMoveY[i] + position.col;
+        if(row >= 0 && row <= 7 && col >= 0 && col <= 7){
+            Piece potentialEnemy = chessBoard.at(row).at(col);
+            if( potentialEnemy.getColor() == enemyColor && potentialEnemy.getPieceUnit() == PieceUnit::KNIGHT){
+                return true;
+            }
+        }
+    }
+
+
+
+    if( isAttackedHorizontally(position, ChessCoordinate{position.row,7}, enemyColor  ) ){
+        return true;
+    } else if( isAttackedHorizontally(position, ChessCoordinate{position.row,0}, enemyColor) ){
+        return true;
+    } else if( isAttackedVertically(position) ){
+        return true;
+    }
+
+
+
+
+
+
+
+    return false;
+}
+
+ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoordinate &finish){
+
+    // We also need to check if the path is clear here
+
+     //INPUT THE CORRECT COORDINATES
+     isSquareUnderAttack({start.row,0}, getPieceColor(start));
+     isSquareUnderAttack({start.row,0}, getPieceColor(start));
+
+
+
+
+    int direction = start.col - finish.col;
+    int rookRow = 0;
+    rookRow = (direction > 0) ? 1 : -1;
+    int rookCol = (rookRow == 1) ? 0 : 7;
+
+    Piece &rookPiece = requestPiece({finish.row,rookCol});
+    Piece &endSpot = requestPiece({finish.row,finish.col + rookRow});
+
+    if(rookPiece.getHasMoved()){
+        return ChessErrorCode::INVALID_MOVE;
+    }
+
+    Piece::updatePiece(rookPiece,endSpot);
+    return ChessErrorCode::VALID_MOVE;
+
+}
+
 
 /////END PRIVATE          //////
 
@@ -272,33 +390,6 @@ const std::string Board::getReverseBoardView() const {
 
 }
 
-
-ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoordinate &finish){
-
-    // We also need to check if the path is clear here
-    //
-    //
-
-
-
-
-
-    int direction = start.col - finish.col;
-    int rookRow = 0;
-    rookRow = (direction > 0) ? 1 : -1;
-    int rookCol = (rookRow == 1) ? 0 : 7;
-
-    Piece &rookPiece = requestPiece({finish.row,rookCol});
-    Piece &endSpot = requestPiece({finish.row,finish.col + rookRow});
-
-    if(rookPiece.getHasMoved()){
-        return ChessErrorCode::INVALID_MOVE;
-    }
-
-    Piece::updatePiece(rookPiece,endSpot);
-    return ChessErrorCode::VALID_MOVE;
-
-}
 
 /***
  *
@@ -351,6 +442,11 @@ Piece& Board::requestPiece(const ChessCoordinate &position) {
 const PieceUnit Board::requestUnit(const ChessCoordinate &position) const {
     Piece a = chessBoard.at(position.row).at(position.col);
     return a.getPieceUnit();
+}
+
+
+const Color Board::getPieceColor(const ChessCoordinate &position) const {
+    return chessBoard.at(position.row).at(position.col).getColor();
 }
 
 //Constructor

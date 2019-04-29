@@ -29,6 +29,7 @@ public:
 
     Piece& requestPiece(const ChessCoordinate &position);
     const PieceUnit requestUnit(const ChessCoordinate &position) const;
+    const Color getPieceColor(const ChessCoordinate &position) const;
 
 
     ChessErrorCode movePiece(const ChessCoordinate &start, const ChessCoordinate &finish);
@@ -45,10 +46,16 @@ private:
    void drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &stream) const;
 
 
-   bool checkHorizontalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const;
-   bool checkVerticalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const;
-   bool checkDiagonalPath(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+   bool isAttackedHorizontally(const ChessCoordinate &start, const ChessCoordinate &finish, const Color c) const;
+   bool isAttackedVertically(const ChessCoordinate &start) const;
+
+
+   bool isHorizontalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+   bool isVerticalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+   bool isDiagonalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
    bool isPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+   bool isSquareUnderAttack(const ChessCoordinate &position, const Color enemyColor) const;
+
 
    void promotePawnToQueen(Piece &source, const ChessCoordinate &target);
    ChessErrorCode executeCastle(const ChessCoordinate &start, const ChessCoordinate &finish);
