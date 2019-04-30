@@ -199,7 +199,7 @@ bool Board::isDiagonalPathClear(const ChessCoordinate &start, const ChessCoordin
 bool Board::isAttackedHorizontally(const ChessCoordinate &start, const Color &kingColor) const {
 
     const vector<Piece> &handle = chessBoard.at(start.row);
-     auto iterBegin = handle.begin() + start.col + 1;
+     auto iterBegin = handle.begin() + start.col ;
      auto iterEnd = handle.end();
 
     //If the piece you are looking for is not None and the piece isn't the attack piece then......
@@ -218,7 +218,7 @@ bool Board::isAttackedHorizontally(const ChessCoordinate &start, const Color &ki
 
 
     //Checking backwards towards the left, so    --x-----a---- "Piece a would be checking towards x to find a rook or queen---
-    const auto rIter = handle.rbegin() + start.col - 1;
+    const auto rIter = handle.rbegin() + start.col ;
     const auto resultTwo = std::find_if(rIter, handle.rend(),
                                      [&](auto i ) {return i.getPieceUnit() != PieceUnit::NONE ;} );
 
@@ -542,7 +542,7 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     } else if(ChessCode == ChessErrorCode::VALID_MOVE){
         promotePawnToQueen(sourcePiece, finish);
         lastPieceKilled.setPiece( targetPiece.getPieceUnit() , targetPiece.getColor() );
-        sourcePiece.updatePiece(sourcePiece,targetPiece);
+        Piece::updatePiece(sourcePiece,targetPiece);
         return ChessCode;
     }
 
