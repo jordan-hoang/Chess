@@ -193,7 +193,7 @@ bool Board::isAttackedVertically(const ChessCoordinate &start, const Color &king
             if(tmp.getColor() != kingColor){
                 return true;
             }
-        } else if(tmp.getPieceUnit() != PieceUnit::NONE){  //but we need to stop checking if the piece we encounter is not
+        } if(tmp.getPieceUnit() != PieceUnit::NONE){  //but we need to stop checking if the piece we encounter is not
             break;
         }
     }
@@ -202,11 +202,12 @@ bool Board::isAttackedVertically(const ChessCoordinate &start, const Color &king
     for(int i = start.row ; i >= 0; i--) {
         Piece tmp = chessBoard.at(i).at(start.col);
         if(tmp.getPieceUnit() == PieceUnit::ROOK || tmp.getPieceUnit() == PieceUnit::QUEEN){
-            if(tmp.getColor() != kingColor){
+            if(tmp.getColor() != kingColor && tmp.getColor() != Color::COLORLESS){
+                std::cout << "startRow:" << i << " startCol:" << start.col << "\n";
                 return true;
             }
-        } else if(tmp.getPieceUnit() != PieceUnit::NONE){  //but we need to stop checking if the piece we encounter is not
-            break;
+        } if(tmp.getPieceUnit() != PieceUnit::NONE){  //but we need to stop checking if the piece we encounter is not
+          break;
         }
     }
 

@@ -657,7 +657,7 @@ TEST(CASTLING, testPathBlocked){
 
     ChessController chessGame(a);
 
-    std::cout << chessGame.getBoardView();
+  //  std::cout << chessGame.getBoardView();
 
 
     std::string input = "d8,f8";
@@ -667,9 +667,23 @@ TEST(CASTLING, testPathBlocked){
     //User should not be able to castle since the path is under attak by the enemy rook.
     EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::INVALID_CASTLE);
 
-    //std::cout << chessGame.getBoardView();
+    input="d8,e8";
+    EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::INVALID_KING_MOVE);
 
+    input="h8,e8";
+    EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::VALID_MOVE);
 
+    // std::cout << chessGame.getBoardView();
+
+    input="e8,e7";
+    EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::VALID_MOVE);
+
+    std::cout << chessGame.getBoardView();
+
+    input="d8,e8";
+    EXPECT_NE(chessGame.readInput(input,p1),ChessErrorCode::INVALID_KING_MOVE);
+
+    std::cout << chessGame.getBoardView();
 
 }
 
