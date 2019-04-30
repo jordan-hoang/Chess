@@ -203,7 +203,6 @@ bool Board::isAttackedVertically(const ChessCoordinate &start, const Color &king
         Piece tmp = chessBoard.at(i).at(start.col);
         if(tmp.getPieceUnit() == PieceUnit::ROOK || tmp.getPieceUnit() == PieceUnit::QUEEN){
             if(tmp.getColor() != kingColor && tmp.getColor() != Color::COLORLESS){
-                std::cout << "startRow:" << i << " startCol:" << start.col << "\n";
                 return true;
             }
         } if(tmp.getPieceUnit() != PieceUnit::NONE){  //but we need to stop checking if the piece we encounter is not
@@ -224,15 +223,16 @@ bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &king
     if(kingColor == Color::BLUE_UPPERCASE){
 
         //bottom left of start and bottom right of start if contain pawn will mean that spot is dangerous
-        ChessCoordinate bottomLeft{start.row + 1, start.col - 1};
+        ChessCoordinate bottomLeft{start.row - 1, start.col - 1};
         if(bottomLeft.isValid()){
             Piece tmp = getPiece(bottomLeft);
+
             if(tmp.getColor() == Color::RED_LOWERCASE && tmp.getPieceUnit() == PieceUnit::PAWN){
                 return true;
             }
         }
 
-        ChessCoordinate bottomRight{start.row + 1, start.col + 1};
+        ChessCoordinate bottomRight{start.row - 1, start.col + 1};
         if(bottomRight.isValid()) {
             Piece tmp = getPiece(bottomRight);
             if (tmp.getColor() == Color::RED_LOWERCASE && tmp.getPieceUnit() == PieceUnit::PAWN) {
@@ -243,14 +243,14 @@ bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &king
     } else if(kingColor == Color::RED_LOWERCASE){
 
         //watch out for pawns coming from above!
-        ChessCoordinate topLeft{start.row - 1, start.col - 1};
+        ChessCoordinate topLeft{start.row + 1, start.col - 1};
         if(topLeft.isValid()){
             Piece tmp = getPiece(topLeft);
             if(tmp.getColor() == Color::BLUE_UPPERCASE && tmp.getPieceUnit() == PieceUnit::PAWN){
                 return true;
             }
         }
-        ChessCoordinate topRight{start.row - 1, start.col + 1};
+        ChessCoordinate topRight{start.row + 1, start.col + 1};
         if(topRight.isValid()){
             Piece tmp = getPiece(topRight);
             if(tmp.getPieceUnit() == PieceUnit::PAWN && tmp.getColor() == Color::BLUE_UPPERCASE){
@@ -266,6 +266,7 @@ bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &king
     int dirX[4] = {1,-1,1,-1};
     int dirY[4] = {1,-1,-1,1};
 
+
     for(int i = 0 ; i < 4; i++){
         ChessCoordinate startingPosition{start.row,start.col};
         bool isValid = true;
@@ -276,7 +277,7 @@ bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &king
                     requestUnit(startingPosition) == PieceUnit::BISHOP) {
                     return true;
                 }
-            } else if(getPiece(startingPosition).getPieceUnit() != PieceUnit::NONE){
+            } if(getPiece(startingPosition).getPieceUnit() != PieceUnit::NONE){
                 isValid = false;
             }
             startingPosition.row += dirX[i];
@@ -288,7 +289,6 @@ bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &king
 
     return false;
 }
-
 
 
 
@@ -383,11 +383,6 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor
     //Function doesn't cover attacks from pawns, and other kings.
     //Now we need to test the position vertically, horizontally, and attacks from knights.
 
-    //First check if the square is empty since it's supposed to be where you want to "move to"
-    if(getPiece(position).getPieceUnit() != PieceUnit::NONE){
-        return true;
-    }
-
 
     //All possible moves of a knight
     int knightMoveX[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
@@ -406,16 +401,21 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor
     }
 
 
-
+    /*
     if( isAttackedHorizontally(position, ChessCoordinate{position.row,7}, kingColor  ) ){
         return true;
-    } else if( isAttackedHorizontally(position, ChessCoordinate{position.row,0}, kingColor) ){
+    }if( isAttackedHorizontally(position, ChessCoordinate{position.row,0}, kingColor) ){
         return true;
-    } else if( isAttackedVertically(position, kingColor) ){
-        return true;
-    } else if( isAttackedDiagonally(position, kingColor)){
+    } */
+
+    if( isAttackedVertically(position, kingColor) ){
         return true;
     }
+
+     if(isAttackedDiagonally(position, kingColor)){
+        return true;
+    }
+
 
 
 
