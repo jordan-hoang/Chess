@@ -617,8 +617,12 @@ vector<Piece> emptyRow(){
     return tmp;
 }
 
-
+/**
+ * Test to see if the king can castle if the direction he is wants to castle has enemies attacking that square
+ */
 TEST(CASTLING, testPathBlocked){
+    //Also test vertical and horizontal attackers
+
     vector<vector<Piece>> a;
 
     vector<Piece> backRow;
@@ -685,11 +689,48 @@ TEST(CASTLING, testPathBlocked){
     input="d1,e2";
     EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
 
+    input="e1,e3";
+    EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+    input="d1,e1";
+    EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+
+    input="e1,e2";
+    EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+   // std::cout << chessGame.getBoardView();
+
+    input = "a8,a2";
+    EXPECT_EQ(chessGame.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+   // std::cout << chessGame.getBoardView();
+
+
+    input = "e2,e1";
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::VALID_MOVE);
+
+
+    input = "e1,e2";
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_KING_MOVE);
+
+
+    input = "a2,h2";
+    EXPECT_EQ(chessGame.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+
+
+    input = "e1,e2";
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_KING_MOVE);
+
+
+
+
+
+
 }
 
 /**
  *
- * Validates that the king cannot enter squares that can be attacked by an enemy knight.
+ * Validates that the king cannot enter squares that can be attacked by an enemy knight, and enemies pawn.
+ * Has a quick test for killing pawns diagonally backwards
  *
  */
 TEST(KING,kingMovement){
@@ -776,7 +817,6 @@ TEST(KING,kingMovement){
 
 
 
-
     input = "e2,e4";
     EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::VALID_MOVE);
 
@@ -790,7 +830,6 @@ TEST(KING,kingMovement){
 
     input = "d6,c6";
     EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
-    std::cout << game.getBoardView();
     //Alright now we are going to check if the other king is responsive to the other teams pawns.
 
 
@@ -800,32 +839,25 @@ TEST(KING,kingMovement){
 
     input = "e5,e4";
     EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
-    std::cout << game.getBoardView();
 
 
+    // Attempting to kill the pawn diagonally backwards
     input = "d5,e4";
     EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::INVALID_MOVE);
-    std::cout << game.getBoardView();
-
-/*
-
-    //Now move the king upwards to face the pawns
+    //
 
     input = "e1,e2";
-    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
-    std::cout << game.getBoardView();
+    EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::VALID_MOVE);
 
     input = "e2,e3";
-    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
-    std::cout << game.getBoardView();
+    EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::VALID_MOVE);
 
-*/
+    input = "e3,d3";
+    EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::INVALID_KING_MOVE);
 
-
-
-
+    input = "e3,f3";
+    EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::INVALID_KING_MOVE);
 
 
 }
-
 

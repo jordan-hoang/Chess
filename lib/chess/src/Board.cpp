@@ -145,37 +145,93 @@ bool Board::isHorizontalPathClear(const ChessCoordinate &start, const ChessCoord
     return (result == iterEnd);
 }
 
+
+
+/**
+ * Determines w/e the path is free vertically
+ * @param start
+ * @param finish
+ */
+bool Board::isVerticalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+
+    int begin = std::min(start.row,finish.row);
+    int end = std::max(start.row,finish.row);
+
+    // + 1 for the space in front of it
+    for(int i = begin + 1; i < end ; i++){
+        if(requestUnit({i,start.col}) != PieceUnit::NONE ){
+            return false;
+        }
+    }
+    return true;
+
+}
+
+//2 slopes + or - and 2 ways to traverse them so 4 ways in total....
+bool Board::isDiagonalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const{
+
+    // A bishop's diagonal can be defined by y = x or y = -x
+    int endIter = abs(finish.col - start.col);
+
+    int curX = start.col;
+    int curY = start.row;
+
+    int changeX = ( (finish.col - start.col) > 0 ) ? 1 : -1;
+    int changeY = ( (finish.row - start.row) > 0 ) ? 1 : -1;
+
+    for(int i = 0; i < endIter - 1; i++){
+        curX += changeX;
+        curY += changeY;
+        if(requestUnit({curY,curX}) != PieceUnit::NONE   ){
+            return false;
+        }
+    }
+
+    return true;
+}
+
 /**
  * NEEDS TESTING
  * @param start - coordinates of the square you want to check is under attack
  * @param finish - end/begin of the row
  * @return True if can be attacked else returns false.
  */
-bool Board::isAttackedHorizontally(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &kingColor) const {
+bool Board::isAttackedHorizontally(const ChessCoordinate &start, const Color &kingColor) const {
 
     const vector<Piece> &handle = chessBoard.at(start.row);
-    const auto iterBegin = handle.begin() + std::min(start.col,finish.col ) + 1 ;
-    const auto iterEnd = handle.begin() + std::max(start.col,finish.col) ;
-
+     auto iterBegin = handle.begin() + start.col + 1;
+     auto iterEnd = handle.end();
 
     //If the piece you are looking for is not None and the piece isn't the attack piece then......
     //Stops looking if it finds a piece that isn't none
-    const auto result = std::find_if(iterBegin,iterEnd,
-                                     [&](auto i) { return i.getPieceUnit() != PieceUnit::NONE ;} );
 
-    //Now we check for the piece that we are supposed to be looking for
-    if( result == iterEnd){
-        return false;
+    //Checking forwards towards the right, so --x-------a-----b--  "Piece a would look towards 'b' to find a rook or queen"
+     auto result = std::find_if(iterBegin,iterEnd,
+            [&](auto i ) {return i.getPieceUnit() != PieceUnit::NONE ;} );
+
+    if(result != iterEnd){
+        if((*result).getColor() != kingColor &&  ((*result).getPieceUnit() == PieceUnit::ROOK ||
+        (*result).getPieceUnit() == PieceUnit::QUEEN )){
+            return true;
+        }
     }
 
-    PieceUnit foundPiece = (*result).getPieceUnit();
-    //They belong on the same team so impossible for them to attack each other.
-    if( (*result).getColor() == kingColor){
-        return false;
+
+    //Checking backwards towards the left, so    --x-----a---- "Piece a would be checking towards x to find a rook or queen---
+    const auto rIter = handle.rbegin() + start.col - 1;
+    const auto resultTwo = std::find_if(rIter, handle.rend(),
+                                     [&](auto i ) {return i.getPieceUnit() != PieceUnit::NONE ;} );
+
+    if(resultTwo != handle.rend()){
+        if((*resultTwo).getColor() != kingColor &&  ((*resultTwo).getPieceUnit() == PieceUnit::ROOK ||
+                                                  (*resultTwo).getPieceUnit() == PieceUnit::QUEEN )){
+            return true;
+        }
     }
 
-    return ( foundPiece == PieceUnit::ROOK || foundPiece == PieceUnit::QUEEN ) ;
 
+
+    return false;
 }
 
 /**
@@ -206,14 +262,13 @@ bool Board::isAttackedVertically(const ChessCoordinate &start, const Color &king
                 return true;
             }
         } if(tmp.getPieceUnit() != PieceUnit::NONE){  //but we need to stop checking if the piece we encounter is not
-          break;
+            break;
         }
     }
 
     return false;
 
 }
-
 
 bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor) const {
 
@@ -290,51 +345,6 @@ bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &king
     return false;
 }
 
-
-
-/**
- * Determines w/e the path is free vertically
- * @param start
- * @param finish
- */
-bool Board::isVerticalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const {
-
-    int begin = std::min(start.row,finish.row);
-    int end = std::max(start.row,finish.row);
-
-    // + 1 for the space in front of it
-    for(int i = begin + 1; i < end ; i++){
-        if(requestUnit({i,start.col}) != PieceUnit::NONE ){
-            return false;
-        }
-    }
-    return true;
-
-}
-
-//2 slopes + or - and 2 ways to traverse them so 4 ways in total....
-bool Board::isDiagonalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const{
-
-    // A bishop's diagonal can be defined by y = x or y = -x
-    int endIter = abs(finish.col - start.col);
-
-    int curX = start.col;
-    int curY = start.row;
-
-    int changeX = ( (finish.col - start.col) > 0 ) ? 1 : -1;
-    int changeY = ( (finish.row - start.row) > 0 ) ? 1 : -1;
-
-    for(int i = 0; i < endIter - 1; i++){
-        curX += changeX;
-        curY += changeY;
-        if(requestUnit({curY,curX}) != PieceUnit::NONE   ){
-            return false;
-        }
-    }
-
-    return true;
-}
-
 /**
  * A method that checks to see w/e the distance between 2 path's is clear.
  * You can only do vertical, horizontal, or diagonal only lines.
@@ -368,12 +378,10 @@ bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &fin
     return false;
 }
 
-
 void Board::promotePawnToQueen(Piece &source, const ChessCoordinate &target){
     if( (target.row == 0 || target.row == 7) && (source.getPieceUnit() == PieceUnit::PAWN) ){
         source.setPiece(PieceUnit::QUEEN,source.getColor());
     }
-
 }
 
 //Check's if a square is under attack
@@ -401,26 +409,15 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor
     }
 
 
-    /*
-    if( isAttackedHorizontally(position, ChessCoordinate{position.row,7}, kingColor  ) ){
+    if( isAttackedHorizontally(position,  kingColor  ) ){
         return true;
-    }if( isAttackedHorizontally(position, ChessCoordinate{position.row,0}, kingColor) ){
-        return true;
-    } */
-
+    }
     if( isAttackedVertically(position, kingColor) ){
         return true;
     }
 
-     if(isAttackedDiagonally(position, kingColor)){
-        return true;
-    }
+    return (isAttackedDiagonally(position, kingColor));
 
-
-
-
-
-    return false;
 }
 
 ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoordinate &finish){

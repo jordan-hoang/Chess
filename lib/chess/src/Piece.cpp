@@ -21,7 +21,6 @@
  */
 ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const {
 
-
     //+ means goes up -1 means goes down the chess board
     int directionTravel = (this->pieceColor == Color::RED_LOWERCASE) ? 1 : -1;
 
@@ -57,8 +56,6 @@ ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoor
                 return ChessErrorCode::VALID_MOVE;
             }
         }
-
-        
         return ChessErrorCode::INVALID_MOVE;
     }
 

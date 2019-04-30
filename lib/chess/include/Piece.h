@@ -45,10 +45,7 @@ struct ChessCoordinate {
         if(row < 0 || row >= 8){
             return false;
         }
-        if(col < 0 || col >= 8 ){
-            return false;
-        }
-        return true;
+        return !(col < 0 || col >= 8 );
     }
 
 
