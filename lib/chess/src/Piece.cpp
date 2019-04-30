@@ -45,14 +45,20 @@ ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoor
 
     }
     else{
-        // Handling diagonal movement
+        // Handling diagonal movement, should be invalid if travelling backwards though
         int diffX  = abs(finish.row - start.row);
         int diffY  = abs(finish.col - start.col);
 
+        int rst = diffX * diffY;
+
         //A pawn can travel at most 1 unit diagonally therefore there xPos,yPos must have changed by 1.
         if(diffX == 1 && diffY == 1){
-            return ChessErrorCode::VALID_MOVE;
+            if(start.row + directionTravel == finish.row ) {
+                return ChessErrorCode::VALID_MOVE;
+            }
         }
+
+        
         return ChessErrorCode::INVALID_MOVE;
     }
 

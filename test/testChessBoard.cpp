@@ -773,28 +773,54 @@ TEST(KING,kingMovement){
     //Now checking pawns
     input = "d8,d7";
     EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
-    std::cout << game.getBoardView();
+
 
 
 
     input = "e2,e4";
     EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::VALID_MOVE);
-    std::cout << game.getBoardView();
 
     input = "e4,d5";
     EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::VALID_MOVE);
-    std::cout << game.getBoardView();
 
 
     input = "d6,e6";
     EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
-    std::cout << game.getBoardView();
 
 
     input = "d6,c6";
     EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
     std::cout << game.getBoardView();
-     
+    //Alright now we are going to check if the other king is responsive to the other teams pawns.
+
+
+    input = "e7,e5";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+
+    input = "e5,e4";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+    std::cout << game.getBoardView();
+
+
+    input = "d5,e4";
+    EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::INVALID_MOVE);
+    std::cout << game.getBoardView();
+
+/*
+
+    //Now move the king upwards to face the pawns
+
+    input = "e1,e2";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+    std::cout << game.getBoardView();
+
+    input = "e2,e3";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+    std::cout << game.getBoardView();
+
+*/
+
 
 
 

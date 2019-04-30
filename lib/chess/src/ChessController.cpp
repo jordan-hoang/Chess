@@ -243,7 +243,7 @@ ChessErrorCode ChessController::executeMove(std::string &moveFrom, std::string &
 
 
 /**
- * Move's piece regardless of color, left here for test class.
+ * Move's piece regardless of color, left here for test class, but can also be used to replay matches
  * @param moveFrom - ChessCoordinate you are from
  * @param moveTo   - ChessCoordinate you are moving to.
  */
