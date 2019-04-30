@@ -190,6 +190,41 @@ bool Board::isDiagonalPathClear(const ChessCoordinate &start, const ChessCoordin
     return true;
 }
 
+
+/**
+ * A method that checks to see w/e the distance between 2 path's is clear.
+ * You can only do vertical, horizontal, or diagonal only lines.
+ *
+ * Ex. (2,4) to (3,4) // (3,5) to (3,7) // or (3,3) to (5,5)
+ *
+ * @param start - Starting coordinate
+ * @param finish - Finishing coordinate
+ * @return
+ */
+bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+
+    int diffRow = abs( finish.row - start.row);
+    int diffCol = abs( finish.col - start.col);
+
+    // You are moving horizontally
+    if( start.row == finish.row && start.col != finish.col ){
+        return isHorizontalPathClear(start, finish);
+    }
+
+        // You are moving vertical
+    else if( start.row != finish.row && start.col == finish.col ) {
+        return isVerticalPathClear(start, finish);
+    }
+
+    else if( diffRow == diffCol ){
+        return isDiagonalPathClear(start, finish);
+    }
+
+
+    return false;
+}
+
+
 /**
  * NEEDS TESTING
  * @param start - coordinates of the square you want to check is under attack
@@ -345,44 +380,6 @@ bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &king
     return false;
 }
 
-/**
- * A method that checks to see w/e the distance between 2 path's is clear.
- * You can only do vertical, horizontal, or diagonal only lines.
- *
- * Ex. (2,4) to (3,4) // (3,5) to (3,7) // or (3,3) to (5,5)
- *
- * @param start - Starting coordinate
- * @param finish - Finishing coordinate
- * @return
- */
-bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const {
-
-    int diffRow = abs( finish.row - start.row);
-    int diffCol = abs( finish.col - start.col);
-
-    // You are moving horizontally
-    if( start.row == finish.row && start.col != finish.col ){
-       return isHorizontalPathClear(start, finish);
-    }
-
-    // You are moving vertical
-    else if( start.row != finish.row && start.col == finish.col ) {
-       return isVerticalPathClear(start, finish);
-    }
-
-    else if( diffRow == diffCol ){
-        return isDiagonalPathClear(start, finish);
-    }
-
-
-    return false;
-}
-
-void Board::promotePawnToQueen(Piece &source, const ChessCoordinate &target){
-    if( (target.row == 0 || target.row == 7) && (source.getPieceUnit() == PieceUnit::PAWN) ){
-        source.setPiece(PieceUnit::QUEEN,source.getColor());
-    }
-}
 
 //Check's if a square is under attack
 bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor) const {
@@ -390,8 +387,6 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor
 
     //Function doesn't cover attacks from pawns, and other kings.
     //Now we need to test the position vertically, horizontally, and attacks from knights.
-
-
     //All possible moves of a knight
     int knightMoveX[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
     int knightMoveY[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
@@ -418,6 +413,12 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor
 
     return (isAttackedDiagonally(position, kingColor));
 
+}
+
+void Board::promotePawnToQueen(Piece &source, const ChessCoordinate &target){
+    if( (target.row == 0 || target.row == 7) && (source.getPieceUnit() == PieceUnit::PAWN) ){
+        source.setPiece(PieceUnit::QUEEN,source.getColor());
+    }
 }
 
 ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoordinate &finish){
@@ -521,14 +522,14 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     if(!pathClear) { pathClear = isPathClear(start,finish); }
     if(!pathClear) {  return ChessErrorCode::INVALID_MOVE; }
 
-    //Code for king movement, since king have special rules.
+    //Code for moving the king specifically
     if(sourcePiece.getPieceUnit() == PieceUnit::KING){
         bool isSquareAttacked = isSquareUnderAttack(finish,sourcePiece.getColor());
         if(isSquareAttacked){
             return ChessErrorCode::INVALID_KING_MOVE;
         }
     }
-
+    //
 
     ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start,finish,targetPiece.getColor());
 
@@ -540,11 +541,23 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
         }
         return ChessCode;
     } else if(ChessCode == ChessErrorCode::VALID_MOVE){
+        //We need to check if the move will place the user in check?
+
+
         promotePawnToQueen(sourcePiece, finish);
         lastPieceKilled.setPiece( targetPiece.getPieceUnit() , targetPiece.getColor() );
         Piece::updatePiece(sourcePiece,targetPiece);
         return ChessCode;
     }
+
+
+    //
+
+
+
+
+
+
 
     return ChessCode;
 
