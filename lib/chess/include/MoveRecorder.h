@@ -24,14 +24,15 @@ class MoveRecorder {
         void removeLastMove();
 
         std::string printMoves();
+        std::pair<ChessCoordinate,ChessCoordinate> getLastMove();
 
-
-
+        MoveRecorder();
 
 
 
     private:
-        vector<pair<ChessCoordinate, ChessCoordinate> > listOfGameMoves;
+        vector<pair<ChessCoordinate, ChessCoordinate> > m_listOfGameMoves;
+
 
 
 };

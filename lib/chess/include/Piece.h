@@ -6,6 +6,7 @@
 #ifndef CHESS_PIECE_H
 #define CHESS_PIECE_H
 
+#include <sstream>
 
 /**Chess error codes,
  * INVALID_MOVE means that piece can't move in that way
@@ -47,6 +48,10 @@ struct ChessCoordinate {
         return !(col < 0 || col >= 8 );
     }
 
+    friend std::ostream &operator<<(std::ostream &os, const ChessCoordinate &coordinate) {
+        os << "{"  << coordinate.row << ", " << coordinate.col << "}\n";
+        return os;
+    }
 
 };
 
