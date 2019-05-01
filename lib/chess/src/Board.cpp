@@ -5,7 +5,7 @@
 #include "Board.h"
 #include <vector>
 #include <iostream>
-#include <assert.h>
+#include <cassert>
 #include <algorithm>
 
 
@@ -476,14 +476,14 @@ const std::string Board::getBoardView() const {
     stream << "   abcdefgh\n___________\n";
 
     int num = 1;
-    for(const vector<Piece> row : _chessBoard){
+    for(const vector<Piece> &row : _chessBoard){
         stream << num << "| ";
         drawRow(row,stream);
         num++;
     }
     stream << "___________\n";
 
-    return std::move(stream.str());
+    return stream.str();
 }
 
 /**
@@ -500,7 +500,7 @@ const std::string Board::getReverseBoardView() const {
         drawRowReverse(row,stream);
     }
 
-    return std::move(stream.str());
+    return stream.str();
 
 }
 
