@@ -6,7 +6,6 @@
 #ifndef CHESS_PIECE_H
 #define CHESS_PIECE_H
 
-#endif //CHESS_PIECE_H
 
 /**Chess error codes,
  * INVALID_MOVE means that piece can't move in that way
@@ -55,8 +54,9 @@ class Piece {
     private:
         PieceUnit _pieceId;
         Color _pieceColor;
-        ChessCoordinate _coordinate;
         bool _hasMoved = false;
+        ChessCoordinate _coordinate;
+
 
         enum ChessErrorCode validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const;
         enum ChessErrorCode validateRook(const ChessCoordinate &start, const ChessCoordinate &finish) const;
@@ -69,6 +69,7 @@ class Piece {
         const enum PieceUnit getPieceUnit() const { return _pieceId; };
         const enum Color getColor() const { return _pieceColor; };
         const bool getHasMoved() const { return _hasMoved; } ;
+        const ChessCoordinate getCoordinate() const { return _coordinate; };
 
         enum ChessErrorCode checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const Color &targetColor) const   ;
         static void updatePiece(Piece &source, Piece &destination);
@@ -83,7 +84,9 @@ class Piece {
 
 
     Piece(PieceUnit unit, Color color, ChessCoordinate coordinate ) :
-            _pieceId(unit), _pieceColor(color),_coordinate(coordinate),_hasMoved(false){}
+            _pieceId(unit), _pieceColor(color),_hasMoved(false),_coordinate(coordinate){}
 
 };
 
+
+#endif //CHESS_PIECE_H

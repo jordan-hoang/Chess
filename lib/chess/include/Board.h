@@ -8,6 +8,7 @@
 #include <vector>
 #include <array>
 #include "Piece.h"
+#include "MoveRecorder.h"
 #include <unordered_map>
 #include <sstream>
 
@@ -17,6 +18,7 @@
 
 
 using std::vector;
+
 
 //Contains an instance of a game
 class Board {
@@ -39,8 +41,11 @@ public:
     const Piece getLastPieceKilled() const;
 
 private:
-    vector< vector<Piece> > _chessBoard;
+    vector<vector<Piece> > _chessBoard;
     Piece _lastPieceKilled;
+    MoveRecorder recorder;
+
+
 
    void initializeGame(vector<vector<Piece>> &chessBoard);
    void createBackRank(Color myColor, vector<vector<Piece>> &boardView, int row) ;
