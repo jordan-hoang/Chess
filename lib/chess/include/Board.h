@@ -23,9 +23,10 @@ class Board {
 public:
     Board();
 
-    Board(vector<vector<Piece>> &chessBoard); // Pass in your own chessBoard, used for testing.
+    Board(vector<vector<Piece>> &chessBoard); // Pass in your own _chessBoard, used for testing.
     const std::string getBoardView() const;
     const std::string getReverseBoardView() const;
+    const vector< vector<Piece> >& getBoard() const;
 
     Piece& requestPiece(const ChessCoordinate &position);
     const Piece &getPiece(const ChessCoordinate &position) const;
@@ -38,11 +39,11 @@ public:
     const Piece getLastPieceKilled() const;
 
 private:
-    vector< vector<Piece> > chessBoard;
-    Piece lastPieceKilled;
+    vector< vector<Piece> > _chessBoard;
+    Piece _lastPieceKilled;
 
    void initializeGame(vector<vector<Piece>> &chessBoard);
-   void createBackRank(Color myColor, vector<vector<Piece>> &boardView) ;
+   void createBackRank(Color myColor, vector<vector<Piece>> &boardView, int row) ;
    void drawRow(const vector<Piece> &listPieceId, std::stringstream &stream) const;
    void drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &stream) const;
 

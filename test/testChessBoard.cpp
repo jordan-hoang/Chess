@@ -858,6 +858,16 @@ TEST(KING,kingMovement){
     input = "e3,f3";
     EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::INVALID_KING_MOVE);
 
-
 }
 
+
+TEST(K,k){
+
+    Board a;
+
+
+
+
+
+
+}

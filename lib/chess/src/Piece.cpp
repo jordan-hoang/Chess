@@ -22,7 +22,7 @@
 ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const {
 
     //+ means goes up -1 means goes down the chess board
-    int directionTravel = (this->pieceColor == Color::RED_LOWERCASE) ? 1 : -1;
+    int directionTravel = (this->_pieceColor == Color::RED_LOWERCASE) ? 1 : -1;
 
     int difY = finish.row - start.row;
     int difX = finish.col - start.col;
@@ -108,7 +108,7 @@ ChessErrorCode Piece::validateKing(const ChessCoordinate &start, const ChessCoor
 
 
     //Implement castling here
-    if(!hasMoved){
+    if(!_hasMoved){
         if( ( (start.col - 2 == finish.col) || (start.col + 2 == finish.col) ) && (finish.row == start.row) ){
             return ChessErrorCode::CASTLE;
         }
@@ -132,10 +132,9 @@ ChessErrorCode Piece::validateQueen(const ChessCoordinate &start, const ChessCoo
 // All the validate methods above do the same thing
 // they validate to see if the move is possible then send a code when it happens
 // All of them are helper methods of checkMovementIsValid
-
 void Piece::setPiece(PieceUnit pieceUnit, Color color) {
-    this->pieceId = pieceUnit;
-    this->pieceColor = color;
+    this->_pieceId = pieceUnit;
+    this->_pieceColor = color;
 }
 
 
@@ -144,13 +143,13 @@ void Piece::setPiece(PieceUnit pieceUnit, Color color) {
 //This function shouldn't need a piece to be executed
 void Piece::updatePiece(Piece &source, Piece &destination) {
 
-    destination.pieceId = source.pieceId;
-    destination.pieceColor = source.pieceColor;
-    destination.hasMoved = true;
+    destination._pieceId = source._pieceId;
+    destination._pieceColor = source._pieceColor;
+    destination._hasMoved = true;
 
-    source.pieceId = PieceUnit::NONE;
-    source.pieceColor = Color::COLORLESS;
-    source.hasMoved = false; //Empty squares "can't move"
+    source._pieceId = PieceUnit::NONE;
+    source._pieceColor = Color::COLORLESS;
+    source._hasMoved = false; //Empty squares "can't move"
 
 }
 
@@ -163,7 +162,7 @@ void Piece::updatePiece(Piece &source, Piece &destination) {
  */
 ChessErrorCode Piece::checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const  Color &targetColor) const {
 
-    PieceUnit piece = pieceId;
+    PieceUnit piece = _pieceId;
 
     switch(piece){
         case PieceUnit::PAWN:
@@ -188,7 +187,7 @@ ChessErrorCode Piece::checkMovementIsValid(const ChessCoordinate &start, const C
 
 
 Piece::Piece() {
-    this->pieceColor = Color::COLORLESS;
-    this->pieceId = PieceUnit::NONE;
-    this->hasMoved = false;
+    this->_pieceColor = Color::COLORLESS;
+    this->_pieceId = PieceUnit::NONE;
+    this->_hasMoved = false;
 }

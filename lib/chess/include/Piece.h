@@ -53,9 +53,10 @@ struct ChessCoordinate {
 
 class Piece {
     private:
-        PieceUnit pieceId;
-        Color pieceColor;
-        bool hasMoved = false;
+        PieceUnit _pieceId;
+        Color _pieceColor;
+        ChessCoordinate _coordinate;
+        bool _hasMoved = false;
 
         enum ChessErrorCode validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const;
         enum ChessErrorCode validateRook(const ChessCoordinate &start, const ChessCoordinate &finish) const;
@@ -65,9 +66,9 @@ class Piece {
         enum ChessErrorCode validateQueen(const ChessCoordinate &start, const ChessCoordinate &finish) const;
 
     public:
-        const enum PieceUnit getPieceUnit() const { return pieceId; };
-        const enum Color getColor() const { return pieceColor; };
-        const bool getHasMoved() const { return hasMoved; } ;
+        const enum PieceUnit getPieceUnit() const { return _pieceId; };
+        const enum Color getColor() const { return _pieceColor; };
+        const bool getHasMoved() const { return _hasMoved; } ;
 
         enum ChessErrorCode checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const Color &targetColor) const   ;
         static void updatePiece(Piece &source, Piece &destination);
@@ -75,8 +76,14 @@ class Piece {
 
 
     Piece();
+
+    //Legacy constructor
     Piece(PieceUnit unit, Color color) :
-            pieceId(unit), pieceColor(color),hasMoved(false){}
+            _pieceId(unit), _pieceColor(color),_hasMoved(false),_coordinate({-1,-1}){}
+
+
+    Piece(PieceUnit unit, Color color, ChessCoordinate coordinate ) :
+            _pieceId(unit), _pieceColor(color),_coordinate(coordinate),_hasMoved(false){}
 
 };
 
