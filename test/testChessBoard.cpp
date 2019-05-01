@@ -858,6 +858,22 @@ TEST(KING,kingMovement){
     input = "e3,f3";
     EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::INVALID_KING_MOVE);
 
-
 }
 
+
+TEST(CoordinateInitialization, coordiantePiece){
+
+    Board a;
+    a.movePiece({1,1},{2,1});
+
+    const vector< vector<Piece> > handle = a.getBoard();
+
+    for(int i = 0; i < 8 ; i++){
+        for(int col = 0 ; col < 8; col++){
+            const Piece &a = handle.at(i).at(col);
+            ChessCoordinate c{i,col};
+            EXPECT_EQ(a.getCoordinate(), c );
+        }
+    }
+
+}

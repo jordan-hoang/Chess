@@ -84,10 +84,7 @@ ChessErrorCode ChessController::processChessMove(const ChessCoordinate &startPos
  * @return A message on how to play the game
  */
 std::string ChessController::helpMessage() const{
-
-    //std::string msg = stringManager.getString(Internationalization::STRING_CODE::MINIGAME_CHESS_WELCOME_MESSAGE);
     return "insert helpful message here";
-
 }
 
 
@@ -268,5 +265,4 @@ ChessController::ChessController(vector<vector<Piece>> a) {
     this->_playerOne = ChessPlayer( "playerOne", Color::RED_LOWERCASE  );
     this->_playerTwo = ChessPlayer( "playerTwo", Color::BLUE_UPPERCASE );
     this->_gameBoard = Board(a);
-
 }

@@ -11,7 +11,7 @@
 
 //getters and setters
 const Piece Board::getLastPieceKilled() const {
-    return lastPieceKilled;
+    return _lastPieceKilled;
 }
 
 /**
@@ -19,23 +19,23 @@ const Piece Board::getLastPieceKilled() const {
  * @param color - Chess piece color
  * @param boardView - The board itself. Called chessBoard.
  */
-void Board::createBackRank(Color color, vector<vector<Piece>> &boardView) {
+void Board::createBackRank(Color color, vector<vector<Piece>> &boardView,int row) {
 
     vector<Piece> tmp;
     tmp.reserve(8);
 
-        tmp.emplace_back(Piece{PieceUnit::ROOK,color});
-        tmp.emplace_back(Piece{PieceUnit::KNIGHT,color});
-        tmp.emplace_back(Piece{PieceUnit::BISHOP,color});
+        tmp.emplace_back(Piece{PieceUnit::ROOK,color, {row,0}   });
+        tmp.emplace_back(Piece{PieceUnit::KNIGHT,color, {row,1} });
+        tmp.emplace_back(Piece{PieceUnit::BISHOP,color, {row,2} });
 
 
-        tmp.emplace_back(Piece{PieceUnit::QUEEN,color});
-        tmp.emplace_back(Piece{PieceUnit::KING,color});
+        tmp.emplace_back(Piece{PieceUnit::QUEEN,color, {row,3} });
+        tmp.emplace_back(Piece{PieceUnit::KING,color, {row,4}  });
 
 
-        tmp.emplace_back(Piece{PieceUnit::BISHOP,color});
-        tmp.emplace_back(Piece{PieceUnit::KNIGHT,color});
-        tmp.emplace_back(Piece{PieceUnit::ROOK,color});
+        tmp.emplace_back(Piece{PieceUnit::BISHOP,color, {row,5} });
+        tmp.emplace_back(Piece{PieceUnit::KNIGHT,color, {row,6} });
+        tmp.emplace_back(Piece{PieceUnit::ROOK,color, {row,7}   });
 
 
         boardView.push_back(tmp);
@@ -49,26 +49,30 @@ void Board::initializeGame(vector<vector<Piece>> &chessBoard) {
 
 
     //Doing red side
-    createBackRank(Color::RED_LOWERCASE,chessBoard);
+    createBackRank(Color::RED_LOWERCASE,chessBoard, 0);
 
     std::vector<Piece> blackPawn;
-    blackPawn.assign(8, Piece{PieceUnit::PAWN, Color::RED_LOWERCASE});
+    for(int col = 0; col < 8 ; col++){
+        blackPawn.emplace_back( Piece{PieceUnit::PAWN, Color::RED_LOWERCASE, {1,col} }  );
+    }
     chessBoard.push_back(blackPawn);
 
 
-    for (int i = 2; i < 6; i++){
+    for (int row = 2; row < 6; row++) {
         std::vector<Piece> tmp;
-        tmp.assign(8,Piece{PieceUnit::NONE, Color::COLORLESS});
+        for (int col = 0; col < 8; col++) {
+            tmp.emplace_back(Piece{PieceUnit::NONE, Color::COLORLESS, {row,col} } );
+        }
         chessBoard.push_back(tmp);
     }
 
     //Doing blue side
     std::vector<Piece> whitePawn;
-    whitePawn.assign(8,Piece{PieceUnit::PAWN, Color::BLUE_UPPERCASE});
+    for(int col = 0 ; col < 8; col++){
+        whitePawn.emplace_back(Piece{PieceUnit::PAWN, Color::BLUE_UPPERCASE, {6,col}});
+    }
     chessBoard.push_back(whitePawn);
-
-    createBackRank(Color::BLUE_UPPERCASE,chessBoard);
-
+    createBackRank(Color::BLUE_UPPERCASE,chessBoard,7);
 
 }
 
@@ -132,7 +136,7 @@ void Board::drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &
 bool Board::isHorizontalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const {
 
 
-    const vector<Piece> &handle = chessBoard.at(start.row);
+    const vector<Piece> &handle = _chessBoard.at(start.row);
     const auto iterBegin = handle.begin() + std::min(start.col,finish.col ) + 1 ;
     const auto iterEnd = handle.begin() + std::max(start.col,finish.col) ;
 
@@ -233,7 +237,7 @@ bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &fin
  */
 bool Board::isAttackedHorizontally(const ChessCoordinate &start, const Color &kingColor) const {
 
-    const vector<Piece> &handle = chessBoard.at(start.row);
+    const vector<Piece> &handle = _chessBoard.at(start.row);
      auto iterBegin = handle.begin() + start.col ;
      auto iterEnd = handle.end();
 
@@ -279,7 +283,7 @@ bool Board::isAttackedVertically(const ChessCoordinate &start, const Color &king
 
     //We need to check vertically upwards, then vertically downwards, from the position START
     for(int i = start.row ; i < 8 ; i++) {
-        Piece tmp = chessBoard.at(i).at(start.col);
+        Piece tmp = _chessBoard.at(i).at(start.col);
         if(tmp.getPieceUnit() == PieceUnit::ROOK || tmp.getPieceUnit() == PieceUnit::QUEEN){
             if(tmp.getColor() != kingColor){
                 return true;
@@ -291,7 +295,7 @@ bool Board::isAttackedVertically(const ChessCoordinate &start, const Color &king
 
     //Now we check downwards, almost duplicated code, only for parameters changed
     for(int i = start.row ; i >= 0; i--) {
-        Piece tmp = chessBoard.at(i).at(start.col);
+        Piece tmp = _chessBoard.at(i).at(start.col);
         if(tmp.getPieceUnit() == PieceUnit::ROOK || tmp.getPieceUnit() == PieceUnit::QUEEN){
             if(tmp.getColor() != kingColor && tmp.getColor() != Color::COLORLESS){
                 return true;
@@ -396,7 +400,7 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor
         int row = knightMoveX[i] + position.row;
         int col = knightMoveY[i] + position.col;
         if(row >= 0 && row <= 7 && col >= 0 && col <= 7){
-            Piece potentialEnemy = chessBoard.at(row).at(col);
+            Piece potentialEnemy = _chessBoard.at(row).at(col);
             if( potentialEnemy.getColor() != kingColor && potentialEnemy.getPieceUnit() == PieceUnit::KNIGHT){
                 return true;
             }
@@ -472,7 +476,7 @@ const std::string Board::getBoardView() const {
     stream << "   abcdefgh\n___________\n";
 
     int num = 1;
-    for(const vector<Piece> row : chessBoard){
+    for(const vector<Piece> row : _chessBoard){
         stream << num << "| ";
         drawRow(row,stream);
         num++;
@@ -492,12 +496,17 @@ const std::string Board::getReverseBoardView() const {
 
     for(int num = 8 ; num > 0 ; num--){
         stream << num << "| ";
-        const vector<Piece> &row = chessBoard.at(num - 1);
+        const vector<Piece> &row = _chessBoard.at(num - 1);
         drawRowReverse(row,stream);
     }
 
     return std::move(stream.str());
 
+}
+
+/*Get the array of vectors for some purpose*/
+const vector< vector<Piece> >& Board::getBoard() const {
+    return _chessBoard;
 }
 
 
@@ -548,7 +557,7 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
 
 
         promotePawnToQueen(sourcePiece, finish);
-        lastPieceKilled.setPiece( targetPiece.getPieceUnit() , targetPiece.getColor() );
+        _lastPieceKilled.setPiece( targetPiece.getPieceUnit() , targetPiece.getColor() );
         Piece::updatePiece(sourcePiece,targetPiece);
         return ChessCode;
     }
@@ -570,35 +579,35 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
  *  Enter's in a coordinate and returns the piece at that location
  */
 Piece& Board::requestPiece(const ChessCoordinate &position) {
-    return chessBoard.at( position.row ).at( position.col );
+    return _chessBoard.at( position.row ).at( position.col );
 }
 
 const Piece& Board::getPiece(const ChessCoordinate &position) const {
-    return chessBoard.at( position.row ).at( position.col );
+    return _chessBoard.at( position.row ).at( position.col );
 }
 
 
 
 const PieceUnit Board::requestUnit(const ChessCoordinate &position) const {
-    Piece a = chessBoard.at(position.row).at(position.col);
+    Piece a = _chessBoard.at(position.row).at(position.col);
     return a.getPieceUnit();
 }
 
 
 const Color Board::getPieceColor(const ChessCoordinate &position) const {
-    return chessBoard.at(position.row).at(position.col).getColor();
+    return _chessBoard.at(position.row).at(position.col).getColor();
 }
 
 //Constructor
 Board::Board() {
-    chessBoard.reserve(8);
-    initializeGame(chessBoard);
-    lastPieceKilled = Piece{PieceUnit::NONE,Color::COLORLESS};
+    _chessBoard.reserve(8);
+    initializeGame(_chessBoard);
+    _lastPieceKilled = Piece{PieceUnit::NONE,Color::COLORLESS, {-1,-1}};
 }
 
 Board::Board(vector<vector<Piece>> &chessBoard) {
-    this->chessBoard = chessBoard;
-    lastPieceKilled = Piece{PieceUnit::NONE, Color::COLORLESS};
+    this->_chessBoard = chessBoard;
+    _lastPieceKilled = Piece{PieceUnit::NONE, Color::COLORLESS, {-1,-1}};
 
 
     assert(chessBoard.size() == 8);
