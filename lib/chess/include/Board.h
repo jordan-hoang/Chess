@@ -57,8 +57,6 @@ private:
    bool isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor) const;
    bool isSquareUnderAttack(const ChessCoordinate &position, const Color enemyColor) const;
 
-   //Code that checks if the player move say a pawn, will it unblock the king from being killed by say a bishop
-   bool willPlacePlayerInCheck(const ChessCoordinate &position);
 
 
    void promotePawnToQueen(Piece &source, const ChessCoordinate &target);
