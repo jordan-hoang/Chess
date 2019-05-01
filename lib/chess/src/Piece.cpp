@@ -21,7 +21,6 @@
  */
 ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const {
 
-
     //+ means goes up -1 means goes down the chess board
     int directionTravel = (this->pieceColor == Color::RED_LOWERCASE) ? 1 : -1;
 
@@ -45,13 +44,17 @@ ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoor
 
     }
     else{
-        // Handling diagonal movement
+        // Handling diagonal movement, should be invalid if travelling backwards though
         int diffX  = abs(finish.row - start.row);
         int diffY  = abs(finish.col - start.col);
 
+        int rst = diffX * diffY;
+
         //A pawn can travel at most 1 unit diagonally therefore there xPos,yPos must have changed by 1.
         if(diffX == 1 && diffY == 1){
-            return ChessErrorCode::VALID_MOVE;
+            if(start.row + directionTravel == finish.row ) {
+                return ChessErrorCode::VALID_MOVE;
+            }
         }
         return ChessErrorCode::INVALID_MOVE;
     }
@@ -103,6 +106,17 @@ ChessErrorCode Piece::validateKing(const ChessCoordinate &start, const ChessCoor
         }
     }
 
+
+    //Implement castling here
+    if(!hasMoved){
+        if( ( (start.col - 2 == finish.col) || (start.col + 2 == finish.col) ) && (finish.row == start.row) ){
+            return ChessErrorCode::CASTLE;
+        }
+    }
+
+
+
+
     return ChessErrorCode::INVALID_MOVE;
 
 }
@@ -127,13 +141,17 @@ void Piece::setPiece(PieceUnit pieceUnit, Color color) {
 
 //Replaces the piece at destination with source, and source set to be empty
 //Note that you can just actually use std::swap..... instead of having this function.
+//This function shouldn't need a piece to be executed
 void Piece::updatePiece(Piece &source, Piece &destination) {
 
     destination.pieceId = source.pieceId;
     destination.pieceColor = source.pieceColor;
+    destination.hasMoved = true;
 
     source.pieceId = PieceUnit::NONE;
     source.pieceColor = Color::COLORLESS;
+    source.hasMoved = false; //Empty squares "can't move"
+
 }
 
 /***
@@ -172,4 +190,5 @@ ChessErrorCode Piece::checkMovementIsValid(const ChessCoordinate &start, const C
 Piece::Piece() {
     this->pieceColor = Color::COLORLESS;
     this->pieceId = PieceUnit::NONE;
+    this->hasMoved = false;
 }

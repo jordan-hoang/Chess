@@ -443,3 +443,421 @@ TEST(InvalidInputTest, invalidMoveInput) {
     player = "tester";
    // EXPECT_FALSE(test.executeMove(start, finish, player));
 }
+
+
+void setUpCastling(ChessController &a){
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+
+    std::string move = "a2,a4";
+    a.readInput(move,p1);
+    //std::cout << a.getBoardView();
+
+    move = "a7,a5";
+    a.readInput(move,p2);
+    //std::cout << a.getBoardView();
+
+    move = "b1,c3";
+    a.readInput(move,p1);
+    //std::cout << a.getBoardView();
+
+
+    move = "d7,d6";
+    a.readInput(move,p2);
+    //std::cout << a.getBoardView();
+
+
+    move = "d7,d6";
+    a.readInput(move,p2);
+    //std::cout << a.getBoardView();
+
+
+    move = "d2,d3";
+    a.readInput(move,p1);
+    //std::cout << a.getBoardView();
+
+
+    move = "c8,e6";
+    a.readInput(move,p2);
+    //std::cout << a.getBoardView();
+
+
+    move = "c1,e3";
+    a.readInput(move,p1);
+    //std::cout << a.getBoardView();
+
+
+    move = "d8,d7";
+    a.readInput(move,p2);
+    //std::cout << a.getBoardView();
+
+
+    move = "d1,d2";
+    a.readInput(move,p1);
+    //std::cout << a.getBoardView();
+
+
+    move = "b8,c6";
+    a.readInput(move,p2);
+    //std::cout << a.getBoardView();
+
+}
+
+/**
+ * Test a castle
+ */
+TEST(CASTLING, testCastle){
+
+    ChessController a;
+
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+    std::string move;
+
+    setUpCastling(a);
+
+    //MOVED ROOK, EXECUTED CASTLE HERE!
+    move = "e1,c1";
+    EXPECT_EQ(a.readInput(move,p1), ChessErrorCode::VALID_MOVE);
+
+    //MOVED ROOK!
+    move = "e8,c8";
+    EXPECT_EQ(a.readInput(move,p2), ChessErrorCode::VALID_MOVE);
+
+}
+
+/**
+ * Test if the game will let you castle if the king has moved.
+ */
+TEST(CASTLING, movedKing){
+    ChessController a;
+
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+    std::string move;
+
+    setUpCastling(a);
+
+    move = "e1,d1";
+    EXPECT_EQ(a.readInput(move,p1), ChessErrorCode::VALID_MOVE);
+
+    move = "d1,e1";
+    EXPECT_EQ(a.readInput(move,p1), ChessErrorCode::VALID_MOVE);
+
+    move = "e1,c1";
+    EXPECT_EQ(a.readInput(move,p1), ChessErrorCode::INVALID_MOVE);
+
+
+}
+
+/**
+ * Test if game lets you castle if you have moved the rook. Castle should not be allowed to work
+ */
+TEST(CASTLING, testKing){
+    ChessController a;
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+
+    std::string move = "a2,a4";
+    EXPECT_EQ(a.readInput(move,p1), ChessErrorCode::VALID_MOVE);
+    //std::cout << a.getBoardView();
+
+    move = "a7,a5";
+    EXPECT_EQ(a.readInput(move,p2), ChessErrorCode::VALID_MOVE);
+    //std::cout << a.getBoardView();
+
+    //MOVED ROOK!
+    move = "a1,a3";
+    a.readInput(move,p1);
+    //std::cout << a.getBoardView();
+
+    //MOVED ROOK!
+    move = "a8,a6";
+    a.readInput(move,p2);
+    //std::cout << a.getBoardView();
+
+
+
+    setUpCastling(a);
+
+    ///// Entire row has been moved! ///// Now we can finally castle, but first we must move rook back. (Castle should
+    ///// fail since we moved the rook).
+
+    //MOVED ROOK!
+    move = "a3,a1";
+    a.readInput(move,p1);
+    //std::cout << a.getBoardView();
+
+    //MOVED ROOK!
+    move = "a6,a8";
+    a.readInput(move,p2);
+   // std::cout << a.getBoardView();
+
+
+    //Invalid move because the rook has already moved.
+    move = "e1,c1";
+    EXPECT_EQ(a.readInput(move,p1), ChessErrorCode::INVALID_CASTLE);
+    //std::cout << a.getBoardView();
+
+    move = "e8,c8";
+    EXPECT_EQ(a.readInput(move,p2), ChessErrorCode::INVALID_CASTLE);
+    // std::cout << a.getBoardView();
+
+
+}
+
+
+vector<Piece> emptyRow(){
+    vector<Piece> tmp;
+
+    for(int i = 0; i < 8; i++){
+        tmp.emplace_back( Piece(PieceUnit::NONE, Color::COLORLESS) );
+    }
+
+    return tmp;
+}
+
+/**
+ * Test to see if the king can castle if the direction he is wants to castle has enemies attacking that square
+ */
+TEST(CASTLING, testPathBlocked){
+    //Also test vertical and horizontal attackers
+
+    vector<vector<Piece>> a;
+
+    vector<Piece> backRow;
+    Color c = Color::BLUE_UPPERCASE;
+
+
+    backRow.emplace_back(Piece{PieceUnit::ROOK,c});
+    backRow.emplace_back(Piece{PieceUnit::BISHOP,c});
+    backRow.emplace_back(Piece{PieceUnit::KNIGHT,c});
+    backRow.emplace_back(Piece{PieceUnit::KING, c});
+    backRow.emplace_back(Piece{PieceUnit::ROOK,c});
+
+    c = Color::COLORLESS;
+    backRow.emplace_back(Piece{PieceUnit::NONE,c});
+    backRow.emplace_back(Piece{PieceUnit::NONE,c});
+    backRow.emplace_back(Piece{PieceUnit::NONE,c});
+
+    a.push_back(backRow);
+
+    for(int i = 0; i < 6; i++){
+        a.emplace_back(emptyRow());
+    }
+
+    vector<Piece> otherRow;
+    otherRow.emplace_back(Piece{PieceUnit::ROOK,Color::RED_LOWERCASE});
+    otherRow.emplace_back( Piece(PieceUnit::NONE, Color::COLORLESS) );
+    otherRow.emplace_back( Piece(PieceUnit::NONE, Color::COLORLESS) );
+    otherRow.emplace_back(Piece{PieceUnit::KING,Color::RED_LOWERCASE});
+    for(int i = 0; i < 3; i++){
+        otherRow.emplace_back( Piece(PieceUnit::NONE, Color::COLORLESS) );
+    }
+
+    otherRow.emplace_back(Piece{PieceUnit::ROOK,Color::RED_LOWERCASE});
+
+    a.emplace_back(otherRow);
+
+    ChessController chessGame(a);
+
+  //  std::cout << chessGame.getBoardView();
+
+    std::string input = "d8,f8";
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+
+    //User should not be able to castle since the path is under attak by the enemy rook.
+    EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::INVALID_CASTLE);
+
+    input="d8,e8";
+    EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::INVALID_KING_MOVE);
+
+    input="h8,e8";
+    EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::VALID_MOVE);
+
+    // std::cout << chessGame.getBoardView();
+
+    input="e8,e7";
+    EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::VALID_MOVE);
+
+    //std::cout << chessGame.getBoardView();
+
+    input="d8,e8";
+    EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::VALID_MOVE);
+
+    input="d1,e2";
+    EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
+
+    input="e1,e3";
+    EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+    input="d1,e1";
+    EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+
+    input="e1,e2";
+    EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+   // std::cout << chessGame.getBoardView();
+
+    input = "a8,a2";
+    EXPECT_EQ(chessGame.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+   // std::cout << chessGame.getBoardView();
+
+
+    input = "e2,e1";
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::VALID_MOVE);
+
+
+    input = "e1,e2";
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_KING_MOVE);
+
+
+    input = "a2,h2";
+    EXPECT_EQ(chessGame.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+
+
+    input = "e1,e2";
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_KING_MOVE);
+
+
+
+
+
+
+}
+
+/**
+ *
+ * Validates that the king cannot enter squares that can be attacked by an enemy knight, and enemies pawn.
+ * Has a quick test for killing pawns diagonally backwards
+ *
+ */
+TEST(KING,kingMovement){
+
+    ChessController game;
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+
+    std::string input = "d7,d5";
+    game.readInput(input,p2);
+
+    input = "e8,d7";
+    game.readInput(input,p2);
+
+    input = "d7,d6";
+    game.readInput(input,p2);
+
+
+    input = "g1,f3";
+    game.readInput(input,p1);
+
+
+    //Now we test all possible combinations of squares that knight can attack
+    input = "d6,e5";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
+
+    input = "d6,e6";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+    input = "e6,f6";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+    input = "f6,g5";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
+
+    input = "f3,e5";
+    EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::VALID_MOVE);
+
+    input = "f6,g6";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
+
+    input = "f6,g5";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+
+    input = "g5,g4";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
+
+    input = "g5,f4";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+    input = "f4,e4";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+    input = "e4,d4";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+    input = "d4,c4";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
+
+    input = "d4,c5";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+    input = "c5,c6";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
+
+    input = "e5,d7";
+    EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::VALID_MOVE);
+
+    input = "c5,d6";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+    input = "d6,c5";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
+
+    input = "d6,e5";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
+    //All possible knight combinations.
+
+
+    //Now checking pawns
+    input = "d8,d7";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+
+
+    input = "e2,e4";
+    EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::VALID_MOVE);
+
+    input = "e4,d5";
+    EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::VALID_MOVE);
+
+
+    input = "d6,e6";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
+
+
+    input = "d6,c6";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
+    //Alright now we are going to check if the other king is responsive to the other teams pawns.
+
+
+    input = "e7,e5";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+
+    input = "e5,e4";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+
+
+    // Attempting to kill the pawn diagonally backwards
+    input = "d5,e4";
+    EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::INVALID_MOVE);
+    //
+
+    input = "e1,e2";
+    EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::VALID_MOVE);
+
+    input = "e2,e3";
+    EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::VALID_MOVE);
+
+    input = "e3,d3";
+    EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::INVALID_KING_MOVE);
+
+    input = "e3,f3";
+    EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::INVALID_KING_MOVE);
+
+
+}
+

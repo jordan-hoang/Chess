@@ -15,10 +15,11 @@
 struct ChessPlayer {
     std::string playerName;
     Color playerColor;
+    bool isChecked;
 
-    ChessPlayer() : playerName(""),playerColor(Color::RED_LOWERCASE){};
+    ChessPlayer() : playerName(""),playerColor(Color::RED_LOWERCASE), isChecked(false){};
     explicit ChessPlayer( std::string playerName, Color color) :
-        playerName(std::move(playerName)),playerColor(color){};
+        playerName(std::move(playerName)),playerColor(color),isChecked(false){};
 
 };
 
@@ -43,6 +44,7 @@ class ChessController {
         std::string helpMessage() const;
 
         ChessController();
+        ChessController( vector<vector<Piece>> a);
 
 private:
         Board _gameBoard;

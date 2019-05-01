@@ -243,7 +243,7 @@ ChessErrorCode ChessController::executeMove(std::string &moveFrom, std::string &
 
 
 /**
- * Move's piece regardless of color, left here for test class.
+ * Move's piece regardless of color, left here for test class, but can also be used to replay matches
  * @param moveFrom - ChessCoordinate you are from
  * @param moveTo   - ChessCoordinate you are moving to.
  */
@@ -261,4 +261,12 @@ ChessController::ChessController() {
     this->_playerOne = ChessPlayer( "playerOne", Color::RED_LOWERCASE  );
     this->_playerTwo = ChessPlayer( "playerTwo", Color::BLUE_UPPERCASE );
     this->_gameBoard  = Board();
+}
+
+//Constructor used for testing
+ChessController::ChessController(vector<vector<Piece>> a) {
+    this->_playerOne = ChessPlayer( "playerOne", Color::RED_LOWERCASE  );
+    this->_playerTwo = ChessPlayer( "playerTwo", Color::BLUE_UPPERCASE );
+    this->_gameBoard = Board(a);
+
 }
