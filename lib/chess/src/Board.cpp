@@ -523,15 +523,16 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     if(!pathClear) {  return ChessErrorCode::INVALID_MOVE; }
 
     //Code for moving the king specifically
-    /* Disable for now since we need to have code to detect stalemates.
+
+    ////////////Can possibly cause the game to never end if stalemate is possible.
     if(sourcePiece.getPieceUnit() == PieceUnit::KING){
         bool isSquareAttacked = isSquareUnderAttack(finish,sourcePiece.getColor());
         if(isSquareAttacked){
             return ChessErrorCode::INVALID_KING_MOVE;
         }
     }
-    */
-    //
+    ///////////
+
 
     ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start,finish,targetPiece.getColor());
 
