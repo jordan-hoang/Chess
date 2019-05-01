@@ -24,8 +24,7 @@ using std::vector;
 class Board {
 public:
     Board();
-
-    Board(vector<vector<Piece>> &chessBoard); // Pass in your own _chessBoard, used for testing.
+    explicit Board(vector<vector<Piece>> &chessBoard); // Pass in your own _chessBoard, used for testing.
     const std::string getBoardView() const;
     const std::string getReverseBoardView() const;
     const vector< vector<Piece> >& getBoard() const;
@@ -43,6 +42,7 @@ public:
 private:
     vector<vector<Piece> > _chessBoard;
     Piece _lastPieceKilled;
+
     MoveRecorder recorder;
 
 
@@ -61,6 +61,7 @@ private:
    bool isAttackedHorizontally(const ChessCoordinate &start, const Color &kingColor) const;
    bool isAttackedVertically(const ChessCoordinate &start, const Color &kingColor) const;
    bool isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor) const;
+   bool isAttackedByPawn(const ChessCoordinate &start, const Color &kingColor) const;
    bool isSquareUnderAttack(const ChessCoordinate &position, const Color enemyColor) const;
 
 

@@ -11,7 +11,6 @@
 
 
 
-
 /**Validates a pawn's movement, check for attempting to move a NONE piece or onto piece of same colored performed
  * in Board.cpp
  * @param start - starting position
@@ -47,8 +46,6 @@ ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoor
         // Handling diagonal movement, should be invalid if travelling backwards though
         int diffX  = abs(finish.row - start.row);
         int diffY  = abs(finish.col - start.col);
-
-        int rst = diffX * diffY;
 
         //A pawn can travel at most 1 unit diagonally therefore there xPos,yPos must have changed by 1.
         if(diffX == 1 && diffY == 1){
