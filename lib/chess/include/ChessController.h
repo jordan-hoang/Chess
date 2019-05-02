@@ -43,6 +43,7 @@ class ChessController {
         const std::string getReverseBoardView() const;
         std::string helpMessage() const;
         void undoMove();
+        void printListMoves(); //Debugging
 
 
         ChessController();

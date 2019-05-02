@@ -633,6 +633,10 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
 void Board::undoMove() {
     recorder.undoMove(_chessBoard);
 }
+void Board::printListMove() {
+    std::cout << recorder.printMoves();
+}
+
 
 const std::unordered_map<PieceUnit, char> Board::PieceLookUp = {
         {PieceUnit::NONE,         '-'},

@@ -37,6 +37,7 @@ public:
 
     ChessErrorCode movePiece(const ChessCoordinate &start, const ChessCoordinate &finish);
     void undoMove();
+    void printListMove();
 
     const Piece getLastPieceKilled() const;
 

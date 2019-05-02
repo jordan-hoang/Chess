@@ -49,7 +49,7 @@ struct ChessCoordinate {
     }
 
     friend std::ostream &operator<<(std::ostream &os, const ChessCoordinate &coordinate) {
-        os << "{"  << coordinate.row << ", " << coordinate.col << "}\n";
+        os << "{"  << coordinate.row << ", " << coordinate.col << "}";
         return os;
     }
 

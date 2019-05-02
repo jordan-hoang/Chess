@@ -38,7 +38,7 @@ bool MoveRecorder::hasMove() const {
 std::string MoveRecorder::printMoves() {
     std::stringstream outputStream;
     for( const auto  myPair : m_listOfGameMoves) {
-        outputStream << myPair.move.first << " , " << myPair.move.second << "\n";
+        outputStream << myPair.move.first << ", " << myPair.move.second << "\n";
     }
     return outputStream.str();
 }
@@ -62,7 +62,7 @@ void MoveRecorder::undoMove(vector<vector<Piece>> &board) {
     //and we place the original piece back at start.
 
     Piece &moveFrom = board[end.row][end.col];
-    Piece &moveTo   = board[start.row][end.col];
+    Piece &moveTo   = board[start.row][start.col];
 
     Piece::updatePiece(moveFrom,moveTo);
     moveFrom.setPiece(lastMove.pieceKilled);
