@@ -36,16 +36,15 @@ public:
 
 
     ChessErrorCode movePiece(const ChessCoordinate &start, const ChessCoordinate &finish);
+    void undoMove();
 
     const Piece getLastPieceKilled() const;
 
 private:
     vector<vector<Piece> > _chessBoard;
-    Piece _lastPieceKilled;
-
     MoveRecorder recorder;
 
-
+   void updatePiece(Piece &source, Piece &destination);
 
    void initializeGame(vector<vector<Piece>> &chessBoard);
    void createBackRank(Color myColor, vector<vector<Piece>> &boardView, int row) ;

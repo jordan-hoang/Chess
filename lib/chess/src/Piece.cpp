@@ -187,4 +187,25 @@ Piece::Piece() {
     this->_pieceColor = Color::COLORLESS;
     this->_pieceId = PieceUnit::NONE;
     this->_hasMoved = false;
+    this->_coordinate = {-1,-1};
 }
+
+void Piece::setPiece(const Piece &a) {
+    this->_hasMoved = a._hasMoved;
+    this->_pieceColor = a._pieceColor;
+    this->_pieceId = a._pieceId;
+
+}
+
+void Piece::setPieceId(PieceUnit pieceId) {
+    _pieceId = pieceId;
+}
+
+void Piece::setPieceColor(Color pieceColor) {
+    _pieceColor = pieceColor;
+}
+
+void Piece::setHasMoved(bool hasMoved) {
+    _hasMoved = hasMoved;
+}
+

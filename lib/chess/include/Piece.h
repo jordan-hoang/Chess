@@ -76,7 +76,13 @@ class Piece {
         const bool getHasMoved() const { return _hasMoved; } ;
         const ChessCoordinate getCoordinate() const { return _coordinate; };
 
-        enum ChessErrorCode checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const Color &targetColor) const   ;
+        void setPieceId(PieceUnit pieceId);
+        void setPieceColor(Color pieceColor);
+        void setHasMoved(bool hasMoved);
+        void setPiece(const Piece &a);
+
+
+    enum ChessErrorCode checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const Color &targetColor) const   ;
         static void updatePiece(Piece &source, Piece &destination);
         void setPiece(PieceUnit pieceUnit, Color color);
 

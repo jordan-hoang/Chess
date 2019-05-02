@@ -15,24 +15,31 @@ using std::pair;
 using std::vector;
 
 
+struct ChessMove{
+    pair<ChessCoordinate,ChessCoordinate> move;
+    Piece pieceKilled;
+};
+
+
 /**
  * A class that records moves, and also checks for move reptition
  */
 class MoveRecorder {
     public:
-        void addMove(ChessCoordinate, ChessCoordinate);
+        void addMove(ChessCoordinate, ChessCoordinate, Piece killedPiece);
         void removeLastMove();
+        void undoMove(vector<vector<Piece>> &board);
 
         std::string printMoves();
-        std::pair<ChessCoordinate,ChessCoordinate> getLastMove();
+
+        bool hasMove() const;
+        ChessMove getLastMove() const;
 
         MoveRecorder();
 
 
-
     private:
-        vector<pair<ChessCoordinate, ChessCoordinate> > m_listOfGameMoves;
-
+        vector<ChessMove> m_listOfGameMoves;
 
 
 };

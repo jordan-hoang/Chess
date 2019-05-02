@@ -877,3 +877,25 @@ TEST(CoordinateInitialization, coordiantePiece){
     }
 
 }
+
+
+TEST(TestUndoMove, undoMove){
+
+    ChessController a;
+    std::string input ="a2,a4";
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+
+    //std::cout << a.getBoardView();
+    a.undoMove();
+    //std::cout << a.getBoardView();
+    a.undoMove();
+    //std::cout << a.getBoardView();
+
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+    
+
+
+}

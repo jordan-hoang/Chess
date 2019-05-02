@@ -42,6 +42,8 @@ class ChessController {
         const std::string getBoardView() const;
         const std::string getReverseBoardView() const;
         std::string helpMessage() const;
+        void undoMove();
+
 
         ChessController();
         ChessController( vector<vector<Piece>> a);

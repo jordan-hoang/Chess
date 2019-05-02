@@ -447,8 +447,8 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
         return ChessErrorCode::INVALID_CASTLE;
      }
 
-     recorder.addMove({finish.row, rookCol}, {finish.row, finish.col + rookRow});
-     Piece::updatePiece(rookPiece,endSpot);
+     // recorder.addMove({finish.row, rookCol}, {finish.row, finish.col + rookRow});
+     updatePiece(rookPiece,endSpot);
      return ChessErrorCode::VALID_MOVE;
 
 }
@@ -524,7 +524,26 @@ const Color Board::getPieceColor(const ChessCoordinate &position) const {
 
 //getters and setters
 const Piece Board::getLastPieceKilled() const {
-    return _lastPieceKilled;
+    if(!recorder.hasMove()){
+        return Piece{PieceUnit::NONE, Color::COLORLESS, {-1,-1} };
+    }
+
+    return recorder.getLastMove().pieceKilled;
+}
+
+
+void Board::updatePiece(Piece &source, Piece &destination) {
+
+    destination.setPieceId(source.getPieceUnit());
+    destination.setPieceColor(source.getColor());
+    destination.setHasMoved(true);
+
+
+    source.setPieceId(PieceUnit::NONE);
+    source.setPieceColor(Color::COLORLESS);
+    source.setHasMoved(false);
+
+
 }
 
 
@@ -569,25 +588,19 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     if(ChessCode == ChessErrorCode::CASTLE) {
         ChessCode = executeCastle(start, finish);
         if (ChessCode == ChessErrorCode::VALID_MOVE) {
-            recorder.addMove(start,finish);
-            Piece::updatePiece(sourcePiece, targetPiece);
+           // recorder.addMove(start,finish, Piece{NONE,});
+            updatePiece(sourcePiece, targetPiece);
         }
         return ChessCode;
     } else if(ChessCode == ChessErrorCode::VALID_MOVE){
         //We need to check if the move will place the user in check?
         promotePawnToQueen(sourcePiece, finish);
-        _lastPieceKilled.setPiece( targetPiece.getPieceUnit() , targetPiece.getColor() );
 
-        recorder.addMove(start,finish);
-        Piece::updatePiece(sourcePiece,targetPiece);
+
+        recorder.addMove(start,finish, targetPiece);
+        updatePiece(sourcePiece,targetPiece);
         return ChessCode;
     }
-
-
-    //
-
-
-
 
 
 
@@ -597,17 +610,18 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
 }
 
 
+
+
+
+
 //Constructor
 Board::Board() {
     _chessBoard.reserve(8);
     initializeGame(_chessBoard);
-    _lastPieceKilled = Piece{PieceUnit::NONE,Color::COLORLESS, {-1,-1}};
 }
 
 Board::Board(vector<vector<Piece>> &chessBoard) {
     this->_chessBoard = chessBoard;
-    _lastPieceKilled = Piece{PieceUnit::NONE, Color::COLORLESS, {-1,-1}};
-
 
     assert(chessBoard.size() == 8);
     for(int i = 0; i<7; i++){
@@ -616,6 +630,9 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
 
 }
 
+void Board::undoMove() {
+    recorder.undoMove(_chessBoard);
+}
 
 const std::unordered_map<PieceUnit, char> Board::PieceLookUp = {
         {PieceUnit::NONE,         '-'},
