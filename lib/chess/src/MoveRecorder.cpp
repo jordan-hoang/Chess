@@ -55,6 +55,9 @@ void MoveRecorder::undoMove(vector<vector<Piece>> &board) {
 
     ChessMove const * lastMove = getLastMove();
 
+    // Here do lastMove.execute() polymorphic code should handle it.
+
+    /*
     const ChessCoordinate &start = lastMove->move.first;
     const ChessCoordinate &end = lastMove->move.second;
 
@@ -66,6 +69,11 @@ void MoveRecorder::undoMove(vector<vector<Piece>> &board) {
 
     Piece::updatePiece(moveFrom,moveTo);
     moveFrom.setPiece(lastMove->pieceKilled);
+     */
+
+
+    lastMove->undoMove(board);
+
 
     removeLastMove();
 
