@@ -528,7 +528,7 @@ const Piece Board::getLastPieceKilled() const {
         return Piece{PieceUnit::NONE, Color::COLORLESS, {-1,-1} };
     }
 
-    return recorder.getLastMove().pieceKilled;
+    return recorder.getLastMove()->pieceKilled;
 }
 
 

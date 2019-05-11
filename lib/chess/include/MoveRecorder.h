@@ -10,6 +10,7 @@
 #include "Piece.h"
 #include <vector>
 #include <string>
+#include <memory>
 
 using std::pair;
 using std::vector;
@@ -19,6 +20,7 @@ struct ChessMove{
     pair<ChessCoordinate,ChessCoordinate> move;
     Piece pieceKilled;
 };
+
 
 
 /**
@@ -33,13 +35,13 @@ class MoveRecorder {
         std::string printMoves();
 
         bool hasMove() const;
-        ChessMove getLastMove() const;
+        ChessMove  const * getLastMove() const;
 
         MoveRecorder();
 
 
     private:
-        vector<ChessMove> m_listOfGameMoves;
+        vector< std::unique_ptr<ChessMove> > m_listOfGameMoves;
 
 
 };
