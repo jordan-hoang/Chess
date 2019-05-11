@@ -18,8 +18,10 @@ using std::vector;
 /// Note polymorphism not actually needed to be used here at all
 /// Since the difference between singleChessMove and MultiChessMove is irrelevant
 /// I only chose to use polymorphism because I wanted to try using it at least once in C++.
+/// You can instead have a vector that stores  a vector of moves and do away with this structure
+/// -Having a vector of vectors is also more flexible and better but lets just use polymorphism for castling
 
-struct ChessMove{
+struct ChessMove {
     pair<ChessCoordinate,ChessCoordinate> move;
     Piece pieceKilled;
 
@@ -36,24 +38,44 @@ struct ChessMove{
 
     }
 
-};
-
-struct SingleChessMove : public ChessMove {
-
-
+    virtual ~ChessMove() = default;
 
 };
 
+struct ChessCastle : public ChessMove {
 
-struct MultiChessMove : public ChessMove {
-    vector <ChessMove> multipleMoves;
+    ChessMove rookMoved;
 
-    virtual void undoMove()  {
+    void undoMove(vector<vector<Piece>> &board) const override {
+
+        const ChessCoordinate &start = move.first;
+        const ChessCoordinate &end =  move.second;
+
+        Piece &moveFrom = board[end.row][end.col];
+        Piece &moveTo   = board[start.row][start.col];
+
+        Piece::updatePiece(moveFrom,moveTo);
+        moveFrom.setPiece(pieceKilled);
+
+
+        //Repeat for rook
+
+        const ChessCoordinate &startRook = rookMoved.move.first;
+        const ChessCoordinate &endRook =  rookMoved.move.second;
+
+        moveFrom = board[endRook.row][endRook.col];
+        moveTo   = board[startRook.row][startRook.col];
+        Piece::updatePiece(moveFrom,moveTo);
+        moveFrom.setPiece(pieceKilled);
 
 
     }
 
+    ~ChessCastle() override = default;
+
+
 };
+
 
 
 

@@ -55,26 +55,8 @@ void MoveRecorder::undoMove(vector<vector<Piece>> &board) {
 
     ChessMove const * lastMove = getLastMove();
 
-    // Here do lastMove.execute() polymorphic code should handle it.
-
-    /*
-    const ChessCoordinate &start = lastMove->move.first;
-    const ChessCoordinate &end = lastMove->move.second;
-
-    //We need to undo a move so we take the piece at end and set it back to start,
-    //and we place the original piece back at start.
-
-    Piece &moveFrom = board[end.row][end.col];
-    Piece &moveTo   = board[start.row][start.col];
-
-    Piece::updatePiece(moveFrom,moveTo);
-    moveFrom.setPiece(lastMove->pieceKilled);
-     */
-
 
     lastMove->undoMove(board);
-
-
     removeLastMove();
 
 
