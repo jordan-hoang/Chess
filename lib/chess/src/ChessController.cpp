@@ -253,6 +253,16 @@ ChessErrorCode ChessController::executeMove(std::string &moveFrom, std::string &
 }
 
 
+void ChessController::undoMove() {
+    _gameBoard.undoMove();
+}
+
+void ChessController::printListMoves() {
+    _gameBoard.printListMove();
+}
+
+
+
 //Constructor that generates the game
 ChessController::ChessController() {
     this->_playerOne = ChessPlayer( "playerOne", Color::RED_LOWERCASE  );

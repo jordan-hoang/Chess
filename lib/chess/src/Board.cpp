@@ -5,14 +5,10 @@
 #include "Board.h"
 #include <vector>
 #include <iostream>
-#include <assert.h>
+#include <cassert>
 #include <algorithm>
 
 
-//getters and setters
-const Piece Board::getLastPieceKilled() const {
-    return _lastPieceKilled;
-}
 
 /**
  * Helper method for initializeGame
@@ -28,19 +24,15 @@ void Board::createBackRank(Color color, vector<vector<Piece>> &boardView,int row
         tmp.emplace_back(Piece{PieceUnit::KNIGHT,color, {row,1} });
         tmp.emplace_back(Piece{PieceUnit::BISHOP,color, {row,2} });
 
-
         tmp.emplace_back(Piece{PieceUnit::QUEEN,color, {row,3} });
         tmp.emplace_back(Piece{PieceUnit::KING,color, {row,4}  });
-
 
         tmp.emplace_back(Piece{PieceUnit::BISHOP,color, {row,5} });
         tmp.emplace_back(Piece{PieceUnit::KNIGHT,color, {row,6} });
         tmp.emplace_back(Piece{PieceUnit::ROOK,color, {row,7}   });
 
-
         boardView.push_back(tmp);
 }
-
 /**
  * Initializes the chess game by setting all the pieces.
  * @param chessBoard
@@ -75,7 +67,6 @@ void Board::initializeGame(vector<vector<Piece>> &chessBoard) {
     createBackRank(Color::BLUE_UPPERCASE,chessBoard,7);
 
 }
-
 /**
  * Draw's a row of chess pieces to a stringstream.
  */
@@ -99,7 +90,6 @@ void Board::drawRow(const vector<Piece> &listPieceId, std::stringstream &stream)
     }
     stream << '\n';
 }
-
 /**
  * Draw's a row backward. Helper method for getReverseBoardView().
  * @param listPieceId - A row of chess pieces.
@@ -127,6 +117,9 @@ void Board::drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &
 
 }
 
+
+
+
 /**
  * @param start
  * @param finish
@@ -134,7 +127,6 @@ void Board::drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &
  *
  */
 bool Board::isHorizontalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const {
-
 
     const vector<Piece> &handle = _chessBoard.at(start.row);
     const auto iterBegin = handle.begin() + std::min(start.col,finish.col ) + 1 ;
@@ -148,9 +140,6 @@ bool Board::isHorizontalPathClear(const ChessCoordinate &start, const ChessCoord
     //If enum NONE was not found result will be set to iterEnd.
     return (result == iterEnd);
 }
-
-
-
 /**
  * Determines w/e the path is free vertically
  * @param start
@@ -170,7 +159,6 @@ bool Board::isVerticalPathClear(const ChessCoordinate &start, const ChessCoordin
     return true;
 
 }
-
 //2 slopes + or - and 2 ways to traverse them so 4 ways in total....
 bool Board::isDiagonalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const{
 
@@ -193,8 +181,6 @@ bool Board::isDiagonalPathClear(const ChessCoordinate &start, const ChessCoordin
 
     return true;
 }
-
-
 /**
  * A method that checks to see w/e the distance between 2 path's is clear.
  * You can only do vertical, horizontal, or diagonal only lines.
@@ -272,7 +258,6 @@ bool Board::isAttackedHorizontally(const ChessCoordinate &start, const Color &ki
 
     return false;
 }
-
 /**
  *
  * @param start - The square you want to check
@@ -309,11 +294,7 @@ bool Board::isAttackedVertically(const ChessCoordinate &start, const Color &king
 
 }
 
-bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor) const {
-
-    //Need code for bishops and pawns,pawns are special case.
-    //RED PAWNS Travel upwards, BLUE PAWNS Travel downwards from Piece.cpp
-
+bool Board::isAttackedByPawn(const ChessCoordinate &start, const Color &kingColor) const {
     if(kingColor == Color::BLUE_UPPERCASE){
 
         //bottom left of start and bottom right of start if contain pawn will mean that spot is dangerous
@@ -335,7 +316,6 @@ bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &king
         }
 
     } else if(kingColor == Color::RED_LOWERCASE){
-
         //watch out for pawns coming from above!
         ChessCoordinate topLeft{start.row + 1, start.col - 1};
         if(topLeft.isValid()){
@@ -351,8 +331,18 @@ bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &king
                 return true;
             }
         }
-
     }
+    return false;
+}
+
+bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor) const {
+
+    //Need code for bishops and pawns,pawns are special case.
+    //RED PAWNS Travel upwards, BLUE PAWNS Travel downwards from Piece.cpp
+    if(isAttackedByPawn(start,kingColor)){
+        return true;
+    }
+
 
     //Check + slope for bishops and queens that can kill you.
     //Check - slope for bishops and queens that can kill you.
@@ -384,10 +374,8 @@ bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &king
     return false;
 }
 
-
 //Check's if a square is under attack
 bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor) const {
-
 
     //Function doesn't cover attacks from pawns, and other kings.
     //Now we need to test the position vertically, horizontally, and attacks from knights.
@@ -418,6 +406,10 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor
     return (isAttackedDiagonally(position, kingColor));
 
 }
+
+
+
+
 
 void Board::promotePawnToQueen(Piece &source, const ChessCoordinate &target){
     if( (target.row == 0 || target.row == 7) && (source.getPieceUnit() == PieceUnit::PAWN) ){
@@ -455,16 +447,17 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
         return ChessErrorCode::INVALID_CASTLE;
      }
 
-     Piece::updatePiece(rookPiece,endSpot);
+     // recorder.addMove({finish.row, rookCol}, {finish.row, finish.col + rookRow});
+     updatePiece(rookPiece,endSpot);
      return ChessErrorCode::VALID_MOVE;
 
 }
 
 
-/////END PRIVATE          //////
 
 
-/// -------------------------------- BEGIN PUBLIC METHODS ------------------------------------////
+
+
 
 /**
  * @return A picture of the board as a string to output to console.
@@ -476,14 +469,14 @@ const std::string Board::getBoardView() const {
     stream << "   abcdefgh\n___________\n";
 
     int num = 1;
-    for(const vector<Piece> row : _chessBoard){
+    for(const vector<Piece> &row : _chessBoard){
         stream << num << "| ";
         drawRow(row,stream);
         num++;
     }
     stream << "___________\n";
 
-    return std::move(stream.str());
+    return stream.str();
 }
 
 /**
@@ -500,7 +493,7 @@ const std::string Board::getReverseBoardView() const {
         drawRowReverse(row,stream);
     }
 
-    return std::move(stream.str());
+    return stream.str();
 
 }
 
@@ -508,6 +501,52 @@ const std::string Board::getReverseBoardView() const {
 const vector< vector<Piece> >& Board::getBoard() const {
     return _chessBoard;
 }
+
+/**
+ *  Enter's in a coordinate and returns the piece at that location
+ */
+Piece& Board::requestPiece(const ChessCoordinate &position) {
+    return _chessBoard.at( position.row ).at( position.col );
+}
+
+const Piece& Board::getPiece(const ChessCoordinate &position) const {
+    return _chessBoard.at( position.row ).at( position.col );
+}
+
+const PieceUnit Board::requestUnit(const ChessCoordinate &position) const {
+    Piece a = _chessBoard.at(position.row).at(position.col);
+    return a.getPieceUnit();
+}
+
+const Color Board::getPieceColor(const ChessCoordinate &position) const {
+    return _chessBoard.at(position.row).at(position.col).getColor();
+}
+
+//getters and setters
+const Piece Board::getLastPieceKilled() const {
+    if(!recorder.hasMove()){
+        return Piece{PieceUnit::NONE, Color::COLORLESS, {-1,-1} };
+    }
+
+    return recorder.getLastMove().pieceKilled;
+}
+
+
+void Board::updatePiece(Piece &source, Piece &destination) {
+
+    destination.setPieceId(source.getPieceUnit());
+    destination.setPieceColor(source.getColor());
+    destination.setHasMoved(true);
+
+
+    source.setPieceId(PieceUnit::NONE);
+    source.setPieceColor(Color::COLORLESS);
+    source.setHasMoved(false);
+
+
+}
+
+
 
 
 /***
@@ -549,24 +588,19 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     if(ChessCode == ChessErrorCode::CASTLE) {
         ChessCode = executeCastle(start, finish);
         if (ChessCode == ChessErrorCode::VALID_MOVE) {
-            Piece::updatePiece(sourcePiece, targetPiece);
+           // recorder.addMove(start,finish, Piece{NONE,});
+            updatePiece(sourcePiece, targetPiece);
         }
         return ChessCode;
     } else if(ChessCode == ChessErrorCode::VALID_MOVE){
         //We need to check if the move will place the user in check?
-
-
         promotePawnToQueen(sourcePiece, finish);
-        _lastPieceKilled.setPiece( targetPiece.getPieceUnit() , targetPiece.getColor() );
-        Piece::updatePiece(sourcePiece,targetPiece);
+
+
+        recorder.addMove(start,finish, targetPiece);
+        updatePiece(sourcePiece,targetPiece);
         return ChessCode;
     }
-
-
-    //
-
-
-
 
 
 
@@ -575,46 +609,32 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
 
 }
 
-/**
- *  Enter's in a coordinate and returns the piece at that location
- */
-Piece& Board::requestPiece(const ChessCoordinate &position) {
-    return _chessBoard.at( position.row ).at( position.col );
-}
-
-const Piece& Board::getPiece(const ChessCoordinate &position) const {
-    return _chessBoard.at( position.row ).at( position.col );
-}
 
 
 
-const PieceUnit Board::requestUnit(const ChessCoordinate &position) const {
-    Piece a = _chessBoard.at(position.row).at(position.col);
-    return a.getPieceUnit();
-}
 
-
-const Color Board::getPieceColor(const ChessCoordinate &position) const {
-    return _chessBoard.at(position.row).at(position.col).getColor();
-}
 
 //Constructor
 Board::Board() {
     _chessBoard.reserve(8);
     initializeGame(_chessBoard);
-    _lastPieceKilled = Piece{PieceUnit::NONE,Color::COLORLESS, {-1,-1}};
 }
 
 Board::Board(vector<vector<Piece>> &chessBoard) {
     this->_chessBoard = chessBoard;
-    _lastPieceKilled = Piece{PieceUnit::NONE, Color::COLORLESS, {-1,-1}};
-
 
     assert(chessBoard.size() == 8);
     for(int i = 0; i<7; i++){
         assert(chessBoard.at(i).size() == 8);
     }
 
+}
+
+void Board::undoMove() {
+    recorder.undoMove(_chessBoard);
+}
+void Board::printListMove() {
+    std::cout << recorder.printMoves();
 }
 
 

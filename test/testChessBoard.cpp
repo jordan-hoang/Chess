@@ -877,3 +877,58 @@ TEST(CoordinateInitialization, coordiantePiece){
     }
 
 }
+
+
+TEST(TestUndoMove, undoMove){
+
+    ChessController a;
+    std::string input ="a2,a4";
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+
+    //std::cout << a.getBoardView();
+    a.undoMove();
+    //std::cout << a.getBoardView();
+    a.undoMove();
+    //std::cout << a.getBoardView();
+
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+
+    input = "a4,a5";
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+   // std::cout << a.getBoardView();
+
+
+    input = "a5,a6";
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+    //std::cout << a.getBoardView();
+
+    input = "a6,b7";
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+    //std::cout << a.getBoardView();
+
+    a.undoMove();
+
+  //  input = "a6,b7";
+  //  EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+  //  std::cout << a.getBoardView();
+
+}
+
+TEST(TestUndoMove, undoKnight){
+    ChessController a;
+    std::string input ="b1,c3";
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+
+    std::cout << a.getBoardView();
+    a.undoMove();
+    std::cout << a.getBoardView();
+
+
+
+}
