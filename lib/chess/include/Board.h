@@ -24,8 +24,7 @@ using std::vector;
 class Board {
 public:
     Board();
-
-    Board(vector<vector<Piece>> &chessBoard); // Pass in your own _chessBoard, used for testing.
+    explicit Board(vector<vector<Piece>> &chessBoard); // Pass in your own _chessBoard, used for testing.
     const std::string getBoardView() const;
     const std::string getReverseBoardView() const;
     const vector< vector<Piece> >& getBoard() const;
@@ -37,15 +36,16 @@ public:
 
 
     ChessErrorCode movePiece(const ChessCoordinate &start, const ChessCoordinate &finish);
+    void undoMove();
+    void printListMove();
 
     const Piece getLastPieceKilled() const;
 
 private:
     vector<vector<Piece> > _chessBoard;
-    Piece _lastPieceKilled;
     MoveRecorder recorder;
 
-
+   void updatePiece(Piece &source, Piece &destination);
 
    void initializeGame(vector<vector<Piece>> &chessBoard);
    void createBackRank(Color myColor, vector<vector<Piece>> &boardView, int row) ;
@@ -61,6 +61,7 @@ private:
    bool isAttackedHorizontally(const ChessCoordinate &start, const Color &kingColor) const;
    bool isAttackedVertically(const ChessCoordinate &start, const Color &kingColor) const;
    bool isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor) const;
+   bool isAttackedByPawn(const ChessCoordinate &start, const Color &kingColor) const;
    bool isSquareUnderAttack(const ChessCoordinate &position, const Color enemyColor) const;
 
 
