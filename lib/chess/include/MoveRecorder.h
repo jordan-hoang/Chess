@@ -38,6 +38,18 @@ struct ChessMove {
 
     }
 
+    ChessMove() = default;
+
+    ChessMove(const ChessMove &move){
+        this->move = move.move;
+        this->pieceKilled = pieceKilled;
+    }
+    ChessMove(const ChessCoordinate &start, const ChessCoordinate &finish){
+        move.first = start;
+        move.second = finish;
+        pieceKilled = Piece{PieceUnit::NONE, Color::COLORLESS};
+    }
+
     virtual ~ChessMove() = default;
 
 };
@@ -59,7 +71,6 @@ struct ChessCastle : public ChessMove {
 
 
         //Repeat for rook
-
         const ChessCoordinate &startRook = rookMoved.move.first;
         const ChessCoordinate &endRook =  rookMoved.move.second;
 
@@ -71,6 +82,25 @@ struct ChessCastle : public ChessMove {
 
     }
 
+
+
+
+    ChessCastle() = default;
+
+
+
+    ChessCastle(const ChessMove &rook, const ChessMove &king){
+
+        rookMoved = rook;
+
+        move.first.row = king.move.first.row;
+        move.first.col = king.move.first.col;
+        pieceKilled = Piece{PieceUnit::NONE,Color::COLORLESS};
+
+        move.second.row = king.move.second.row;
+        move.second.col = king.move.second.col;
+
+    }
     ~ChessCastle() override = default;
 
 
@@ -85,6 +115,7 @@ struct ChessCastle : public ChessMove {
 class MoveRecorder {
     public:
         void addMove(ChessCoordinate, ChessCoordinate, Piece killedPiece);
+        void addMove( std::unique_ptr<ChessCastle> chessMove );
         void removeLastMove();
         void undoMove(vector<vector<Piece>> &board);
 

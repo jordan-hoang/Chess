@@ -440,8 +440,12 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
      rookRow = (direction > 0) ? 1 : -1;
      int rookCol = (rookRow == 1) ? 0 : 7;
 
+    ChessCoordinate rookStart{finish.row,rookCol};
+    ChessCoordinate rookFinish{finish.row,finish.col + rookRow};
+
      Piece &rookPiece = requestPiece({finish.row,rookCol});
      Piece &endSpot = requestPiece({finish.row,finish.col + rookRow});
+
 
      if(rookPiece.getHasMoved() || rookPiece.getPieceUnit() != PieceUnit::ROOK){
         return ChessErrorCode::INVALID_CASTLE;
@@ -449,9 +453,25 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
 
      // recorder.addMove({finish.row, rookCol}, {finish.row, finish.col + rookRow});
 
+     //THE MOVE IS VALID SO....
+    Piece &sourcePiece = requestPiece(start);
+    Piece &targetPiece = requestPiece(finish);
+    updatePiece(sourcePiece, targetPiece);
+    updatePiece(rookPiece,endSpot);
 
 
-     updatePiece(rookPiece,endSpot);
+    //NOW WE NEED TO RECORD THIS "CASTLE"
+
+    ChessMove king{start,finish};
+    ChessMove rook{rookStart,rookFinish};
+
+    //ChessCastle castleMove(rook,king);
+    auto p1 = std::make_unique<ChessCastle>(rook,king);
+    recorder.addMove( std::move(p1) );
+
+
+
+
      return ChessErrorCode::VALID_MOVE;
 
 }
@@ -590,10 +610,6 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     //Special case for when user attempts to CASTLE
     if(ChessCode == ChessErrorCode::CASTLE) {
         ChessCode = executeCastle(start, finish);
-        if (ChessCode == ChessErrorCode::VALID_MOVE) {
-           // recorder.addMove(start,finish, Piece{NONE,});
-            updatePiece(sourcePiece, targetPiece);
-        }
         return ChessCode;
 
 
