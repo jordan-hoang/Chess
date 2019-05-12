@@ -8,8 +8,6 @@
 
 using std::string;
 
-
-
 //first parameter is name of grouping, 2nd parameter is the name of the test
 //Test's the pawns in the chess game
 TEST(BoardTest,  pawn){
@@ -925,10 +923,55 @@ TEST(TestUndoMove, undoKnight){
 
     EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
 
-    std::cout << a.getBoardView();
+   // std::cout << a.getBoardView();
     a.undoMove();
-    std::cout << a.getBoardView();
+   // std::cout << a.getBoardView();
 
 
+}
+
+TEST(TestUndoMove, undoCastle){
+    ChessController a;
+    std::string input ="b1,c3";
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+
+    a.readInput(input,p1);
+  //  std::cout << a.getBoardView();
+
+    input = "a2,a4";
+    a.readInput(input,p1);
+
+
+
+
+    input = "b2,b4";
+    a.readInput(input,p1);
+
+    input = "c3,b2";
+    a.readInput(input,p1);
+
+
+    input = "c1,a3";
+    a.readInput(input,p1);
+
+    input = "d1,b1";
+    a.readInput(input,p1);
+
+    input = "b1,b2";
+    a.readInput(input,p1);
+
+    input = "e1,c1";
+
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+
+
+    a.undoMove();
+
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+
+    input = "h2,h4";
+    a.readInput(input,p1);
+    a.undoMove();
 
 }

@@ -11,23 +11,28 @@ MoveRecorder::MoveRecorder() = default;
 //Add
 void MoveRecorder::addMove(ChessCoordinate startPos,  ChessCoordinate finishPos, Piece killed) {
 
-    ChessMove tmp;
-    tmp.move = std::make_pair(startPos,finishPos);
-    tmp.pieceKilled = killed;
-    m_listOfGameMoves.emplace_back(tmp) ;
+    std::unique_ptr<ChessMove> tmp(new ChessMove());
+    tmp->move = std::make_pair(startPos,finishPos);
+    tmp->pieceKilled = killed;
+    m_listOfGameMoves.emplace_back( std::move(tmp) ); //You need to use std::move to transfer ownership.
 
 }
+
+void MoveRecorder::addMove(std::unique_ptr<ChessCastle> chessMove) {
+    m_listOfGameMoves.emplace_back( std::move(chessMove) );
+}
+
 
 void MoveRecorder::removeLastMove() {
     m_listOfGameMoves.pop_back();
 }
 
-ChessMove MoveRecorder::getLastMove() const{
+ChessMove const * MoveRecorder::getLastMove() const{
     if(hasMove()){
-        return m_listOfGameMoves.back();
+        return m_listOfGameMoves.back().get();
     }
-    ChessMove tmp;
-    return tmp;  //////////JANKY CODE REMOVE LATER
+    ChessMove * tmp = nullptr;
+    return tmp;
 }
 
 bool MoveRecorder::hasMove() const {
@@ -37,8 +42,8 @@ bool MoveRecorder::hasMove() const {
 
 std::string MoveRecorder::printMoves() {
     std::stringstream outputStream;
-    for( const auto  myPair : m_listOfGameMoves) {
-        outputStream << myPair.move.first << ", " << myPair.move.second << "\n";
+    for( const auto &myPair : m_listOfGameMoves) {
+        outputStream << myPair->move.first << ", " << myPair->move.second << "\n";
     }
     return outputStream.str();
 }
@@ -53,21 +58,8 @@ void MoveRecorder::undoMove(vector<vector<Piece>> &board) {
         return;
     }
 
-    ChessMove lastMove = getLastMove();
-
-    const ChessCoordinate &start = lastMove.move.first;
-    const ChessCoordinate &end = lastMove.move.second;
-
-    //We need to undo a move so we take the piece at end and set it back to start,
-    //and we place the original piece back at start.
-
-    Piece &moveFrom = board[end.row][end.col];
-    Piece &moveTo   = board[start.row][start.col];
-
-    Piece::updatePiece(moveFrom,moveTo);
-    moveFrom.setPiece(lastMove.pieceKilled);
-
+    ChessMove const * lastMove = getLastMove();
+    lastMove->undoMove(board);
     removeLastMove();
-
 
 }

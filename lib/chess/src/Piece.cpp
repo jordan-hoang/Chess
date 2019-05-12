@@ -31,8 +31,6 @@ ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoor
 
         if (start.row + directionTravel == finish.row && ( difX == 0 || difY == 0 ) ) {
             return ChessErrorCode::VALID_MOVE; //GENERIC PAWN CODE SHOULD WORK FOR BOTH
-
-
         } else if (start.row == 1 && directionTravel == 1 && (start.row + directionTravel * 2) == finish.row) {
             return ChessErrorCode::VALID_MOVE; //CODE FOR RED
         } else if (start.row == 6 && directionTravel == -1 && (start.row + directionTravel * 2) == finish.row) {

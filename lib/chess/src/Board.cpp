@@ -377,7 +377,6 @@ bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &king
 //Check's if a square is under attack
 bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor) const {
 
-    //Function doesn't cover attacks from pawns, and other kings.
     //Now we need to test the position vertically, horizontally, and attacks from knights.
     //All possible moves of a knight
     int knightMoveX[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
@@ -440,23 +439,37 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
      rookRow = (direction > 0) ? 1 : -1;
      int rookCol = (rookRow == 1) ? 0 : 7;
 
-     Piece &rookPiece = requestPiece({finish.row,rookCol});
-     Piece &endSpot = requestPiece({finish.row,finish.col + rookRow});
+    ChessCoordinate rookStart{finish.row,rookCol};
+    ChessCoordinate rookFinish{finish.row,finish.col + rookRow};
+
+    Piece &rookPiece = requestPiece({finish.row,rookCol});
+    Piece &endSpot = requestPiece({finish.row,finish.col + rookRow});
+
 
      if(rookPiece.getHasMoved() || rookPiece.getPieceUnit() != PieceUnit::ROOK){
         return ChessErrorCode::INVALID_CASTLE;
      }
 
      // recorder.addMove({finish.row, rookCol}, {finish.row, finish.col + rookRow});
-     updatePiece(rookPiece,endSpot);
-     return ChessErrorCode::VALID_MOVE;
+
+     //THE MOVE IS VALID SO MOVE THE PIECES/UPDATE THEIR POSITIONS.
+    Piece &sourcePiece = requestPiece(start);
+    Piece &targetPiece = requestPiece(finish);
+    updatePiece(sourcePiece, targetPiece);
+    updatePiece(rookPiece,endSpot);
+
+
+    //NOW WE NEED TO RECORD THIS "CASTLE"
+    ChessMove king{start,finish};
+    ChessMove rook{rookStart,rookFinish};
+
+    auto p1 = std::make_unique<ChessCastle>(rook,king);
+    recorder.addMove( std::move(p1) );
+
+
+    return ChessErrorCode::VALID_MOVE;
 
 }
-
-
-
-
-
 
 
 /**
@@ -528,10 +541,10 @@ const Piece Board::getLastPieceKilled() const {
         return Piece{PieceUnit::NONE, Color::COLORLESS, {-1,-1} };
     }
 
-    return recorder.getLastMove().pieceKilled;
+    return recorder.getLastMove()->pieceKilled;
 }
 
-
+//Should have overloaded version that takes in ChessCoordinates.
 void Board::updatePiece(Piece &source, Piece &destination) {
 
     destination.setPieceId(source.getPieceUnit());
@@ -582,15 +595,11 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     ///////////
 
 
-    ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start,finish,targetPiece.getColor());
+    ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start, finish, targetPiece.getColor() );
 
     //Special case for when user attempts to CASTLE
     if(ChessCode == ChessErrorCode::CASTLE) {
         ChessCode = executeCastle(start, finish);
-        if (ChessCode == ChessErrorCode::VALID_MOVE) {
-           // recorder.addMove(start,finish, Piece{NONE,});
-            updatePiece(sourcePiece, targetPiece);
-        }
         return ChessCode;
     } else if(ChessCode == ChessErrorCode::VALID_MOVE){
         //We need to check if the move will place the user in check?
