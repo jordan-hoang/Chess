@@ -32,7 +32,7 @@ ChessMove const * MoveRecorder::getLastMove() const{
         return m_listOfGameMoves.back().get();
     }
     ChessMove * tmp = nullptr;
-    return tmp;  //////////JANKY CODE REMOVE LATER
+    return tmp;
 }
 
 bool MoveRecorder::hasMove() const {
@@ -59,10 +59,7 @@ void MoveRecorder::undoMove(vector<vector<Piece>> &board) {
     }
 
     ChessMove const * lastMove = getLastMove();
-
-
     lastMove->undoMove(board);
     removeLastMove();
-
 
 }

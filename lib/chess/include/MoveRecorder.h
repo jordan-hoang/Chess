@@ -62,7 +62,6 @@ struct ChessCastle : public ChessMove {
 
     void undoMove(vector<vector<Piece>> &board) const override {
 
-        std::cout << "ChessCastle undoMove called!!! \n";
 
         const ChessCoordinate &start = move.first;
         const ChessCoordinate &end =  move.second;
@@ -83,7 +82,6 @@ struct ChessCastle : public ChessMove {
         //std::cout << "For debugging the coordinates of rook and king are \n";
         //std::cout << "King  : " << start << ", " << end << "\n";
         //std::cout << "Rook : " << startRook << ", " <<  endRook << "\n";
-
 
     }
 
