@@ -40,13 +40,14 @@ TEST(BoardTest,  pawn){
     target = "a5";
     isValid = move.executeMove(input, target);
     EXPECT_EQ(isValid, ChessErrorCode::VALID_MOVE);
+    std::cout << move.getBoardView();
 
     //Invalid move pawns can only kill diagonally
     input = "a5";
     target = "a6";
     isValid = move.executeMove(input, target);
     EXPECT_EQ(isValid, ChessErrorCode::INVALID_MOVE);
-    // move.getBoardView();
+    std::cout << move.getBoardView();
 
 
     input = "h7";

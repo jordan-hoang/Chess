@@ -27,16 +27,7 @@ ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoor
     int difX = finish.col - start.col;
 
     //Works if the path is clear
-
-        if (start.row + directionTravel == finish.row && ( difX == 0 || difY == 0 ) ) {
-            return ChessErrorCode::VALID_MOVE; //GENERIC PAWN CODE SHOULD WORK FOR BOTH
-        } else if (start.row == 1 && directionTravel == 1 && (start.row + directionTravel * 2) == finish.row) {
-            return ChessErrorCode::VALID_MOVE; //CODE FOR RED
-        } else if (start.row == 6 && directionTravel == -1 && (start.row + directionTravel * 2) == finish.row) {
-            return ChessErrorCode::VALID_MOVE; //CODE FOR BLUE
-        }
-
-
+    
 
         // Handling diagonal movement, should be invalid if travelling backwards though
         int diffX  = abs(finish.row - start.row);
@@ -51,6 +42,16 @@ ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoor
             }
         }
 
+
+        if(target == Color::COLORLESS){
+            if (start.row + directionTravel == finish.row && ( difX == 0 || difY == 0 ) ) {
+                return ChessErrorCode::VALID_MOVE; //GENERIC PAWN CODE SHOULD WORK FOR BOTH
+            } else if (start.row == 1 && directionTravel == 1 && (start.row + directionTravel * 2) == finish.row) {
+                return ChessErrorCode::VALID_MOVE; //CODE FOR RED
+            } else if (start.row == 6 && directionTravel == -1 && (start.row + directionTravel * 2) == finish.row) {
+                return ChessErrorCode::VALID_MOVE; //CODE FOR BLUE
+            }
+        }
 
 
 
