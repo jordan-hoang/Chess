@@ -596,6 +596,12 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
 
 
     ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start, finish, targetPiece.getColor() );
+    if(ChessCode == ChessErrorCode::ENPASSANT){
+        ChessCode = enPassant(start,finish);
+    }
+
+
+
 
     //Special case for when user attempts to CASTLE
     if(ChessCode == ChessErrorCode::CASTLE) {
@@ -619,8 +625,35 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
 }
 
 
+//The recorder won't record this move properly however.
+ChessErrorCode Board::enPassant(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+    const auto lastMove = recorder.getLastMove();
+
+    const ChessCoordinate &pastMoveStart = lastMove->move.first;
+    const ChessCoordinate &pastMoveEnd   = lastMove->move.second;
 
 
+    if( abs(pastMoveEnd.row  - pastMoveStart.row) == 2 &&  requestUnit(pastMoveEnd) == PieceUnit::PAWN   ){
+        //MAKE SURE YOU CHECK FOR COLOR HERE AS WELL
+
+        //However they must finish directly behind that pawn.
+        if( getPieceColor(start) == getPieceColor(pastMoveEnd)){
+            return ChessErrorCode::INVALID_MOVE;
+        }
+
+        if(start.row == pastMoveEnd.row && (start.col + 1 == pastMoveEnd.col || start.col - 1 == pastMoveEnd.col ) ){
+            //Now we need to check if pawn moves diagonally correctly
+            if( (finish.row == pastMoveEnd.row - 1 || finish.row == pastMoveEnd.col) && finish.col == pastMoveEnd.col ) {
+                return ChessErrorCode::VALID_MOVE;
+            }
+        }
+
+
+    }
+    return ChessErrorCode::INVALID_MOVE;
+
+
+}
 
 
 //Constructor

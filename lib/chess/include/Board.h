@@ -65,7 +65,7 @@ private:
    bool isSquareUnderAttack(const ChessCoordinate &position, const Color enemyColor) const;
 
 
-
+   ChessErrorCode enPassant(const ChessCoordinate &start, const ChessCoordinate &finish) const;
    void promotePawnToQueen(Piece &source, const ChessCoordinate &target);
    ChessErrorCode executeCastle(const ChessCoordinate &start, const ChessCoordinate &finish);
 

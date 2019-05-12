@@ -52,8 +52,6 @@ struct ChessMove {
 
     virtual ~ChessMove() = default;
 
-
-
 };
 
 struct ChessCastle : public ChessMove {
@@ -75,7 +73,7 @@ struct ChessCastle : public ChessMove {
         //Repeat for rook
         const ChessCoordinate &startRook = rookMoved.move.first;
         const ChessCoordinate &endRook =  rookMoved.move.second;
-        Piece::updatePiece( board[endRook.row][endRook.col], board[startRook.row][startRook.col] )  ;
+        Piece::updatePiece( board[endRook.row][endRook.col], board[startRook.row][startRook.col] );
         board[startRook.row][startRook.col].setHasMoved(false);
 
 
