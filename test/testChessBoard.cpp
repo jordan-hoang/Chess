@@ -969,8 +969,9 @@ TEST(TestUndoMove, undoCastle){
     a.undoMove();
 
     EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
-    std::cout << a.getBoardView();
 
-
+    input = "h2,h4";
+    a.readInput(input,p1);
+    a.undoMove();
 
 }

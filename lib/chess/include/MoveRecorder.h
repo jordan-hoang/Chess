@@ -52,6 +52,8 @@ struct ChessMove {
 
     virtual ~ChessMove() = default;
 
+
+
 };
 
 struct ChessCastle : public ChessMove {
@@ -88,8 +90,6 @@ struct ChessCastle : public ChessMove {
 
 
 
-    ChessCastle() = default;
-
     ChessCastle(const ChessMove &rook, const ChessMove &king){
         rookMoved = rook;
         move.first = king.move.first;
@@ -101,9 +101,11 @@ struct ChessCastle : public ChessMove {
     }
     ~ChessCastle() override = default;
 
+private:
+    ChessCastle() = default;
+
 
 };
-
 
 
 
