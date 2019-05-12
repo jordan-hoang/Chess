@@ -471,8 +471,7 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
 
 
 
-
-     return ChessErrorCode::VALID_MOVE;
+    return ChessErrorCode::VALID_MOVE;
 
 }
 
@@ -611,9 +610,6 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     if(ChessCode == ChessErrorCode::CASTLE) {
         ChessCode = executeCastle(start, finish);
         return ChessCode;
-
-
-
     } else if(ChessCode == ChessErrorCode::VALID_MOVE){
         //We need to check if the move will place the user in check?
         promotePawnToQueen(sourcePiece, finish);

@@ -11,7 +11,7 @@
 #include <vector>
 #include <string>
 #include <memory>
-
+#include <iostream>
 using std::pair;
 using std::vector;
 
@@ -60,24 +60,27 @@ struct ChessCastle : public ChessMove {
 
     void undoMove(vector<vector<Piece>> &board) const override {
 
+        std::cout << "ChessCastle undoMove called!!! \n";
+
         const ChessCoordinate &start = move.first;
         const ChessCoordinate &end =  move.second;
 
-        Piece &moveFrom = board[end.row][end.col];
-        Piece &moveTo   = board[start.row][start.col];
-
-        Piece::updatePiece(moveFrom,moveTo);
-        moveFrom.setPiece(pieceKilled);
+        Piece &moveFromKing = board[end.row][end.col];
+        Piece &moveToKing   = board[start.row][start.col];
+        Piece::updatePiece(moveFromKing,moveToKing);
+        moveToKing.setHasMoved(false);
 
 
         //Repeat for rook
         const ChessCoordinate &startRook = rookMoved.move.first;
         const ChessCoordinate &endRook =  rookMoved.move.second;
+        Piece::updatePiece( board[endRook.row][endRook.col], board[startRook.row][startRook.col] )  ;
+        board[startRook.row][startRook.col].setHasMoved(false);
 
-        moveFrom = board[endRook.row][endRook.col];
-        moveTo   = board[startRook.row][startRook.col];
-        Piece::updatePiece(moveFrom,moveTo);
-        moveFrom.setPiece(pieceKilled);
+
+        //std::cout << "For debugging the coordinates of rook and king are \n";
+        //std::cout << "King  : " << start << ", " << end << "\n";
+        //std::cout << "Rook : " << startRook << ", " <<  endRook << "\n";
 
 
     }
@@ -87,18 +90,13 @@ struct ChessCastle : public ChessMove {
 
     ChessCastle() = default;
 
-
-
     ChessCastle(const ChessMove &rook, const ChessMove &king){
-
         rookMoved = rook;
+        move.first = king.move.first;
 
-        move.first.row = king.move.first.row;
-        move.first.col = king.move.first.col;
         pieceKilled = Piece{PieceUnit::NONE,Color::COLORLESS};
+        move.second = king.move.second;
 
-        move.second.row = king.move.second.row;
-        move.second.col = king.move.second.col;
 
     }
     ~ChessCastle() override = default;

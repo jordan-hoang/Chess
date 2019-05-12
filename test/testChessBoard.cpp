@@ -937,7 +937,7 @@ TEST(TestUndoMove, undoCastle){
     std::string p2 = "playerTwo";
 
     a.readInput(input,p1);
-    std::cout << a.getBoardView();
+  //  std::cout << a.getBoardView();
 
     input = "a2,a4";
     a.readInput(input,p1);
@@ -952,8 +952,6 @@ TEST(TestUndoMove, undoCastle){
     a.readInput(input,p1);
 
 
-    std::cout << a.getBoardView();
-
     input = "c1,a3";
     a.readInput(input,p1);
 
@@ -963,9 +961,16 @@ TEST(TestUndoMove, undoCastle){
     input = "b1,b2";
     a.readInput(input,p1);
 
+    input = "e1,c1";
 
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+
+
+    a.undoMove();
+
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
     std::cout << a.getBoardView();
 
-    // EXECUTE CASTLE AND THEN......
+
 
 }
