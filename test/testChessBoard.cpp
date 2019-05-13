@@ -976,3 +976,29 @@ TEST(TestUndoMove, undoCastle){
     a.undoMove();
 
 }
+
+TEST(TestUndoMove, enPassant){
+    ChessController a;
+    std::string input ="b2,b4";
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+
+    a.readInput(input,p1);
+    //std::cout << a.getBoardView();
+
+    input = "b4,b5";
+    a.readInput(input,p1);
+
+
+    input = "c7,c5";
+    a.readInput(input,p2);
+    std::cout << a.getBoardView();
+
+    input = "b5,c6";
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+    a.undoMove();
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+
+
+
+}

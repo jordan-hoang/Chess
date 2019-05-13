@@ -22,6 +22,12 @@ void MoveRecorder::addMove(std::unique_ptr<ChessCastle> chessMove) {
     m_listOfGameMoves.emplace_back( std::move(chessMove) );
 }
 
+void MoveRecorder::addMove(std::unique_ptr<ChessMove> chessMove) {
+    m_listOfGameMoves.emplace_back( std::move(chessMove) );
+}
+
+
+
 
 void MoveRecorder::removeLastMove() {
     m_listOfGameMoves.pop_back();

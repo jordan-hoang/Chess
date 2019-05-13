@@ -54,7 +54,6 @@ ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoor
         }
 
 
-
         return ChessErrorCode::INVALID_MOVE;
 
 

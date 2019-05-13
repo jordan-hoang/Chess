@@ -61,6 +61,10 @@ struct ChessCoordinate {
         return os;
     }
 
+    ChessCoordinate() : row(-1), col(-1){}
+    ChessCoordinate(int enteredRow, int enteredCol) : row(enteredRow), col(enteredCol) {}
+
+
 };
 
 class Piece {

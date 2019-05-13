@@ -599,12 +599,8 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     if(ChessCode == ChessErrorCode::ENPASSANT){
         ChessCode = enPassant(start,finish);
     }
-
-
-
-
     //Special case for when user attempts to CASTLE
-    if(ChessCode == ChessErrorCode::CASTLE) {
+    else if(ChessCode == ChessErrorCode::CASTLE) {
         ChessCode = executeCastle(start, finish);
         return ChessCode;
     } else if(ChessCode == ChessErrorCode::VALID_MOVE){
@@ -625,8 +621,8 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
 }
 
 
-//The recorder won't record this move properly however.
-ChessErrorCode Board::enPassant(const ChessCoordinate &start, const ChessCoordinate &finish) const {
+
+ChessErrorCode Board::enPassant(const ChessCoordinate &start, const ChessCoordinate &finish)  {
     const auto lastMove = recorder.getLastMove();
 
     const ChessCoordinate &pastMoveStart = lastMove->move.first;
@@ -636,6 +632,7 @@ ChessErrorCode Board::enPassant(const ChessCoordinate &start, const ChessCoordin
     if( abs(pastMoveEnd.row  - pastMoveStart.row) == 2 &&  requestUnit(pastMoveEnd) == PieceUnit::PAWN   ){
         //MAKE SURE YOU CHECK FOR COLOR HERE AS WELL
 
+
         //However they must finish directly behind that pawn.
         if( getPieceColor(start) == getPieceColor(pastMoveEnd)){
             return ChessErrorCode::INVALID_MOVE;
@@ -643,15 +640,25 @@ ChessErrorCode Board::enPassant(const ChessCoordinate &start, const ChessCoordin
 
         if(start.row == pastMoveEnd.row && (start.col + 1 == pastMoveEnd.col || start.col - 1 == pastMoveEnd.col ) ){
             //Now we need to check if pawn moves diagonally correctly
-            if( (finish.row == pastMoveEnd.row - 1 || finish.row == pastMoveEnd.col) && finish.col == pastMoveEnd.col ) {
+            if( (finish.row == pastMoveEnd.row - 1 || finish.row == pastMoveEnd.row + 1) && finish.col == pastMoveEnd.col ) {
+
+                const auto pawnMove = std::make_pair(start,finish);
+
+                ChessMove pawn{pawnMove, getPiece(pastMoveEnd) };
+                ChessCoordinate coordinate{pastMoveEnd};
+                auto chessMove = std::make_unique<MoveEnPassant>(pawn,coordinate);
+                recorder.addMove( std::move(chessMove) );
+
+                Piece::updatePiece(requestPiece(start), requestPiece(finish));
+                _chessBoard[pastMoveEnd.row][pastMoveEnd.col] = Piece{PieceUnit::NONE, Color::COLORLESS, pastMoveEnd};
+
                 return ChessErrorCode::VALID_MOVE;
             }
         }
 
-
     }
-    return ChessErrorCode::INVALID_MOVE;
 
+    return ChessErrorCode::INVALID_MOVE;
 
 }
 
