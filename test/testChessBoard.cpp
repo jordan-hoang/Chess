@@ -40,13 +40,14 @@ TEST(BoardTest,  pawn){
     target = "a5";
     isValid = move.executeMove(input, target);
     EXPECT_EQ(isValid, ChessErrorCode::VALID_MOVE);
+    std::cout << move.getBoardView();
 
     //Invalid move pawns can only kill diagonally
     input = "a5";
     target = "a6";
     isValid = move.executeMove(input, target);
     EXPECT_EQ(isValid, ChessErrorCode::INVALID_MOVE);
-    // move.getBoardView();
+    std::cout << move.getBoardView();
 
 
     input = "h7";
@@ -973,5 +974,31 @@ TEST(TestUndoMove, undoCastle){
     input = "h2,h4";
     a.readInput(input,p1);
     a.undoMove();
+
+}
+
+TEST(TestUndoMove, enPassant){
+    ChessController a;
+    std::string input ="b2,b4";
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+
+    a.readInput(input,p1);
+    //std::cout << a.getBoardView();
+
+    input = "b4,b5";
+    a.readInput(input,p1);
+
+
+    input = "c7,c5";
+    a.readInput(input,p2);
+    std::cout << a.getBoardView();
+
+    input = "b5,c6";
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+    a.undoMove();
+    EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+
+
 
 }

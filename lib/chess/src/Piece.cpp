@@ -27,32 +27,34 @@ ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoor
     int difX = finish.col - start.col;
 
     //Works if the path is clear
-    if(target == Color::COLORLESS) {
+    
 
-        if (start.row + directionTravel == finish.row && ( difX == 0 || difY == 0 ) ) {
-            return ChessErrorCode::VALID_MOVE; //GENERIC PAWN CODE SHOULD WORK FOR BOTH
-        } else if (start.row == 1 && directionTravel == 1 && (start.row + directionTravel * 2) == finish.row) {
-            return ChessErrorCode::VALID_MOVE; //CODE FOR RED
-        } else if (start.row == 6 && directionTravel == -1 && (start.row + directionTravel * 2) == finish.row) {
-            return ChessErrorCode::VALID_MOVE; //CODE FOR BLUE
-        } else{
-            return ChessErrorCode::INVALID_MOVE;
-        }
-
-    }
-    else{
         // Handling diagonal movement, should be invalid if travelling backwards though
         int diffX  = abs(finish.row - start.row);
         int diffY  = abs(finish.col - start.col);
 
         //A pawn can travel at most 1 unit diagonally therefore there xPos,yPos must have changed by 1.
         if(diffX == 1 && diffY == 1){
-            if(start.row + directionTravel == finish.row ) {
+            if(start.row + directionTravel == finish.row && target == Color::COLORLESS) {
+                return ChessErrorCode::ENPASSANT;
+            } else if(start.row + directionTravel == finish.row){
                 return ChessErrorCode::VALID_MOVE;
             }
         }
+
+
+        if(target == Color::COLORLESS){
+            if (start.row + directionTravel == finish.row && ( difX == 0 || difY == 0 ) ) {
+                return ChessErrorCode::VALID_MOVE; //GENERIC PAWN CODE SHOULD WORK FOR BOTH
+            } else if (start.row == 1 && directionTravel == 1 && (start.row + directionTravel * 2) == finish.row) {
+                return ChessErrorCode::VALID_MOVE; //CODE FOR RED
+            } else if (start.row == 6 && directionTravel == -1 && (start.row + directionTravel * 2) == finish.row) {
+                return ChessErrorCode::VALID_MOVE; //CODE FOR BLUE
+            }
+        }
+
+
         return ChessErrorCode::INVALID_MOVE;
-    }
 
 
 }

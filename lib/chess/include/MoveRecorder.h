@@ -50,9 +50,16 @@ struct ChessMove {
         pieceKilled = Piece{PieceUnit::NONE, Color::COLORLESS};
     }
 
+
+    //
+    //Piece(PieceUnit unit, Color color, ChessCoordinate coordinate ) :
+    //    _pieceId(unit), _pieceColor(color),_hasMoved(false),_coordinate(coordinate){}
+    //
+
+    ChessMove( pair<ChessCoordinate,ChessCoordinate> userMove, Piece piece) :
+            move( std::move(userMove) ), pieceKilled(piece){}
+
     virtual ~ChessMove() = default;
-
-
 
 };
 
@@ -75,7 +82,7 @@ struct ChessCastle : public ChessMove {
         //Repeat for rook
         const ChessCoordinate &startRook = rookMoved.move.first;
         const ChessCoordinate &endRook =  rookMoved.move.second;
-        Piece::updatePiece( board[endRook.row][endRook.col], board[startRook.row][startRook.col] )  ;
+        Piece::updatePiece( board[endRook.row][endRook.col], board[startRook.row][startRook.col] );
         board[startRook.row][startRook.col].setHasMoved(false);
 
 
@@ -84,9 +91,6 @@ struct ChessCastle : public ChessMove {
         //std::cout << "Rook : " << startRook << ", " <<  endRook << "\n";
 
     }
-
-
-
 
     ChessCastle(const ChessMove &rook, const ChessMove &king){
         rookMoved = rook;
@@ -105,6 +109,38 @@ private:
 
 };
 
+struct MoveEnPassant : public ChessMove{
+
+    ChessCoordinate coordinatePawn;
+
+    void undoMove(vector<vector<Piece>>  &board) const override {
+        const ChessCoordinate &start = move.first;
+        const ChessCoordinate &end =  move.second;
+
+        Piece &moveFrom= board[end.row][end.col];
+        Piece &moveTo   = board[start.row][start.col];
+        Piece::updatePiece(moveFrom,moveTo);
+
+        //Now we need to restore the killedPawn
+
+        board[coordinatePawn.row][coordinatePawn.col] = pieceKilled;
+    }
+
+
+    MoveEnPassant(const ChessMove &movePawn, const ChessCoordinate &killedPiece){
+        move = movePawn.move;
+        pieceKilled = movePawn.pieceKilled;
+        coordinatePawn = killedPiece;
+    }
+
+private:
+    MoveEnPassant() = default;
+
+
+};
+
+
+
 
 
 /**
@@ -114,6 +150,9 @@ class MoveRecorder {
     public:
         void addMove(ChessCoordinate, ChessCoordinate, Piece killedPiece);
         void addMove( std::unique_ptr<ChessCastle> chessMove );
+        void addMove( std::unique_ptr<ChessMove> chessMove) ;
+
+
         void removeLastMove();
         void undoMove(vector<vector<Piece>> &board);
 

@@ -13,7 +13,15 @@
  * INVALID_INPUT - Bad input from user
  * INVALID_PIECE - Attempting to move a piece that isn't yours, moving a piece that is "NONE"
  */
-enum class ChessErrorCode {INVALID_MOVE, INVALID_INPUT, INVALID_PIECE, VALID_MOVE, CASTLE, INVALID_CASTLE, INVALID_KING_MOVE};
+enum class ChessErrorCode {
+        INVALID_MOVE,
+        INVALID_INPUT,
+        INVALID_PIECE,
+        VALID_MOVE,
+        CASTLE,
+        INVALID_CASTLE,
+        INVALID_KING_MOVE,
+        ENPASSANT};
 
 /**
  * The color of the piece
@@ -52,6 +60,10 @@ struct ChessCoordinate {
         os << "{"  << coordinate.row << ", " << coordinate.col << "}";
         return os;
     }
+
+    ChessCoordinate() : row(-1), col(-1){}
+    ChessCoordinate(int enteredRow, int enteredCol) : row(enteredRow), col(enteredCol) {}
+
 
 };
 
