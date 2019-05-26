@@ -510,10 +510,11 @@ const std::string Board::getReverseBoardView() const {
 
 }
 
-/*Get the array of vectors for some purpose*/
+/*Get the array of vectors for some purpose (Graphics)*/
 const vector< vector<Piece> >& Board::getBoard() const {
     return _chessBoard;
 }
+
 
 /**
  *  Enter's in a coordinate and returns the piece at that location
@@ -546,19 +547,14 @@ const Piece Board::getLastPieceKilled() const {
 
 //Should have overloaded version that takes in ChessCoordinates.
 void Board::updatePiece(Piece &source, Piece &destination) {
-
     destination.setPieceId(source.getPieceUnit());
     destination.setPieceColor(source.getColor());
     destination.setHasMoved(true);
 
-
     source.setPieceId(PieceUnit::NONE);
     source.setPieceColor(Color::COLORLESS);
     source.setHasMoved(false);
-
-
 }
-
 
 
 
@@ -606,10 +602,12 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     } else if(ChessCode == ChessErrorCode::VALID_MOVE){
         //We need to check if the move will place the user in check?
         promotePawnToQueen(sourcePiece, finish);
-
-
         recorder.addMove(start,finish, targetPiece);
         updatePiece(sourcePiece,targetPiece);
+
+
+
+
         return ChessCode;
     }
 
@@ -621,17 +619,14 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
 }
 
 
-
+//Executes an enpassant, a french chess move where a pawn caputures a pawn that jumped 2 squares from it.
 ChessErrorCode Board::enPassant(const ChessCoordinate &start, const ChessCoordinate &finish)  {
     const auto lastMove = recorder.getLastMove();
 
     const ChessCoordinate &pastMoveStart = lastMove->move.first;
     const ChessCoordinate &pastMoveEnd   = lastMove->move.second;
 
-
     if( abs(pastMoveEnd.row  - pastMoveStart.row) == 2 &&  requestUnit(pastMoveEnd) == PieceUnit::PAWN   ){
-        //MAKE SURE YOU CHECK FOR COLOR HERE AS WELL
-
 
         //However they must finish directly behind that pawn.
         if( getPieceColor(start) == getPieceColor(pastMoveEnd)){

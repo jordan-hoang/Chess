@@ -45,24 +45,23 @@ private:
     vector<vector<Piece> > _chessBoard;
     MoveRecorder recorder;
 
-   void updatePiece(Piece &source, Piece &destination);
+    static void updatePiece(Piece &source, Piece &destination);
 
-   void initializeGame(vector<vector<Piece>> &chessBoard);
-   void createBackRank(Color myColor, vector<vector<Piece>> &boardView, int row) ;
-   void drawRow(const vector<Piece> &listPieceId, std::stringstream &stream) const;
-   void drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &stream) const;
+    void initializeGame(vector<vector<Piece>> &chessBoard);
+    void createBackRank(Color myColor, vector<vector<Piece>> &boardView, int row) ;
+    void drawRow(const vector<Piece> &listPieceId, std::stringstream &stream) const;
+    void drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &stream) const;
+    
+    bool isHorizontalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+    bool isVerticalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+    bool isDiagonalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
+    bool isPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
 
-
-   bool isHorizontalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
-   bool isVerticalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
-   bool isDiagonalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
-   bool isPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
-
-   bool isAttackedHorizontally(const ChessCoordinate &start, const Color &kingColor) const;
-   bool isAttackedVertically(const ChessCoordinate &start, const Color &kingColor) const;
-   bool isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor) const;
-   bool isAttackedByPawn(const ChessCoordinate &start, const Color &kingColor) const;
-   bool isSquareUnderAttack(const ChessCoordinate &position, const Color enemyColor) const;
+    bool isAttackedHorizontally(const ChessCoordinate &start, const Color &kingColor) const;
+    bool isAttackedVertically(const ChessCoordinate &start, const Color &kingColor) const;
+    bool isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor) const;
+    bool isAttackedByPawn(const ChessCoordinate &start, const Color &kingColor) const;
+    bool isSquareUnderAttack(const ChessCoordinate &position, const Color enemyColor) const;
 
 
    ChessErrorCode enPassant(const ChessCoordinate &start, const ChessCoordinate &finish) ;
