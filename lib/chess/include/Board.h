@@ -44,6 +44,10 @@ public:
 private:
     vector<vector<Piece> > _chessBoard;
     MoveRecorder recorder;
+    ChessCoordinate redKing;
+    ChessCoordinate blueKing;
+
+
 
     static void updatePiece(Piece &source, Piece &destination);
 
@@ -62,6 +66,8 @@ private:
     bool isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor) const;
     bool isAttackedByPawn(const ChessCoordinate &start, const Color &kingColor) const;
     bool isSquareUnderAttack(const ChessCoordinate &position, const Color enemyColor) const;
+
+    bool isCheck();
 
 
     ChessErrorCode enPassant(const ChessCoordinate &start, const ChessCoordinate &finish) ;

@@ -119,7 +119,6 @@ void Board::drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &
 
 
 
-
 /**
  * @param start
  * @param finish
@@ -394,7 +393,6 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor
         }
     }
 
-
     if( isAttackedHorizontally(position,  kingColor  ) ){
         return true;
     }
@@ -557,6 +555,14 @@ void Board::updatePiece(Piece &source, Piece &destination) {
 }
 
 
+bool Board::isCheck() {
+
+    //Now check on the kings, but we haven't recorded their positions.
+
+
+    return false;
+}
+
 
 /***
  *
@@ -595,6 +601,7 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     if(ChessCode == ChessErrorCode::ENPASSANT){
         ChessCode = enPassant(start,finish);
     }
+
     //Special case for when user attempts to CASTLE
     else if(ChessCode == ChessErrorCode::CASTLE) {
         ChessCode = executeCastle(start, finish);
@@ -605,13 +612,19 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
         recorder.addMove(start,finish, targetPiece);
         updatePiece(sourcePiece,targetPiece);
 
+        if(isCheck()){
+            undoMove();
+            ChessCode =  ChessErrorCode::INVALID_MOVE;
+        } else if(sourcePiece.getPieceUnit() == PieceUnit::KING){
+            if(sourcePiece.getColor() == Color::BLUE_UPPERCASE){
+                blueKing = sourcePiece.getCoordinate();
+            } else {
+                redKing = sourcePiece.getCoordinate();
+            }
+        }
 
 
-
-        return ChessCode;
     }
-
-
 
 
     return ChessCode;
@@ -657,11 +670,14 @@ ChessErrorCode Board::enPassant(const ChessCoordinate &start, const ChessCoordin
 
 }
 
-
 //Constructor
 Board::Board() {
     _chessBoard.reserve(8);
     initializeGame(_chessBoard);
+    //Shoddy loop
+    redKing  = {0, 4};
+    blueKing = {7, 4};
+
 }
 
 Board::Board(vector<vector<Piece>> &chessBoard) {
@@ -671,6 +687,25 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
     for(int i = 0; i<7; i++){
         assert(chessBoard.at(i).size() == 8);
     }
+
+    redKing = {-1,-1};
+    blueKing= {-1,-1};
+
+    //Shoddy loop
+    for(int i = 0; i< 8; i++){
+        for(int j = 0; j < 8; j++){
+            if(_chessBoard[i][j].getPieceUnit() == PieceUnit::KING){
+                if(_chessBoard[i][j].getColor() == Color::RED_LOWERCASE){
+                    redKing = {i,j};
+                } else if(_chessBoard[i][j].getColor() == Color::BLUE_UPPERCASE) {
+                    blueKing = {i,j};
+                }
+            }
+        }
+    }
+
+    assert(redKing.isValid());
+    assert(blueKing.isValid());
 
 }
 
