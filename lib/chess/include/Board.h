@@ -51,7 +51,7 @@ private:
     void createBackRank(Color myColor, vector<vector<Piece>> &boardView, int row) ;
     void drawRow(const vector<Piece> &listPieceId, std::stringstream &stream) const;
     void drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &stream) const;
-    
+
     bool isHorizontalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
     bool isVerticalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
     bool isDiagonalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
@@ -64,11 +64,11 @@ private:
     bool isSquareUnderAttack(const ChessCoordinate &position, const Color enemyColor) const;
 
 
-   ChessErrorCode enPassant(const ChessCoordinate &start, const ChessCoordinate &finish) ;
-   void promotePawnToQueen(Piece &source, const ChessCoordinate &target);
-   ChessErrorCode executeCastle(const ChessCoordinate &start, const ChessCoordinate &finish);
+    ChessErrorCode enPassant(const ChessCoordinate &start, const ChessCoordinate &finish) ;
+    void promotePawnToQueen(Piece &source, const ChessCoordinate &target);
+    ChessErrorCode executeCastle(const ChessCoordinate &start, const ChessCoordinate &finish);
 
-   const static std::unordered_map <PieceUnit, char> PieceLookUp;
+    const static std::unordered_map <PieceUnit, char> PieceLookUp;
 
 };
 
