@@ -709,13 +709,18 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
 
 }
 
+
+
+
+/**Undo's a move with special attention given to the king
+ */
 void Board::undoMove() {
     ChessMove const * ptr= recorder.getLastMove();
     if(ptr==nullptr){
         return;
     }
 
-    Piece movedPiece = requestPiece(ptr->move.second);
+    Piece& movedPiece = requestPiece(ptr->move.second);
     if(movedPiece.getPieceUnit() == PieceUnit::KING){
         if(movedPiece.getColor() == Color::RED_LOWERCASE){
             redKing = ptr->move.first;
@@ -729,8 +734,10 @@ void Board::undoMove() {
 
     recorder.undoMove(_chessBoard);
 
-
 }
+
+
+
 void Board::printListMove() {
     std::cout << recorder.printMoves();
 }

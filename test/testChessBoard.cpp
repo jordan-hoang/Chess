@@ -966,6 +966,8 @@ TEST(TestUndoMove, undoCastle){
     EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
 
 
+    std::cout << a.getBoardView();
+
     a.undoMove();
 
     EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
@@ -1022,5 +1024,31 @@ TEST(TestKingTracking, track){
 
     tmp = {7,4};
     EXPECT_EQ(tmp, a.getBlueKing());
+
+    //Since we undid the move we also undid the fact that the king ever moved.
+    start = {7 ,5};
+    finish = {5,3};
+
+    a.movePiece(start, finish);
+
+    start = {7,6};
+    finish = {5,5};
+    a.movePiece(start,finish);
+
+
+
+
+    if( a.getPiece({7,4}).getHasMoved() ){
+        std::cout << "Uh oh";
+    }
+
+
+
+
+    start = {7,4};
+    finish = {7,6};
+    a.movePiece(start, finish);
+    std::cout << a.getBoardView();
+
 
 }
