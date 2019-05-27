@@ -615,11 +615,11 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
         if(isCheck()){
             undoMove();
             ChessCode =  ChessErrorCode::INVALID_MOVE;
-        } else if(sourcePiece.getPieceUnit() == PieceUnit::KING){
-            if(sourcePiece.getColor() == Color::BLUE_UPPERCASE){
-                blueKing = sourcePiece.getCoordinate();
+        } else if(targetPiece.getPieceUnit() == PieceUnit::KING){
+            if(targetPiece.getColor() == Color::BLUE_UPPERCASE){
+                blueKing = targetPiece.getCoordinate();
             } else {
-                redKing = sourcePiece.getCoordinate();
+                redKing = targetPiece.getCoordinate();
             }
         }
 
@@ -691,7 +691,7 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
     redKing = {-1,-1};
     blueKing= {-1,-1};
 
-    //Shoddy loop
+    //Shoddy loop really bad fix later
     for(int i = 0; i< 8; i++){
         for(int j = 0; j < 8; j++){
             if(_chessBoard[i][j].getPieceUnit() == PieceUnit::KING){
@@ -710,7 +710,26 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
 }
 
 void Board::undoMove() {
+    ChessMove const * ptr= recorder.getLastMove();
+    if(ptr==nullptr){
+        return;
+    }
+
+    Piece movedPiece = requestPiece(ptr->move.second);
+    if(movedPiece.getPieceUnit() == PieceUnit::KING){
+        if(movedPiece.getColor() == Color::RED_LOWERCASE){
+            redKing = ptr->move.first;
+        } else if(movedPiece.getColor() == Color::BLUE_UPPERCASE){
+            blueKing = ptr->move.first;
+        } else if(movedPiece.getColor() == Color::COLORLESS){
+            assert(-1 && " undoMove of king failure");
+        }
+    }
+
+
     recorder.undoMove(_chessBoard);
+
+
 }
 void Board::printListMove() {
     std::cout << recorder.printMoves();

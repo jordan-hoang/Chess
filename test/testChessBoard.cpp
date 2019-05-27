@@ -877,7 +877,6 @@ TEST(CoordinateInitialization, coordiantePiece){
 
 }
 
-
 TEST(TestUndoMove, undoMove){
 
     ChessController a;
@@ -984,21 +983,44 @@ TEST(TestUndoMove, enPassant){
     std::string p2 = "playerTwo";
 
     a.readInput(input,p1);
-    //std::cout << a.getBoardView();
 
     input = "b4,b5";
     a.readInput(input,p1);
 
-
     input = "c7,c5";
     a.readInput(input,p2);
-    std::cout << a.getBoardView();
 
     input = "b5,c6";
     EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
     a.undoMove();
     EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
 
+}
 
+TEST(TestKingTracking, track){
+
+    Board a;
+    ChessCoordinate b = a.getBlueKing();
+
+    ChessCoordinate tmp = {7,4};
+    EXPECT_EQ( b, tmp );
+
+    ChessCoordinate start =  {6,4} ;
+    ChessCoordinate finish = {4,4};
+    a.movePiece(start, finish);
+
+
+    start = {7,4};
+    finish = {6,4};
+    a.movePiece(start,finish);
+
+
+    tmp = {6,4};
+    EXPECT_EQ(a.getBlueKing(), tmp);
+
+    a.undoMove();
+
+    tmp = {7,4};
+    EXPECT_EQ(tmp, a.getBlueKing());
 
 }

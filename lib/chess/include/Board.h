@@ -33,6 +33,8 @@ public:
     const Piece &getPiece(const ChessCoordinate &position) const;
     const PieceUnit requestUnit(const ChessCoordinate &position) const;
     const Color getPieceColor(const ChessCoordinate &position) const;
+    const ChessCoordinate& getRedKing() const {return redKing;   };
+    const ChessCoordinate& getBlueKing() const {return blueKing; };
 
 
     ChessErrorCode movePiece(const ChessCoordinate &start, const ChessCoordinate &finish);
@@ -40,6 +42,8 @@ public:
     void printListMove();
 
     const Piece getLastPieceKilled() const;
+
+
 
 private:
     vector<vector<Piece> > _chessBoard;
