@@ -40,15 +40,12 @@ TEST(BoardTest,  pawn){
     target = "a5";
     isValid = move.executeMove(input, target);
     EXPECT_EQ(isValid, ChessErrorCode::VALID_MOVE);
-    std::cout << move.getBoardView();
 
     //Invalid move pawns can only kill diagonally
     input = "a5";
     target = "a6";
     isValid = move.executeMove(input, target);
     EXPECT_EQ(isValid, ChessErrorCode::INVALID_MOVE);
-    std::cout << move.getBoardView();
-
 
     input = "h7";
     target = "h5";
@@ -877,7 +874,6 @@ TEST(CoordinateInitialization, coordiantePiece){
 
 }
 
-
 TEST(TestUndoMove, undoMove){
 
     ChessController a;
@@ -967,6 +963,8 @@ TEST(TestUndoMove, undoCastle){
     EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
 
 
+    std::cout << a.getBoardView();
+
     a.undoMove();
 
     EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
@@ -984,21 +982,67 @@ TEST(TestUndoMove, enPassant){
     std::string p2 = "playerTwo";
 
     a.readInput(input,p1);
-    //std::cout << a.getBoardView();
 
     input = "b4,b5";
     a.readInput(input,p1);
 
-
     input = "c7,c5";
     a.readInput(input,p2);
-    std::cout << a.getBoardView();
 
     input = "b5,c6";
     EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
     a.undoMove();
     EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
 
+}
+
+TEST(TestKingTracking, track){
+
+    Board a;
+    ChessCoordinate b = a.getBlueKing();
+
+    ChessCoordinate tmp = {7,4};
+    EXPECT_EQ( b, tmp );
+
+    ChessCoordinate start =  {6,4} ;
+    ChessCoordinate finish = {4,4};
+    a.movePiece(start, finish);
+
+
+    start = {7,4};
+    finish = {6,4};
+    a.movePiece(start,finish);
+
+
+    tmp = {6,4};
+    EXPECT_EQ(a.getBlueKing(), tmp);
+
+    a.undoMove();
+
+    tmp = {7,4};
+    EXPECT_EQ(tmp, a.getBlueKing());
+
+    //Since we undid the move we also undid the fact that the king ever moved.
+    start = {7 ,5};
+    finish = {5,3};
+
+    a.movePiece(start, finish);
+
+    start = {7,6};
+    finish = {5,5};
+    a.movePiece(start,finish);
+
+    start = {7,4};
+    finish = {7,6};
+    a.movePiece(start, finish);
+
+    tmp = {7,6};
+    EXPECT_EQ( a.getBlueKing(), tmp);
+
+    a.undoMove();
+
+    tmp = {7,4};
+    EXPECT_EQ(a.getBlueKing(), tmp);
 
 
 }

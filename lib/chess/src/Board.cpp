@@ -119,7 +119,6 @@ void Board::drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &
 
 
 
-
 /**
  * @param start
  * @param finish
@@ -394,7 +393,6 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor
         }
     }
 
-
     if( isAttackedHorizontally(position,  kingColor  ) ){
         return true;
     }
@@ -405,8 +403,6 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor
     return (isAttackedDiagonally(position, kingColor));
 
 }
-
-
 
 
 
@@ -421,23 +417,23 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
     // We also need to check if the path is clear here
 
      //INPUT THE CORRECT COORDINATES
-     int dirSquare  = (finish.col - start.col > 0 ) ? 1 : -1;
 
-     bool isAttacked = isSquareUnderAttack({start.row, start.col + dirSquare}, getPieceColor(start));
-     if(isAttacked){
+    int dirSquare  = (finish.col - start.col > 0 ) ? 1 : -1;
+
+    bool isAttacked = isSquareUnderAttack({start.row, start.col + dirSquare}, getPieceColor(start));
+    if(isAttacked){
         return ChessErrorCode::INVALID_CASTLE;
-     }
-     isAttacked = isSquareUnderAttack({start.row, start.col + dirSquare*2}, getPieceColor(start));
-     if(isAttacked){
+    }
+    isAttacked = isSquareUnderAttack({start.row, start.col + dirSquare*2}, getPieceColor(start));
+    if(isAttacked){
         return ChessErrorCode::INVALID_CASTLE;
-     }
+    }
 
 
-
-     int direction = start.col - finish.col;
-     int rookRow = 0;
-     rookRow = (direction > 0) ? 1 : -1;
-     int rookCol = (rookRow == 1) ? 0 : 7;
+    int direction = start.col - finish.col;
+    int rookRow = 0;
+    rookRow = (direction > 0) ? 1 : -1;
+    int rookCol = (rookRow == 1) ? 0 : 7;
 
     ChessCoordinate rookStart{finish.row,rookCol};
     ChessCoordinate rookFinish{finish.row,finish.col + rookRow};
@@ -446,17 +442,27 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
     Piece &endSpot = requestPiece({finish.row,finish.col + rookRow});
 
 
-     if(rookPiece.getHasMoved() || rookPiece.getPieceUnit() != PieceUnit::ROOK){
+    if(rookPiece.getHasMoved() || rookPiece.getPieceUnit() != PieceUnit::ROOK){
         return ChessErrorCode::INVALID_CASTLE;
-     }
+    }
 
-     // recorder.addMove({finish.row, rookCol}, {finish.row, finish.col + rookRow});
 
      //THE MOVE IS VALID SO MOVE THE PIECES/UPDATE THEIR POSITIONS.
     Piece &sourcePiece = requestPiece(start);
     Piece &targetPiece = requestPiece(finish);
     updatePiece(sourcePiece, targetPiece);
     updatePiece(rookPiece,endSpot);
+
+
+
+
+    if(targetPiece.getColor() == Color::RED_LOWERCASE){
+        redKing = targetPiece.getCoordinate();
+    } else if(targetPiece.getColor() == Color::BLUE_UPPERCASE){
+        blueKing = targetPiece.getCoordinate();
+    } else if(targetPiece.getColor() == Color::COLORLESS){
+        assert(-1 && " undoMove of king failure");
+    }
 
 
     //NOW WE NEED TO RECORD THIS "CASTLE"
@@ -510,10 +516,11 @@ const std::string Board::getReverseBoardView() const {
 
 }
 
-/*Get the array of vectors for some purpose*/
+/*Get the array of vectors for some purpose (Graphics)*/
 const vector< vector<Piece> >& Board::getBoard() const {
     return _chessBoard;
 }
+
 
 /**
  *  Enter's in a coordinate and returns the piece at that location
@@ -546,20 +553,25 @@ const Piece Board::getLastPieceKilled() const {
 
 //Should have overloaded version that takes in ChessCoordinates.
 void Board::updatePiece(Piece &source, Piece &destination) {
-
     destination.setPieceId(source.getPieceUnit());
     destination.setPieceColor(source.getColor());
     destination.setHasMoved(true);
 
-
     source.setPieceId(PieceUnit::NONE);
     source.setPieceColor(Color::COLORLESS);
     source.setHasMoved(false);
-
-
 }
 
 
+bool Board::isCheck(Color personMoving) {
+
+    //Now check on the kings, but we haven't recorded their positions.
+    return false;
+
+    //return isSquareUnderAttack(redKing, personMoving);
+
+
+}
 
 
 /***
@@ -592,13 +604,13 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
             return ChessErrorCode::INVALID_KING_MOVE;
         }
     }
-    ///////////
 
 
     ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start, finish, targetPiece.getColor() );
     if(ChessCode == ChessErrorCode::ENPASSANT){
         ChessCode = enPassant(start,finish);
     }
+
     //Special case for when user attempts to CASTLE
     else if(ChessCode == ChessErrorCode::CASTLE) {
         ChessCode = executeCastle(start, finish);
@@ -606,14 +618,21 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     } else if(ChessCode == ChessErrorCode::VALID_MOVE){
         //We need to check if the move will place the user in check?
         promotePawnToQueen(sourcePiece, finish);
-
-
         recorder.addMove(start,finish, targetPiece);
         updatePiece(sourcePiece,targetPiece);
-        return ChessCode;
+
+        if( isCheck(targetPiece.getColor()) ){
+            undoMove();
+            ChessCode =  ChessErrorCode::INVALID_MOVE;
+        } else if(targetPiece.getPieceUnit() == PieceUnit::KING){
+            if(targetPiece.getColor() == Color::BLUE_UPPERCASE){
+                blueKing = targetPiece.getCoordinate();
+            } else {
+                redKing = targetPiece.getCoordinate();
+            }
+        }
+
     }
-
-
 
 
     return ChessCode;
@@ -621,17 +640,14 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
 }
 
 
-
+//Executes an enpassant, a french chess move where a pawn caputures a pawn that jumped 2 squares from it.
 ChessErrorCode Board::enPassant(const ChessCoordinate &start, const ChessCoordinate &finish)  {
     const auto lastMove = recorder.getLastMove();
 
     const ChessCoordinate &pastMoveStart = lastMove->move.first;
     const ChessCoordinate &pastMoveEnd   = lastMove->move.second;
 
-
     if( abs(pastMoveEnd.row  - pastMoveStart.row) == 2 &&  requestUnit(pastMoveEnd) == PieceUnit::PAWN   ){
-        //MAKE SURE YOU CHECK FOR COLOR HERE AS WELL
-
 
         //However they must finish directly behind that pawn.
         if( getPieceColor(start) == getPieceColor(pastMoveEnd)){
@@ -662,11 +678,14 @@ ChessErrorCode Board::enPassant(const ChessCoordinate &start, const ChessCoordin
 
 }
 
-
 //Constructor
 Board::Board() {
     _chessBoard.reserve(8);
     initializeGame(_chessBoard);
+
+    redKing  = {0, 4};
+    blueKing = {7, 4};
+
 }
 
 Board::Board(vector<vector<Piece>> &chessBoard) {
@@ -677,11 +696,55 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
         assert(chessBoard.at(i).size() == 8);
     }
 
+    redKing = {-1,-1};
+    blueKing= {-1,-1};
+
+    //Shoddy loop really bad fix later
+    for(int i = 0; i< 8; i++){
+        for(int j = 0; j < 8; j++){
+            if(_chessBoard[i][j].getPieceUnit() == PieceUnit::KING){
+                if(_chessBoard[i][j].getColor() == Color::RED_LOWERCASE){
+                    redKing = {i,j};
+                } else if(_chessBoard[i][j].getColor() == Color::BLUE_UPPERCASE) {
+                    blueKing = {i,j};
+                }
+            }
+        }
+    }
+
+    assert(redKing.isValid());
+    assert(blueKing.isValid());
+
 }
 
+
+
+
+/**Undo's a move with special attention given to the king
+ */
 void Board::undoMove() {
+    ChessMove const * lastMove= recorder.getLastMove();
+    if(lastMove==nullptr){
+        return;
+    }
+
+    Piece& movedPiece = requestPiece(lastMove->move.second);
+    if(movedPiece.getPieceUnit() == PieceUnit::KING){
+        if(movedPiece.getColor() == Color::RED_LOWERCASE){
+            redKing = lastMove->move.first;
+        } else if(movedPiece.getColor() == Color::BLUE_UPPERCASE){
+            blueKing = lastMove->move.first;
+        } else if(movedPiece.getColor() == Color::COLORLESS){
+            assert(-1 && " undoMove of king failure");
+        }
+    }
+
     recorder.undoMove(_chessBoard);
+
 }
+
+
+
 void Board::printListMove() {
     std::cout << recorder.printMoves();
 }

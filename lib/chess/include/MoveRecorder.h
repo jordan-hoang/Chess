@@ -36,6 +36,21 @@ struct ChessMove {
         Piece::updatePiece(moveFrom,moveTo);
         moveFrom.setPiece(pieceKilled);
 
+        //Handling special king case
+        if(moveTo.getPieceUnit() == PieceUnit::KING ){
+            ChessCoordinate blueKingStart = {7,4};
+            ChessCoordinate redKingStart = {0,4};
+
+            if(moveTo.getColor() == Color::RED_LOWERCASE &&  redKingStart == start){
+                moveTo.setHasMoved(false);
+            }else if(moveTo.getColor() == Color::BLUE_UPPERCASE &&  blueKingStart == start){
+                moveTo.setHasMoved(false);
+            }else if(moveTo.getColor() == Color::COLORLESS ){
+
+            }
+
+        }
+
     }
 
     ChessMove() = default;
@@ -50,12 +65,6 @@ struct ChessMove {
         pieceKilled = Piece{PieceUnit::NONE, Color::COLORLESS};
     }
 
-
-    //
-    //Piece(PieceUnit unit, Color color, ChessCoordinate coordinate ) :
-    //    _pieceId(unit), _pieceColor(color),_hasMoved(false),_coordinate(coordinate){}
-    //
-
     ChessMove( pair<ChessCoordinate,ChessCoordinate> userMove, Piece piece) :
             move( std::move(userMove) ), pieceKilled(piece){}
 
@@ -68,7 +77,6 @@ struct ChessCastle : public ChessMove {
     ChessMove rookMoved;
 
     void undoMove(vector<vector<Piece>> &board) const override {
-
 
         const ChessCoordinate &start = move.first;
         const ChessCoordinate &end =  move.second;
