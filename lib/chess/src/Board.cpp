@@ -406,8 +406,6 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, Color kingColor
 
 
 
-
-
 void Board::promotePawnToQueen(Piece &source, const ChessCoordinate &target){
     if( (target.row == 0 || target.row == 7) && (source.getPieceUnit() == PieceUnit::PAWN) ){
         source.setPiece(PieceUnit::QUEEN,source.getColor());
@@ -419,23 +417,23 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
     // We also need to check if the path is clear here
 
      //INPUT THE CORRECT COORDINATES
-     int dirSquare  = (finish.col - start.col > 0 ) ? 1 : -1;
 
-     bool isAttacked = isSquareUnderAttack({start.row, start.col + dirSquare}, getPieceColor(start));
-     if(isAttacked){
+    int dirSquare  = (finish.col - start.col > 0 ) ? 1 : -1;
+
+    bool isAttacked = isSquareUnderAttack({start.row, start.col + dirSquare}, getPieceColor(start));
+    if(isAttacked){
         return ChessErrorCode::INVALID_CASTLE;
-     }
-     isAttacked = isSquareUnderAttack({start.row, start.col + dirSquare*2}, getPieceColor(start));
-     if(isAttacked){
+    }
+    isAttacked = isSquareUnderAttack({start.row, start.col + dirSquare*2}, getPieceColor(start));
+    if(isAttacked){
         return ChessErrorCode::INVALID_CASTLE;
-     }
+    }
 
 
-
-     int direction = start.col - finish.col;
-     int rookRow = 0;
-     rookRow = (direction > 0) ? 1 : -1;
-     int rookCol = (rookRow == 1) ? 0 : 7;
+    int direction = start.col - finish.col;
+    int rookRow = 0;
+    rookRow = (direction > 0) ? 1 : -1;
+    int rookCol = (rookRow == 1) ? 0 : 7;
 
     ChessCoordinate rookStart{finish.row,rookCol};
     ChessCoordinate rookFinish{finish.row,finish.col + rookRow};
@@ -444,17 +442,27 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
     Piece &endSpot = requestPiece({finish.row,finish.col + rookRow});
 
 
-     if(rookPiece.getHasMoved() || rookPiece.getPieceUnit() != PieceUnit::ROOK){
+    if(rookPiece.getHasMoved() || rookPiece.getPieceUnit() != PieceUnit::ROOK){
         return ChessErrorCode::INVALID_CASTLE;
-     }
+    }
 
-     // recorder.addMove({finish.row, rookCol}, {finish.row, finish.col + rookRow});
 
      //THE MOVE IS VALID SO MOVE THE PIECES/UPDATE THEIR POSITIONS.
     Piece &sourcePiece = requestPiece(start);
     Piece &targetPiece = requestPiece(finish);
     updatePiece(sourcePiece, targetPiece);
     updatePiece(rookPiece,endSpot);
+
+
+
+
+    if(targetPiece.getColor() == Color::RED_LOWERCASE){
+        redKing = targetPiece.getCoordinate();
+    } else if(targetPiece.getColor() == Color::BLUE_UPPERCASE){
+        blueKing = targetPiece.getCoordinate();
+    } else if(targetPiece.getColor() == Color::COLORLESS){
+        assert(-1 && " undoMove of king failure");
+    }
 
 
     //NOW WE NEED TO RECORD THIS "CASTLE"
@@ -555,12 +563,14 @@ void Board::updatePiece(Piece &source, Piece &destination) {
 }
 
 
-bool Board::isCheck() {
+bool Board::isCheck(Color personMoving) {
 
     //Now check on the kings, but we haven't recorded their positions.
-
-
     return false;
+
+    //return isSquareUnderAttack(redKing, personMoving);
+
+
 }
 
 
@@ -594,7 +604,6 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
             return ChessErrorCode::INVALID_KING_MOVE;
         }
     }
-    ///////////
 
 
     ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start, finish, targetPiece.getColor() );
@@ -612,7 +621,7 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
         recorder.addMove(start,finish, targetPiece);
         updatePiece(sourcePiece,targetPiece);
 
-        if(isCheck()){
+        if( isCheck(targetPiece.getColor()) ){
             undoMove();
             ChessCode =  ChessErrorCode::INVALID_MOVE;
         } else if(targetPiece.getPieceUnit() == PieceUnit::KING){
@@ -622,7 +631,6 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
                 redKing = targetPiece.getCoordinate();
             }
         }
-
 
     }
 
@@ -674,7 +682,7 @@ ChessErrorCode Board::enPassant(const ChessCoordinate &start, const ChessCoordin
 Board::Board() {
     _chessBoard.reserve(8);
     initializeGame(_chessBoard);
-    //Shoddy loop
+
     redKing  = {0, 4};
     blueKing = {7, 4};
 
@@ -715,22 +723,21 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
 /**Undo's a move with special attention given to the king
  */
 void Board::undoMove() {
-    ChessMove const * ptr= recorder.getLastMove();
-    if(ptr==nullptr){
+    ChessMove const * lastMove= recorder.getLastMove();
+    if(lastMove==nullptr){
         return;
     }
 
-    Piece& movedPiece = requestPiece(ptr->move.second);
+    Piece& movedPiece = requestPiece(lastMove->move.second);
     if(movedPiece.getPieceUnit() == PieceUnit::KING){
         if(movedPiece.getColor() == Color::RED_LOWERCASE){
-            redKing = ptr->move.first;
+            redKing = lastMove->move.first;
         } else if(movedPiece.getColor() == Color::BLUE_UPPERCASE){
-            blueKing = ptr->move.first;
+            blueKing = lastMove->move.first;
         } else if(movedPiece.getColor() == Color::COLORLESS){
             assert(-1 && " undoMove of king failure");
         }
     }
-
 
     recorder.undoMove(_chessBoard);
 

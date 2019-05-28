@@ -71,7 +71,7 @@ private:
     bool isAttackedByPawn(const ChessCoordinate &start, const Color &kingColor) const;
     bool isSquareUnderAttack(const ChessCoordinate &position, const Color enemyColor) const;
 
-    bool isCheck();
+    bool isCheck(Color color);
 
 
     ChessErrorCode enPassant(const ChessCoordinate &start, const ChessCoordinate &finish) ;

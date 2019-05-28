@@ -40,15 +40,12 @@ TEST(BoardTest,  pawn){
     target = "a5";
     isValid = move.executeMove(input, target);
     EXPECT_EQ(isValid, ChessErrorCode::VALID_MOVE);
-    std::cout << move.getBoardView();
 
     //Invalid move pawns can only kill diagonally
     input = "a5";
     target = "a6";
     isValid = move.executeMove(input, target);
     EXPECT_EQ(isValid, ChessErrorCode::INVALID_MOVE);
-    std::cout << move.getBoardView();
-
 
     input = "h7";
     target = "h5";
@@ -1035,20 +1032,17 @@ TEST(TestKingTracking, track){
     finish = {5,5};
     a.movePiece(start,finish);
 
-
-
-
-    if( a.getPiece({7,4}).getHasMoved() ){
-        std::cout << "Uh oh";
-    }
-
-
-
-
     start = {7,4};
     finish = {7,6};
     a.movePiece(start, finish);
-    std::cout << a.getBoardView();
+
+    tmp = {7,6};
+    EXPECT_EQ( a.getBlueKing(), tmp);
+
+    a.undoMove();
+
+    tmp = {7,4};
+    EXPECT_EQ(a.getBlueKing(), tmp);
 
 
 }
