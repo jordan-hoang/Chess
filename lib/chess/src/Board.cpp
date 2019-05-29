@@ -629,7 +629,7 @@ void Board::updatePiece(Piece &source, Piece &destination) {
 bool Board::isCheck(Color personMoving) {
 
 
-    vector<ChessCoordinate> enemies;
+    vector<ChessCoordinate> enemies = {};
 
     //Now check on the kings, but we haven't recorded their positions.
     if(personMoving == Color::RED_LOWERCASE){
@@ -642,7 +642,6 @@ bool Board::isCheck(Color personMoving) {
         return false;
     }
 
-    std::cout << "size of vector is : " << enemies.size() << " ";
     for(const auto &iter : enemies){
         std:: cout << iter << "\n";
     }
@@ -675,7 +674,7 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
 
     //Code for moving the king specifically
 
-    ////////////Can possibly cause the game to never end if stalemate is possible.
+    //////Can possibly cause the game to never end if stalemate is possible. (should disable this code or finish it off)
     if(sourcePiece.getPieceUnit() == PieceUnit::KING){
         bool isSquareAttacked = isSquareUnderAttack(finish,sourcePiece.getColor());
         if(isSquareAttacked){
@@ -695,21 +694,31 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
         return ChessCode;
     } else if(ChessCode == ChessErrorCode::VALID_MOVE){
         //We need to check if the move will place the user in check?
+
         promotePawnToQueen(sourcePiece, finish);
         recorder.addMove(start,finish, targetPiece);
         updatePiece(sourcePiece,targetPiece);
 
+        if(targetPiece.getPieceUnit() == PieceUnit::KING && targetPiece.getColor() == Color::BLUE_UPPERCASE){
+            blueKing = targetPiece.getCoordinate();
+        } else if(targetPiece.getPieceUnit() == PieceUnit::KING && targetPiece.getColor() == Color::RED_LOWERCASE){
+            redKing = targetPiece.getCoordinate();
+        }
+
+
         if( isCheck(targetPiece.getColor()) ){
             undoMove();
             ChessCode =  ChessErrorCode::INVALID_MOVE;
-        } else if(targetPiece.getPieceUnit() == PieceUnit::KING){
+        }
+
+        /*else if(targetPiece.getPieceUnit() == PieceUnit::KING){
             if(targetPiece.getColor() == Color::BLUE_UPPERCASE){
                 blueKing = targetPiece.getCoordinate();
             } else {
                 redKing = targetPiece.getCoordinate();
             }
         }
-
+        */
     }
 
 
@@ -774,21 +783,29 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
         assert(chessBoard.at(i).size() == 8);
     }
 
-    redKing = {-1,-1};
-    blueKing= {-1,-1};
+    redKing.row = 7;
+    redKing.col = 3;
 
-    //Shoddy loop really bad fix later
-    for(int i = 0; i< 8; i++){
+    blueKing.row = 0;
+    blueKing.col = 3;
+
+    /*
+    //Shoddy loop really bad fix later, CAUSES CRASH!!!!
+    for(int i = 0; i < 8; i++){
         for(int j = 0; j < 8; j++){
             if(_chessBoard[i][j].getPieceUnit() == PieceUnit::KING){
+                std::cout << i << "\n";
                 if(_chessBoard[i][j].getColor() == Color::RED_LOWERCASE){
                     redKing = {i,j};
                 } else if(_chessBoard[i][j].getColor() == Color::BLUE_UPPERCASE) {
                     blueKing = {i,j};
                 }
             }
+
         }
     }
+    */
+
 
     assert(redKing.isValid());
     assert(blueKing.isValid());
