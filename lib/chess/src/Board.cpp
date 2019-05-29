@@ -628,11 +628,24 @@ void Board::updatePiece(Piece &source, Piece &destination) {
 
 bool Board::isCheck(Color personMoving) {
 
-    //Now check on the kings, but we haven't recorded their positions.
     return false;
 
-    //return isSquareUnderAttack(redKing, personMoving);
+    /*
+    vector<ChessCoordinate> enemies;
 
+    //Now check on the kings, but we haven't recorded their positions.
+    if(personMoving == Color::RED_LOWERCASE){
+        isSquareUnderAttack(redKing,Color::RED_LOWERCASE, enemies);
+    } else if(personMoving == Color::BLUE_UPPERCASE){
+        isSquareUnderAttack(blueKing, Color::BLUE_UPPERCASE, enemies);
+    }
+
+    if(enemies.empty()){
+        return false;
+    }
+
+    return true;
+     */
 
 }
 
