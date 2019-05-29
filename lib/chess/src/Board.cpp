@@ -628,9 +628,7 @@ void Board::updatePiece(Piece &source, Piece &destination) {
 
 bool Board::isCheck(Color personMoving) {
 
-    return false;
 
-    /*
     vector<ChessCoordinate> enemies;
 
     //Now check on the kings, but we haven't recorded their positions.
@@ -644,8 +642,12 @@ bool Board::isCheck(Color personMoving) {
         return false;
     }
 
+    std::cout << "size of vector is : " << enemies.size() << " ";
+    for(const auto &iter : enemies){
+        std:: cout << iter << "\n";
+    }
+
     return true;
-     */
 
 }
 

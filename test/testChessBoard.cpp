@@ -673,6 +673,7 @@ TEST(CASTLING, testPathBlocked){
     input="h8,e8";
     EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::VALID_MOVE);
 
+
     // std::cout << chessGame.getBoardView();
 
     input="e8,e7";
@@ -689,14 +690,22 @@ TEST(CASTLING, testPathBlocked){
     input="e1,e3";
     EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::VALID_MOVE);
 
+
     input="d1,e1";
     EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::VALID_MOVE);
 
+    //std::cout << chessGame.getBoardView();
 
     input="e1,e2";
     EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::VALID_MOVE);
-   // std::cout << chessGame.getBoardView();
 
+    //std::cout << chessGame.getBoardView();
+
+
+
+    // std::cout << chessGame.getBoardView();
+
+   /*
     input = "a8,a2";
     EXPECT_EQ(chessGame.readInput(input,p1), ChessErrorCode::VALID_MOVE);
    // std::cout << chessGame.getBoardView();
@@ -717,8 +726,7 @@ TEST(CASTLING, testPathBlocked){
     input = "e1,e2";
     EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_KING_MOVE);
 
-
-
+    */
 
 
 
@@ -794,13 +802,20 @@ TEST(KING,kingMovement){
     input = "c5,c6";
     EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
 
+
     input = "e5,d7";
     EXPECT_EQ(game.readInput(input,p1),ChessErrorCode::VALID_MOVE);
 
-    std::cout << game.getBoardView();
+
 
     input = "c5,d6";
-    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_MOVE);
+
+
+    std::cout << game.getBoardView();
+
+    input = "c5,b5";
+    EXPECT_EQ(game.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
 
 
     /*
@@ -967,9 +982,6 @@ TEST(TestUndoMove, undoCastle){
     input = "e1,c1";
 
     EXPECT_EQ(a.readInput(input,p1), ChessErrorCode::VALID_MOVE);
-
-
-    std::cout << a.getBoardView();
 
     a.undoMove();
 
