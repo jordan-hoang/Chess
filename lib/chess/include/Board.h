@@ -65,11 +65,12 @@ private:
     bool isDiagonalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
     bool isPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
 
-    bool isAttackedHorizontally(const ChessCoordinate &start, const Color &kingColor) const;
-    bool isAttackedVertically(const ChessCoordinate &start, const Color &kingColor) const;
-    bool isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor) const;
-    bool isAttackedByPawn(const ChessCoordinate &start, const Color &kingColor) const;
-    bool isSquareUnderAttack(const ChessCoordinate &position, const Color enemyColor) const;
+    bool isAttackedHorizontally(const ChessCoordinate &start, const Color &kingColor, vector<ChessCoordinate> &enemies) const;
+    bool isAttackedVertically(const ChessCoordinate &start, const Color &kingColor,  vector<ChessCoordinate> &enemies) const;
+    bool isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor,  vector<ChessCoordinate> &enemies) const;
+    bool isAttackedByPawn(const ChessCoordinate &start, const Color &kingColor,  vector<ChessCoordinate> &enemies) const;
+    bool isSquareUnderAttack(const ChessCoordinate &position, const Color &kingColor, vector<ChessCoordinate> &enemies) const;
+    bool isSquareUnderAttack(const ChessCoordinate &position, const Color &kingColor) const;
 
     bool isCheck(Color color);
 
