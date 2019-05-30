@@ -639,14 +639,6 @@ TEST(CASTLING, testPathBlocked){
     a.emplace_back(otherRow);
 
 
-    std::cout << "size of board is " << a.size();
-
-    for(const auto &iter : a){
-        for(int i = 0; i< iter.size(); i++){
-            std::cout << iter[i].getCoordinate() ;
-        }
-    }
-
 
     ChessController chessGame(a);
 
@@ -714,18 +706,10 @@ TEST(CASTLING, testPathBlocked){
     input = "e1,e2";
     EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_KING_MOVE);
 
-    
 
 
 
 }
-
-
-
-
-
-
-
 
 /**
  *

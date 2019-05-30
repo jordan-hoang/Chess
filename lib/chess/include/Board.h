@@ -72,7 +72,8 @@ private:
     bool isSquareUnderAttack(const ChessCoordinate &position, const Color &kingColor, vector<ChessCoordinate> &enemies) const;
     bool isSquareUnderAttack(const ChessCoordinate &position, const Color &kingColor) const;
 
-    bool isCheck(Color color);
+    bool isCheck(const Color &color);
+    
 
 
     ChessErrorCode enPassant(const ChessCoordinate &start, const ChessCoordinate &finish) ;

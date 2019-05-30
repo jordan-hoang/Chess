@@ -4,7 +4,7 @@ add_executable(runAllTests
   # Add all new test files to the list here.
   # Place each file name on a separate line.
         testChessBoard.cpp
-        #testKing.cpp)
+        testCheck.cpp)
         )
 
 target_link_libraries(runAllTests

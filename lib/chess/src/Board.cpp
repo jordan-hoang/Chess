@@ -626,14 +626,14 @@ void Board::updatePiece(Piece &source, Piece &destination) {
 }
 
 
-bool Board::isCheck(Color personMoving) {
+bool Board::isCheck(const Color &personMoving) {
 
 
     vector<ChessCoordinate> enemies = {};
 
     //Now check on the kings, but we haven't recorded their positions.
     if(personMoving == Color::RED_LOWERCASE){
-        isSquareUnderAttack(redKing,Color::RED_LOWERCASE, enemies);
+        isSquareUnderAttack(redKing, Color::RED_LOWERCASE, enemies);
     } else if(personMoving == Color::BLUE_UPPERCASE){
         isSquareUnderAttack(blueKing, Color::BLUE_UPPERCASE, enemies);
     }
@@ -647,6 +647,7 @@ bool Board::isCheck(Color personMoving) {
     }
 
     return true;
+
 
 }
 
@@ -783,11 +784,11 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
         assert(chessBoard.at(i).size() == 8);
     }
 
-    redKing.row = 7;
-    redKing.col = 3;
+    redKing.row = 7;  //Hard coded for testing of 1 function
+    redKing.col = 3;  //Hard coded for testing of 1 function
 
-    blueKing.row = 0;
-    blueKing.col = 3;
+    blueKing.row = 0; //Hard coded for testing of 1 function
+    blueKing.col = 3; //Hard coded for testing of 1 function
 
 
     for(int i = 0; i < 8; i++){
@@ -812,8 +813,6 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
     assert(blueKing.isValid());
 
 }
-
-
 
 
 /**Undo's a move with special attention given to the king
