@@ -11,6 +11,7 @@
 #include "MoveRecorder.h"
 #include <unordered_map>
 #include <sstream>
+#include "CheckMate.h"
 
 
 
@@ -48,6 +49,9 @@ public:
 private:
     vector<vector<Piece> > _chessBoard;
     MoveRecorder recorder;
+    CheckMate checkmate_system;
+
+
     ChessCoordinate redKing;
     ChessCoordinate blueKing;
 

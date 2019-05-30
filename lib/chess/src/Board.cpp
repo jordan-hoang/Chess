@@ -115,6 +115,8 @@ void Board::drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &
     }
     stream << '\n';
 
+
+
 }
 
 
@@ -437,6 +439,7 @@ bool Board::isSquareUnderAttack(const ChessCoordinate &position, const Color &ki
 
 }
 
+
 bool Board::isSquareUnderAttack(const ChessCoordinate &position, const Color& kingColor) const {
     //Now we need to test the position vertically, horizontally, and attacks from knights.
     //All possible moves of a knight
@@ -678,6 +681,8 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     //////Can possibly cause the game to never end if stalemate is possible. (should disable this code or finish it off)
     if(sourcePiece.getPieceUnit() == PieceUnit::KING){
         bool isSquareAttacked = isSquareUnderAttack(finish,sourcePiece.getColor());
+
+
         if(isSquareAttacked){
             return ChessErrorCode::INVALID_KING_MOVE;
         }
@@ -751,6 +756,8 @@ ChessErrorCode Board::enPassant(const ChessCoordinate &start, const ChessCoordin
                 ChessMove pawn{pawnMove, getPiece(pastMoveEnd) };
                 ChessCoordinate coordinate{pastMoveEnd};
                 auto chessMove = std::make_unique<MoveEnPassant>(pawn,coordinate);
+
+
                 recorder.addMove( std::move(chessMove) );
 
                 Piece::updatePiece(requestPiece(start), requestPiece(finish));
@@ -778,6 +785,11 @@ Board::Board() {
 
 Board::Board(vector<vector<Piece>> &chessBoard) {
     this->_chessBoard = chessBoard;
+  //  CheckMate checkmate_system(Color::RED_LOWERCASE, Color::BLUE_UPPERCASE);
+ //   this->checkmate_system = std::move(checkmate_system);
+
+
+
 
     assert(chessBoard.size() == 8);
     for(int i = 0; i<7; i++){
