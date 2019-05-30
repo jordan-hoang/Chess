@@ -789,8 +789,7 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
     blueKing.row = 0;
     blueKing.col = 3;
 
-    /*
-    //Shoddy loop really bad fix later, CAUSES CRASH!!!!
+
     for(int i = 0; i < 8; i++){
         for(int j = 0; j < 8; j++){
             if(_chessBoard[i][j].getPieceUnit() == PieceUnit::KING){
@@ -802,9 +801,11 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
                 }
             }
 
+            _chessBoard[i][j].setCoordinate({i,j});
+
         }
     }
-    */
+
 
 
     assert(redKing.isValid());

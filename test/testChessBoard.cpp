@@ -321,7 +321,7 @@ TEST(BoardTest, testBishop){
 
 }
 
-/*
+
 TEST(BoardTest, testPromotionAndKillKing){
 
     Board board;
@@ -332,26 +332,11 @@ TEST(BoardTest, testPromotionAndKillKing){
     board.movePiece({5,1},{6,2});
     board.movePiece({6,2},{7,3});
 
+    std::cout << board.getBoardView();
+
     EXPECT_EQ(board.requestUnit({7,3}), PieceUnit::QUEEN );
 
-
-    board.movePiece({6,4},{4,4});
-
-    board.movePiece({4,4},{3,4});
-    board.movePiece({3,4},{2,4});
-    board.movePiece({2,4},{1,3});
-    board.movePiece({1,3},{0,2});
-
-
-    EXPECT_EQ(board.requestUnit({0,2}), PieceUnit::QUEEN );
-    board.movePiece({0,2},{0,3});
-    EXPECT_EQ(board.getLastPieceKilled().getPieceUnit(), PieceUnit::QUEEN);
-
-    board.movePiece({0,3},{0,4});
-    EXPECT_EQ(board.getLastPieceKilled().getPieceUnit(), PieceUnit::KING);
-
 }
-*/
 
 
 TEST(MoveValidatorTest, testTurn){
@@ -616,6 +601,7 @@ vector<Piece> emptyRow(){
 TEST(CASTLING, testPathBlocked){
     //Also test vertical and horizontal attackers
 
+
     vector<vector<Piece>> a;
 
     vector<Piece> backRow;
@@ -652,6 +638,16 @@ TEST(CASTLING, testPathBlocked){
 
     a.emplace_back(otherRow);
 
+
+    std::cout << "size of board is " << a.size();
+
+    for(const auto &iter : a){
+        for(int i = 0; i< iter.size(); i++){
+            std::cout << iter[i].getCoordinate() ;
+        }
+    }
+
+
     ChessController chessGame(a);
 
   //  std::cout << chessGame.getBoardView();
@@ -672,18 +668,14 @@ TEST(CASTLING, testPathBlocked){
     EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::VALID_MOVE);
 
 
-
     input="e8,e7";
     EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::VALID_MOVE);
 
-    std::cout << chessGame.getBoardView();
-
-    input="d8,e8";
-    EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::VALID_MOVE); //Somehow this ca
-    std::cout << chessGame.getBoardView();
 
 
-    /*
+    EXPECT_EQ(chessGame.readInput(input,p1),ChessErrorCode::INVALID_PIECE); //Somehow this causes crash/error to happen
+
+
     input="d1,e2";
     EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::INVALID_KING_MOVE);
 
@@ -697,11 +689,11 @@ TEST(CASTLING, testPathBlocked){
 
 
 
-    //input="e1,e2";
-    //EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::VALID_MOVE);
+    input="e1,e2";
+    EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::VALID_MOVE);
 
 
-   /*
+
     input = "a8,a2";
     EXPECT_EQ(chessGame.readInput(input,p1), ChessErrorCode::VALID_MOVE);
    // std::cout << chessGame.getBoardView();
@@ -722,11 +714,16 @@ TEST(CASTLING, testPathBlocked){
     input = "e1,e2";
     EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_KING_MOVE);
 
-    */
+    
 
 
 
 }
+
+
+
+
+
 
 
 

@@ -92,7 +92,7 @@ class Piece {
         void setPieceColor(Color pieceColor);
         void setHasMoved(bool hasMoved);
         void setPiece(const Piece &a);
-
+        void setCoordinate(const ChessCoordinate &a) {this->_coordinate = a; };
 
     enum ChessErrorCode checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const Color &targetColor) const   ;
         static void updatePiece(Piece &source, Piece &destination);
