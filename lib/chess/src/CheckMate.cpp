@@ -51,7 +51,57 @@ void CheckMate::addMove(const ChessCoordinate &enemyPosition, const vector<vecto
 
 
 
+bool CheckMate::isAttackedByPawn(const ChessCoordinate &start, const Color &kingColor,
+                                 const vector<vector<Piece> > &m_chessBoard) {
 
+    bool flag = false;
+
+    if(kingColor == Color::BLUE_UPPERCASE){
+
+        //bottom left of start and bottom right of start if contain pawn will mean that spot is dangerous
+        ChessCoordinate bottomLeft{start.row - 1, start.col - 1};
+        if(bottomLeft.isValid()){
+            Piece tmp = m_chessBoard[bottomLeft.row][bottomLeft.col];
+
+            if(tmp.getColor() == Color::RED_LOWERCASE && tmp.getPieceUnit() == PieceUnit::PAWN){
+               addMove(ChessCoordinate{start.row - 1, start.col -1}, m_chessBoard);
+                flag = true;
+            }
+        }
+
+        ChessCoordinate bottomRight{start.row - 1, start.col + 1};
+        if(bottomRight.isValid()) {
+            Piece tmp = m_chessBoard[bottomRight.row][bottomRight.col];
+            if (tmp.getColor() == Color::RED_LOWERCASE && tmp.getPieceUnit() == PieceUnit::PAWN) {
+                addMove(ChessCoordinate{start.row - 1, start.col + 1}, m_chessBoard);
+                flag = true;
+            }
+        }
+
+    } else if(kingColor == Color::RED_LOWERCASE){
+        //watch out for pawns coming from above!
+        ChessCoordinate topLeft{start.row + 1, start.col - 1};
+        if(topLeft.isValid()){
+            Piece tmp = m_chessBoard[topLeft.row][topLeft.col];
+            if(tmp.getColor() == Color::BLUE_UPPERCASE && tmp.getPieceUnit() == PieceUnit::PAWN){
+                addMove(ChessCoordinate{start.row + 1, start.col - 1}, m_chessBoard);
+                flag = true;
+            }
+        }
+        ChessCoordinate topRight{start.row + 1, start.col + 1};
+        if(topRight.isValid()){
+            Piece tmp = m_chessBoard[topRight.row][topRight.col];
+            if(tmp.getPieceUnit() == PieceUnit::PAWN && tmp.getColor() == Color::BLUE_UPPERCASE){
+                addMove(ChessCoordinate{start.row + 1, start.col + 1}, m_chessBoard);
+                flag = true;
+            }
+        }
+    }
+
+    return flag;
+
+
+}
 
 /**
  * NEEDS TESTING
@@ -190,6 +240,7 @@ bool CheckMate::isSquareUnderAttack(const ChessCoordinate &position, const Color
     //Now we need to test the position vertically, horizontally, and attacks from knights.
     //All possible moves of a knight
     std::vector<ChessCoordinate> enemies;
+
 
     int knightMoveX[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
     int knightMoveY[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
