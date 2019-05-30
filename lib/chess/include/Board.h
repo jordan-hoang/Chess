@@ -73,7 +73,7 @@ private:
     bool isSquareUnderAttack(const ChessCoordinate &position, const Color &kingColor) const;
 
     bool isCheck(const Color &color);
-    
+
 
 
     ChessErrorCode enPassant(const ChessCoordinate &start, const ChessCoordinate &finish) ;
