@@ -216,261 +216,6 @@ bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &fin
 }
 
 
-/**
- * NEEDS TESTING
- * @param start - coordinates of the square you want to check is under attack
- * @param finish - end/begin of the row
- * @return True if can be attacked else returns false.
- */
-bool Board::isAttackedHorizontally(const ChessCoordinate &start, const Color &kingColor,  vector<ChessCoordinate> &enemies) const {
-
-    const vector<Piece> &handle = _chessBoard.at(start.row);
-    auto iterBegin = handle.begin() + start.col ;
-    auto iterEnd = handle.end();
-
-    //If the piece you are looking for is not None and the piece isn't the attack piece then......
-    //Stops looking if it finds a piece that isn't none
-
-    //Checking forwards towards the right, so --x-------a-----b--  "Piece a would look towards 'b' to find a rook or queen"
-    auto result = std::find_if(iterBegin,iterEnd,
-                               [&](auto i ) {return i.getPieceUnit() != PieceUnit::NONE ;} );
-
-    if(result != iterEnd){
-        if((*result).getColor() != kingColor &&  ((*result).getPieceUnit() == PieceUnit::ROOK ||
-                                                  (*result).getPieceUnit() == PieceUnit::QUEEN )){
-            enemies.push_back((*result).getCoordinate());
-            return true;
-        }
-    }
-
-
-    //Checking backwards towards the left, so    --x-----a---- "Piece a would be checking towards x to find a rook or queen---
-    const auto rIter = handle.rbegin() + start.col ;
-    const auto resultTwo = std::find_if(rIter, handle.rend(),
-                                        [&](auto i ) {return i.getPieceUnit() != PieceUnit::NONE ;} );
-
-    if(resultTwo != handle.rend()){
-        if((*resultTwo).getColor() != kingColor &&  ((*resultTwo).getPieceUnit() == PieceUnit::ROOK ||
-                                                     (*resultTwo).getPieceUnit() == PieceUnit::QUEEN )){
-            enemies.push_back((*resultTwo).getCoordinate());
-            return true;
-        }
-    }
-
-
-
-    return false;
-}
-/**
- *
- * @param start - The square you want to check
- * @param kingColor - Color of the king that is trying to castle.
- * @return - If that square can be attacked
- */
-bool Board::isAttackedVertically(const ChessCoordinate &start, const Color &kingColor,  vector<ChessCoordinate> &enemies) const {
-
-    //We need to check vertically upwards, then vertically downwards, from the position START
-    bool flag = false;
-
-    for(int i = start.row ; i < 8 ; i++) {
-        Piece tmp = _chessBoard.at(i).at(start.col);
-        if(tmp.getPieceUnit() == PieceUnit::ROOK || tmp.getPieceUnit() == PieceUnit::QUEEN){
-            if(tmp.getColor() != kingColor){
-                enemies.emplace_back(i, start.col);
-                flag = true;
-            }
-        } if(tmp.getPieceUnit() != PieceUnit::NONE){  //but we need to stop checking if the piece we encounter is not
-            break;
-        }
-        if(flag){
-            break;
-        }
-    }
-
-    //Now we check downwards, almost duplicated code, only for parameters changed
-    for(int i = start.row ; i >= 0; i--) {
-        Piece tmp = _chessBoard.at(i).at(start.col);
-        if(tmp.getPieceUnit() == PieceUnit::ROOK || tmp.getPieceUnit() == PieceUnit::QUEEN){
-            if(tmp.getColor() != kingColor && tmp.getColor() != Color::COLORLESS){
-                enemies.emplace_back(i, start.col);
-                flag =  true; //We checked upwards already so we can just return true
-            }
-        } if(tmp.getPieceUnit() != PieceUnit::NONE){  //but we need to stop checking if the piece we encounter is not
-            break;
-        }
-        if(flag){
-            break;
-        }
-    }
-
-    return flag;
-
-}
-
-bool Board::isAttackedByPawn(const ChessCoordinate &start, const Color &kingColor,  vector<ChessCoordinate> &enemies) const {
-
-    bool flag = false;
-
-    if(kingColor == Color::BLUE_UPPERCASE){
-
-        //bottom left of start and bottom right of start if contain pawn will mean that spot is dangerous
-        ChessCoordinate bottomLeft{start.row - 1, start.col - 1};
-        if(bottomLeft.isValid()){
-            Piece tmp = getPiece(bottomLeft);
-
-            if(tmp.getColor() == Color::RED_LOWERCASE && tmp.getPieceUnit() == PieceUnit::PAWN){
-                enemies.emplace_back(ChessCoordinate{start.row - 1, start.col -1});
-                flag = true;
-            }
-        }
-
-        ChessCoordinate bottomRight{start.row - 1, start.col + 1};
-        if(bottomRight.isValid()) {
-            Piece tmp = getPiece(bottomRight);
-            if (tmp.getColor() == Color::RED_LOWERCASE && tmp.getPieceUnit() == PieceUnit::PAWN) {
-                enemies.emplace_back(ChessCoordinate{start.row - 1, start.col + 1});
-                flag = true;
-            }
-        }
-
-    } else if(kingColor == Color::RED_LOWERCASE){
-        //watch out for pawns coming from above!
-        ChessCoordinate topLeft{start.row + 1, start.col - 1};
-        if(topLeft.isValid()){
-            Piece tmp = getPiece(topLeft);
-            if(tmp.getColor() == Color::BLUE_UPPERCASE && tmp.getPieceUnit() == PieceUnit::PAWN){
-                enemies.emplace_back(ChessCoordinate{start.row + 1, start.col - 1});
-                flag = true;
-            }
-        }
-        ChessCoordinate topRight{start.row + 1, start.col + 1};
-        if(topRight.isValid()){
-            Piece tmp = getPiece(topRight);
-            if(tmp.getPieceUnit() == PieceUnit::PAWN && tmp.getColor() == Color::BLUE_UPPERCASE){
-                enemies.emplace_back(ChessCoordinate{start.row + 1, start.col + 1});
-                flag = true;
-            }
-        }
-    }
-
-    return flag;
-}
-
-bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor,  vector<ChessCoordinate> &enemies) const {
-
-    //Need code for bishops and pawns,pawns are special case.
-    //RED PAWNS Travel upwards, BLUE PAWNS Travel downwards from Piece.cpp
-
-    bool flag = false;
-    if(isAttackedByPawn(start,kingColor, enemies)){
-        flag = true;
-    }
-
-
-    //Check + slope for bishops and queens that can kill you.
-    //Check - slope for bishops and queens that can kill you.
-    //All possible directions diagonally to check in.
-    int dirX[4] = {1,-1,1,-1};
-    int dirY[4] = {1,-1,-1,1};
-
-
-    for(int i = 0 ; i < 4; i++){
-
-        ChessCoordinate startingPosition{start.row,start.col};
-        bool isValid = true;
-
-        while( isValid && startingPosition.isValid()){
-            if(getPieceColor(startingPosition) != kingColor) {
-                if ((requestUnit(startingPosition) == PieceUnit::QUEEN) ||
-                    requestUnit(startingPosition) == PieceUnit::BISHOP) {
-                    enemies.emplace_back(startingPosition);
-                    flag = true;
-                }
-            } if(getPiece(startingPosition).getPieceUnit() != PieceUnit::NONE){
-                isValid = false;
-            }
-            startingPosition.row += dirX[i];
-            startingPosition.col += dirY[i];
-        }
-
-    }
-
-
-    return flag;
-}
-
-//Check's if a square is under attack
-bool Board::isSquareUnderAttack(const ChessCoordinate &position, const Color &kingColor,
-                                vector<ChessCoordinate> &enemies) const {
-
-    //Now we need to test the position vertically, horizontally, and attacks from knights.
-    //All possible moves of a knight
-    int knightMoveX[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
-    int knightMoveY[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
-
-    bool flag = false;
-
-    //Checking if any of these squares has an enemy knight
-    for(int i = 0; i < 8; i++){
-        int row = knightMoveX[i] + position.row;
-        int col = knightMoveY[i] + position.col;
-        if(row >= 0 && row <= 7 && col >= 0 && col <= 7){
-            Piece potentialEnemy = _chessBoard.at(row).at(col);
-            if( potentialEnemy.getColor() != kingColor && potentialEnemy.getPieceUnit() == PieceUnit::KNIGHT){
-                flag = true;
-                enemies.emplace_back(ChessCoordinate{row,col});
-            }
-        }
-
-    }
-
-    if( isAttackedHorizontally(position,  kingColor, enemies  ) ){
-        flag = true;
-    }
-    if( isAttackedVertically(position, kingColor, enemies) ){
-        flag = true;
-    }
-    if( isAttackedDiagonally(position,kingColor, enemies)){
-        flag = true;
-    }
-
-    return flag;
-
-
-}
-
-
-bool Board::isSquareUnderAttack(const ChessCoordinate &position, const Color& kingColor) const {
-    //Now we need to test the position vertically, horizontally, and attacks from knights.
-    //All possible moves of a knight
-    std::vector<ChessCoordinate> enemies;
-
-    int knightMoveX[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
-    int knightMoveY[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
-
-    //Checking if any of these squares has an enemy knight
-    for(int i = 0; i < 8; i++){
-        int row = knightMoveX[i] + position.row;
-        int col = knightMoveY[i] + position.col;
-        if(row >= 0 && row <= 7 && col >= 0 && col <= 7){
-            Piece potentialEnemy = _chessBoard.at(row).at(col);
-            if( potentialEnemy.getColor() != kingColor && potentialEnemy.getPieceUnit() == PieceUnit::KNIGHT){
-                return true;
-            }
-        }
-    }
-
-    if( isAttackedHorizontally(position,  kingColor, enemies  ) ){
-        return true;
-    }
-    if( isAttackedVertically(position, kingColor, enemies) ){
-        return true;
-    }
-
-    return (isAttackedDiagonally(position, kingColor, enemies));
-
-}
-
 
 void Board::promotePawnToQueen(Piece &source, const ChessCoordinate &target){
     if( (target.row == 0 || target.row == 7) && (source.getPieceUnit() == PieceUnit::PAWN) ){
@@ -486,11 +231,11 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
 
     int dirSquare  = (finish.col - start.col > 0 ) ? 1 : -1;
 
-    bool isAttacked = isSquareUnderAttack({start.row, start.col + dirSquare}, getPieceColor(start));
+    bool isAttacked = checkmate_system->isSquareUnderAttack({start.row, start.col + dirSquare}, getPieceColor(start), getBoard());
     if(isAttacked){
         return ChessErrorCode::INVALID_CASTLE;
     }
-    isAttacked = isSquareUnderAttack({start.row, start.col + dirSquare*2}, getPieceColor(start));
+    isAttacked =  checkmate_system->isSquareUnderAttack({start.row, start.col + dirSquare*2}, getPieceColor(start), getBoard());
     if(isAttacked){
         return ChessErrorCode::INVALID_CASTLE;
     }
@@ -636,9 +381,9 @@ bool Board::isCheck(const Color &personMoving) {
 
     //Now check on the kings, but we haven't recorded their positions.
     if(personMoving == Color::RED_LOWERCASE){
-        isSquareUnderAttack(redKing, Color::RED_LOWERCASE, enemies);
+        checkmate_system->isSquareUnderAttack(redKing, Color::RED_LOWERCASE, getBoard());
     } else if(personMoving == Color::BLUE_UPPERCASE){
-        isSquareUnderAttack(blueKing, Color::BLUE_UPPERCASE, enemies);
+        checkmate_system->isSquareUnderAttack(blueKing, Color::BLUE_UPPERCASE, getBoard());
     }
 
     if(enemies.empty()){
@@ -680,7 +425,7 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
 
     //////Can possibly cause the game to never end if stalemate is possible. (should disable this code or finish it off)
     if(sourcePiece.getPieceUnit() == PieceUnit::KING){
-        bool isSquareAttacked = isSquareUnderAttack(finish,sourcePiece.getColor());
+        bool isSquareAttacked = checkmate_system->isSquareUnderAttack(finish,sourcePiece.getColor(), getBoard());
 
 
         if(isSquareAttacked){
@@ -781,12 +526,14 @@ Board::Board() {
     redKing  = {0, 4};
     blueKing = {7, 4};
 
+    checkmate_system = std::make_unique<CheckMate>(Color::RED_LOWERCASE, Color::BLUE_UPPERCASE);
+
 }
 
 Board::Board(vector<vector<Piece>> &chessBoard) {
     this->_chessBoard = chessBoard;
-  //  CheckMate checkmate_system(Color::RED_LOWERCASE, Color::BLUE_UPPERCASE);
- //   this->checkmate_system = std::move(checkmate_system);
+
+    checkmate_system = std::make_unique<CheckMate>(Color::RED_LOWERCASE, Color::BLUE_UPPERCASE);
 
 
 

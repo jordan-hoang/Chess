@@ -17,7 +17,7 @@ class CheckMate {
 
     public:
         CheckMate(const Color playerOne, Color playerTwo);
-        CheckMate();
+        //CheckMate();
         ~CheckMate();
 
         void addMove(const ChessCoordinate &enemyPosition, const vector<vector<Piece> > &m_chessBoard);
@@ -31,8 +31,7 @@ class CheckMate {
         struct kingAttackers; //Make this private only this class should know
         std::unique_ptr<kingAttackers> teamAlpha;
         std::unique_ptr<kingAttackers> teamBeta;
-
-
+        CheckMate();
 
         bool isAttackedHorizontally(const ChessCoordinate &start, const Color &friendlyColor, const vector<vector<Piece> > &m_chessBoard) ;
         bool isAttackedVertically(const ChessCoordinate &start, const Color &friendlyColor,   const vector<vector<Piece> > &m_chessBoard) ;

@@ -13,7 +13,7 @@ struct CheckMate::kingAttackers{
     Color colorVector;
     std::vector<ChessCoordinate> enemyCoordinates;
 
-    kingAttackers(const Color color):colorVector(color){
+    explicit kingAttackers(const Color color):colorVector(color){
         enemyCoordinates.reserve(4);
     };
 
@@ -28,6 +28,10 @@ CheckMate::CheckMate() = default;
 CheckMate::CheckMate(const Color playerOne, const Color playerTwo) {
     teamAlpha = std::make_unique<CheckMate::kingAttackers>(playerOne);
     teamBeta =  std::make_unique<CheckMate::kingAttackers>(playerTwo);
+
+    assert(teamBeta != nullptr);
+    assert(teamAlpha != nullptr);
+
 }
 
 

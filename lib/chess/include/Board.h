@@ -49,7 +49,7 @@ public:
 private:
     vector<vector<Piece> > _chessBoard;
     MoveRecorder recorder;
-    CheckMate checkmate_system;
+    std::unique_ptr<CheckMate> checkmate_system;
 
 
     ChessCoordinate redKing;
