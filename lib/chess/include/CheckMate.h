@@ -16,8 +16,7 @@ using std::vector;
 class CheckMate {
 
     public:
-        CheckMate(const Color playerOne, Color playerTwo);
-        //CheckMate();
+        CheckMate(const Color playerOne, Color playerTwo); //is used in std::make_unique()
         ~CheckMate();
 
         void addMove(const ChessCoordinate &enemyPosition, const vector<vector<Piece> > &m_chessBoard);
@@ -33,6 +32,7 @@ class CheckMate {
         std::unique_ptr<kingAttackers> teamBeta;
         CheckMate();
 
+        void clearEnemies();
         bool isAttackedHorizontally(const ChessCoordinate &start, const Color &friendlyColor, const vector<vector<Piece> > &m_chessBoard) ;
         bool isAttackedVertically(const ChessCoordinate &start, const Color &friendlyColor,   const vector<vector<Piece> > &m_chessBoard) ;
         bool isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor,   const vector<vector<Piece> > &m_chessBoard) ;

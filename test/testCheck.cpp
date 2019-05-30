@@ -16,8 +16,33 @@
 TEST(TestCheck, check) {
 
 
-    Board game;
+    ChessController a;
+    std::string input;
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
 
+    input = "e2,e4";
+
+    a.readInput(input,p1);
+    std::cout << a.getBoardView();
+
+    input = "e1,e2";
+    a.readInput(input,p1);
+
+    input = "e2,e3";
+    a.readInput(input,p1);
+
+    input = "e3,d4";
+    a.readInput(input,p1);
+
+    input = "d4,d5";
+    a.readInput(input,p1);
+
+    input = "e7,e6";
+    a.readInput(input,p2);
+
+
+    std::cout << a.getBoardView();
 
 
 

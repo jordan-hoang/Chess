@@ -44,15 +44,15 @@ void Board::initializeGame(vector<vector<Piece>> &chessBoard) {
     createBackRank(Color::RED_LOWERCASE,chessBoard, 0);
 
     std::vector<Piece> blackPawn;
-    for(int col = 0; col < 8 ; col++){
+    for(int col = 0; col < 8 ; ++col){
         blackPawn.emplace_back( Piece{PieceUnit::PAWN, Color::RED_LOWERCASE, {1,col} }  );
     }
     chessBoard.push_back(blackPawn);
 
 
-    for (int row = 2; row < 6; row++) {
+    for (int row = 2; row < 6; ++row) {
         std::vector<Piece> tmp;
-        for (int col = 0; col < 8; col++) {
+        for (int col = 0; col < 8; ++col) {
             tmp.emplace_back(Piece{PieceUnit::NONE, Color::COLORLESS, {row,col} } );
         }
         chessBoard.push_back(tmp);
@@ -60,7 +60,7 @@ void Board::initializeGame(vector<vector<Piece>> &chessBoard) {
 
     //Doing blue side
     std::vector<Piece> whitePawn;
-    for(int col = 0 ; col < 8; col++){
+    for(int col = 0 ; col < 8; ++col){
         whitePawn.emplace_back(Piece{PieceUnit::PAWN, Color::BLUE_UPPERCASE, {6,col}});
     }
     chessBoard.push_back(whitePawn);
@@ -152,7 +152,7 @@ bool Board::isVerticalPathClear(const ChessCoordinate &start, const ChessCoordin
     int end = std::max(start.row,finish.row);
 
     // + 1 for the space in front of it
-    for(int i = begin + 1; i < end ; i++){
+    for(int i = begin + 1; i < end ; ++i){
         if(requestUnit({i,start.col}) != PieceUnit::NONE ){
             return false;
         }
@@ -172,7 +172,7 @@ bool Board::isDiagonalPathClear(const ChessCoordinate &start, const ChessCoordin
     int changeX = ( (finish.col - start.col) > 0 ) ? 1 : -1;
     int changeY = ( (finish.row - start.row) > 0 ) ? 1 : -1;
 
-    for(int i = 0; i < endIter - 1; i++){
+    for(int i = 0; i < endIter - 1; ++i){
         curX += changeX;
         curY += changeY;
         if(requestUnit({curY,curX}) != PieceUnit::NONE   ){
@@ -377,7 +377,6 @@ void Board::updatePiece(Piece &source, Piece &destination) {
 bool Board::isCheck(const Color &personMoving) {
 
 
-    vector<ChessCoordinate> enemies = {};
 
     //Now check on the kings, but we haven't recorded their positions.
     if(personMoving == Color::RED_LOWERCASE){
@@ -386,10 +385,13 @@ bool Board::isCheck(const Color &personMoving) {
         checkmate_system->isSquareUnderAttack(blueKing, Color::BLUE_UPPERCASE, getBoard());
     }
 
+    const auto& enemies = checkmate_system->getAttackers(personMoving);
+
     if(enemies.empty()){
         return false;
     }
 
+    std::cout << "Attackers: to king";
     for(const auto &iter : enemies){
         std:: cout << iter << "\n";
     }
@@ -456,20 +458,20 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
             redKing = targetPiece.getCoordinate();
         }
 
-
+        //Checks to see if you are executing a move that would place you in check, if you did undo it since
+        //Placing yourself in check is illegal.
         if( isCheck(targetPiece.getColor()) ){
             undoMove();
             ChessCode =  ChessErrorCode::INVALID_MOVE;
         }
 
-        /*else if(targetPiece.getPieceUnit() == PieceUnit::KING){
-            if(targetPiece.getColor() == Color::BLUE_UPPERCASE){
-                blueKing = targetPiece.getCoordinate();
-            } else {
-                redKing = targetPiece.getCoordinate();
-            }
-        }
-        */
+    }
+
+    //Now we need to see if we've check-mated the other player.
+    if(targetPiece.getColor() == Color::RED_LOWERCASE){
+        isCheck(Color::BLUE_UPPERCASE);
+    } else {
+        isCheck(Color::RED_LOWERCASE);
     }
 
 
@@ -539,7 +541,7 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
 
 
     assert(chessBoard.size() == 8);
-    for(int i = 0; i<7; i++){
+    for(int i = 0; i<7; ++i){
         assert(chessBoard.at(i).size() == 8);
     }
 
@@ -550,8 +552,8 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
     blueKing.col = 3; //Hard coded for testing of 1 function
 
 
-    for(int i = 0; i < 8; i++){
-        for(int j = 0; j < 8; j++){
+    for(int i = 0; i < 8; ++i){
+        for(int j = 0; j < 8; ++j){
             if(_chessBoard[i][j].getPieceUnit() == PieceUnit::KING){
                 std::cout << i << "\n";
                 if(_chessBoard[i][j].getColor() == Color::RED_LOWERCASE){

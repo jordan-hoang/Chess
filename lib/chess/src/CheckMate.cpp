@@ -29,11 +29,7 @@ CheckMate::CheckMate(const Color playerOne, const Color playerTwo) {
     teamAlpha = std::make_unique<CheckMate::kingAttackers>(playerOne);
     teamBeta =  std::make_unique<CheckMate::kingAttackers>(playerTwo);
 
-    assert(teamBeta != nullptr);
-    assert(teamAlpha != nullptr);
-
 }
-
 
 
 
@@ -52,8 +48,6 @@ void CheckMate::addMove(const ChessCoordinate &enemyPosition, const vector<vecto
     }
 
 }
-
-
 
 bool CheckMate::isAttackedByPawn(const ChessCoordinate &start, const Color &kingColor,
                                  const vector<vector<Piece> > &m_chessBoard) {
@@ -238,13 +232,18 @@ bool CheckMate::isAttackedDiagonally(const ChessCoordinate &start, const Color &
 
 }
 
+void CheckMate::clearEnemies() {
+    teamAlpha->enemyCoordinates.clear();
+    teamBeta->enemyCoordinates.clear();
+}
+
 bool CheckMate::isSquareUnderAttack(const ChessCoordinate &position, const Color &friendlyColor, const vector<vector<Piece> > &m_chessBoard) {
+
 
 
     //Now we need to test the position vertically, horizontally, and attacks from knights.
     //All possible moves of a knight
-    std::vector<ChessCoordinate> enemies;
-
+    clearEnemies();
 
     int knightMoveX[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
     int knightMoveY[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
@@ -278,7 +277,11 @@ bool CheckMate::isSquareUnderAttack(const ChessCoordinate &position, const Color
 
 
 
-
+/**
+ *
+ * @param color
+ * @return A vector of chessCoordinates with attackers of
+ */
 const vector<ChessCoordinate>& CheckMate::getAttackers(const Color &color) {
 
     if(teamAlpha->colorVector == color){
