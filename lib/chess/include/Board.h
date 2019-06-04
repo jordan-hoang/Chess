@@ -68,9 +68,13 @@ private:
     bool isPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
 
 
+    ChessErrorCode canKingDodge(const ChessCoordinate &kingCoordinate);
+    ChessErrorCode canBlock(const ChessCoordinate &kingCoordinate, const Color &enemyColor); //Delegate this to CheckMate system perhaps???
+    ChessErrorCode canEliminate(const ChessCoordinate &kingCoordinate, const Color &enemyColor);
+
 
     bool isCheck(const Color &color);
-
+    ChessErrorCode isCheckMate(const Color &enemyColor);
 
 
     ChessErrorCode enPassant(const ChessCoordinate &start, const ChessCoordinate &finish) ;

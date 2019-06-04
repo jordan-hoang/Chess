@@ -24,7 +24,6 @@ TEST(TestCheck, check) {
     input = "e2,e4";
 
     a.readInput(input,p1);
-    std::cout << a.getBoardView();
 
     input = "e1,e2";
     a.readInput(input,p1);
@@ -41,10 +40,13 @@ TEST(TestCheck, check) {
     input = "e7,e6";
     a.readInput(input,p2);
 
+    input = "d5,e6";
+    a.readInput(input,p1);
+
+    input = "d5,d4";
+    a.readInput(input,p1);
 
     std::cout << a.getBoardView();
 
-
-
-
 }
+

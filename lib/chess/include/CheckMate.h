@@ -24,15 +24,13 @@ class CheckMate {
         bool isSquareUnderAttack(const ChessCoordinate &position, const Color &friendlyColor, const vector<vector<Piece> > &m_chessBoard) ;
 
 
-
-
     private:
         struct kingAttackers; //Make this private only this class should know
         std::unique_ptr<kingAttackers> teamAlpha;
         std::unique_ptr<kingAttackers> teamBeta;
         CheckMate();
 
-        void clearEnemies();
+        void clearEnemies(); //Should be called at the beginning of every move.
         bool isAttackedHorizontally(const ChessCoordinate &start, const Color &friendlyColor, const vector<vector<Piece> > &m_chessBoard) ;
         bool isAttackedVertically(const ChessCoordinate &start, const Color &friendlyColor,   const vector<vector<Piece> > &m_chessBoard) ;
         bool isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor,   const vector<vector<Piece> > &m_chessBoard) ;

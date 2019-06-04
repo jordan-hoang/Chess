@@ -25,10 +25,10 @@ struct CheckMate::kingAttackers{
 CheckMate::~CheckMate() = default;
 CheckMate::CheckMate() = default;
 
+
 CheckMate::CheckMate(const Color playerOne, const Color playerTwo) {
     teamAlpha = std::make_unique<CheckMate::kingAttackers>(playerOne);
     teamBeta =  std::make_unique<CheckMate::kingAttackers>(playerTwo);
-
 }
 
 
@@ -49,6 +49,70 @@ void CheckMate::addMove(const ChessCoordinate &enemyPosition, const vector<vecto
 
 }
 
+
+bool CheckMate::isSquareUnderAttack(const ChessCoordinate &position, const Color &friendlyColor, const vector<vector<Piece> > &m_chessBoard) {
+    clearEnemies();
+
+    //Now we need to test the position vertically, horizontally, and attacks from knights.
+    //All possible moves of a knight
+    int knightMoveX[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
+    int knightMoveY[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
+
+    //Checking if any of these squares has an enemy knight
+    for(int i = 0; i < 8; i++){
+        int row = knightMoveX[i] + position.row;
+        int col = knightMoveY[i] + position.col;
+        if(row >= 0 && row <= 7 && col >= 0 && col <= 7){
+            Piece potentialEnemy = m_chessBoard.at(row).at(col);
+            if( potentialEnemy.getColor() != friendlyColor && potentialEnemy.getPieceUnit() == PieceUnit::KNIGHT){
+                return true;
+            }
+        }
+    }
+
+    if( isAttackedHorizontally(position,  friendlyColor, m_chessBoard) ){
+        return true;
+    }
+
+    if( isAttackedVertically(position, friendlyColor, m_chessBoard) ){
+        return true;
+    }
+
+    return (isAttackedDiagonally(position, friendlyColor, m_chessBoard));
+
+}
+
+
+
+
+
+/**
+ *
+ * @param color
+ * @return A vector of chessCoordinates with attackers of
+ */
+const vector<ChessCoordinate>& CheckMate::getAttackers(const Color &color) {
+
+    if(teamAlpha->colorVector == color){
+        return teamAlpha->enemyCoordinates;
+    } else if(teamBeta->colorVector == color){
+        return teamBeta->enemyCoordinates;
+    }
+
+
+    assert(-1 && "Invalid attackerColor");
+    vector<ChessCoordinate> garbage;
+    return std::move(garbage);
+
+}
+
+
+
+
+
+
+
+
 bool CheckMate::isAttackedByPawn(const ChessCoordinate &start, const Color &kingColor,
                                  const vector<vector<Piece> > &m_chessBoard) {
 
@@ -62,7 +126,7 @@ bool CheckMate::isAttackedByPawn(const ChessCoordinate &start, const Color &king
             Piece tmp = m_chessBoard[bottomLeft.row][bottomLeft.col];
 
             if(tmp.getColor() == Color::RED_LOWERCASE && tmp.getPieceUnit() == PieceUnit::PAWN){
-               addMove(ChessCoordinate{start.row - 1, start.col -1}, m_chessBoard);
+                addMove(ChessCoordinate{start.row - 1, start.col -1}, m_chessBoard);
                 flag = true;
             }
         }
@@ -122,7 +186,7 @@ bool CheckMate::isAttackedHorizontally(const ChessCoordinate &start, const Color
 
     if(result != iterEnd){
         if((*result).getColor() != friendlyColor &&  ((*result).getPieceUnit() == PieceUnit::ROOK ||
-                                                  (*result).getPieceUnit() == PieceUnit::QUEEN )){
+                                                      (*result).getPieceUnit() == PieceUnit::QUEEN )){
             addMove((*result).getCoordinate(), m_chessBoard);
             return true;
         }
@@ -136,7 +200,7 @@ bool CheckMate::isAttackedHorizontally(const ChessCoordinate &start, const Color
 
     if(resultTwo != handle.rend()){
         if((*resultTwo).getColor() != friendlyColor &&  ((*resultTwo).getPieceUnit() == PieceUnit::ROOK ||
-                                                     (*resultTwo).getPieceUnit() == PieceUnit::QUEEN )){
+                                                         (*resultTwo).getPieceUnit() == PieceUnit::QUEEN )){
             addMove((*resultTwo).getCoordinate(), m_chessBoard);
             return true;
         }
@@ -232,68 +296,13 @@ bool CheckMate::isAttackedDiagonally(const ChessCoordinate &start, const Color &
 
 }
 
+
 void CheckMate::clearEnemies() {
     teamAlpha->enemyCoordinates.clear();
     teamBeta->enemyCoordinates.clear();
 }
 
-bool CheckMate::isSquareUnderAttack(const ChessCoordinate &position, const Color &friendlyColor, const vector<vector<Piece> > &m_chessBoard) {
 
 
 
-    //Now we need to test the position vertically, horizontally, and attacks from knights.
-    //All possible moves of a knight
-    clearEnemies();
-
-    int knightMoveX[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
-    int knightMoveY[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
-
-    //Checking if any of these squares has an enemy knight
-    for(int i = 0; i < 8; i++){
-        int row = knightMoveX[i] + position.row;
-        int col = knightMoveY[i] + position.col;
-        if(row >= 0 && row <= 7 && col >= 0 && col <= 7){
-            Piece potentialEnemy = m_chessBoard.at(row).at(col);
-            if( potentialEnemy.getColor() != friendlyColor && potentialEnemy.getPieceUnit() == PieceUnit::KNIGHT){
-                return true;
-            }
-        }
-    }
-
-
-    if( isAttackedHorizontally(position,  friendlyColor, m_chessBoard) ){
-        return true;
-    }
-
-    if( isAttackedVertically(position, friendlyColor, m_chessBoard) ){
-        return true;
-    }
-
-    return (isAttackedDiagonally(position, friendlyColor, m_chessBoard));
-
-
-
-}
-
-
-
-/**
- *
- * @param color
- * @return A vector of chessCoordinates with attackers of
- */
-const vector<ChessCoordinate>& CheckMate::getAttackers(const Color &color) {
-
-    if(teamAlpha->colorVector == color){
-        return teamAlpha->enemyCoordinates;
-    } else if(teamBeta->colorVector == color){
-        return teamBeta->enemyCoordinates;
-    }
-
-
-    assert(-1 && "Invalid attackerColor");
-    vector<ChessCoordinate> garbage;
-    return std::move(garbage);
-
-}
 
