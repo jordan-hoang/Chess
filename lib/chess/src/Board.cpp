@@ -469,7 +469,6 @@ ChessErrorCode Board::isCheckMate(const Color &enemyColor){
     assert(enemyLocations.size() != -1);
     bool canBlockOrEliminate = enemyLocations.size() == 1;
 
-
     ChessErrorCode code;
     ChessCoordinate currentKing;
     if(enemyColor == Color::RED_LOWERCASE){
@@ -521,6 +520,7 @@ bool Board::isCheck(const Color &personMoving) {
     }
 
     const auto& enemies = checkmate_system->getAttackers(personMoving);
+
     if(enemies.empty()){
         return false;
     }
@@ -608,62 +608,8 @@ ChessErrorCode Board::movePieceHelper(const ChessCoordinate &start, const ChessC
  */
 ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finish) {
 
-    if(!start.isValid() || !finish.isValid()){
-        return ChessErrorCode::INVALID_MOVE;
-    }
-
-    Piece &sourcePiece = requestPiece(start);
+    ChessErrorCode ChessCode = movePieceHelper(start, finish);
     Piece &targetPiece = requestPiece(finish);
-
-    if( ( sourcePiece.getColor() == targetPiece.getColor() ) || sourcePiece.getPieceUnit() == PieceUnit::NONE    ){
-        return ChessErrorCode::INVALID_PIECE;
-    }
-
-    // If Piece is a Knight path is meaningless since they can jump over units
-    bool pathClear = (sourcePiece.getPieceUnit() == PieceUnit::KNIGHT);
-    if(!pathClear) { pathClear = isPathClear(start,finish); }
-    if(!pathClear) {  return ChessErrorCode::INVALID_MOVE; }
-
-    ////Code for moving the king specifically
-    ////Can possibly cause the game to never end if stalemate is possible. (should disable this code or finish it off)
-    if(sourcePiece.getPieceUnit() == PieceUnit::KING){
-        bool isSquareAttacked = checkmate_system->isSquareUnderAttack(finish,sourcePiece.getColor(), getBoard());
-        if(isSquareAttacked){
-            return ChessErrorCode::INVALID_KING_MOVE;
-        }
-    }
-
-
-    ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start, finish, targetPiece.getColor() );
-    if(ChessCode == ChessErrorCode::ENPASSANT){
-        ChessCode = enPassant(start,finish);
-    }
-
-    //Special case for when user attempts to CASTLE
-    else if(ChessCode == ChessErrorCode::CASTLE) {
-        ChessCode = executeCastle(start, finish);
-        return ChessCode;
-    } else if(ChessCode == ChessErrorCode::VALID_MOVE){
-        //We need to check if the move will place the user in check?
-
-        promotePawnToQueen(sourcePiece, finish);
-        recorder.addMove(start,finish, targetPiece);
-        updatePiece(sourcePiece,targetPiece);
-
-        if(targetPiece.getPieceUnit() == PieceUnit::KING && targetPiece.getColor() == Color::BLUE_UPPERCASE){
-            blueKing = targetPiece.getCoordinate();
-        } else if(targetPiece.getPieceUnit() == PieceUnit::KING && targetPiece.getColor() == Color::RED_LOWERCASE){
-            redKing = targetPiece.getCoordinate();
-        }
-
-        //Checks to see if you are executing a move that would place you in check, if you did, undo it since
-        //Placing yourself in check is illegal.
-        if( isCheck(targetPiece.getColor()) ){
-            undoMove();
-            return ChessErrorCode::INVALID_MOVE;
-        }
-
-    }
 
 
     Color enemyColor;
@@ -672,14 +618,14 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     //It must have a color.
     if(targetPiece.getColor() == Color::RED_LOWERCASE){
         enemyColor = Color::BLUE_UPPERCASE;
-        checked = isCheck(Color::BLUE_UPPERCASE);
+        checked = isCheck(Color::RED_LOWERCASE);
     } else {
         enemyColor = Color::RED_LOWERCASE;
         checked =isCheck(Color::RED_LOWERCASE);
     }
 
     if(checked){
-       // ChessCode = isCheckMate(enemyColor);
+        ChessCode = isCheckMate(enemyColor);
     }
 
     return ChessCode;
