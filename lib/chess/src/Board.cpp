@@ -499,20 +499,18 @@ ChessErrorCode Board::isCheckMate(const Color &enemyColor){
     }
     */
 
-    std::cout << "CHECK_MATED";
     return ChessErrorCode::CHECK_MATED;
 
 }
 
 /**
  * @param personMoving - The color of the pieces that are considered enemies, will check if say pieces
- * of the color 'x' are attaking the opposite color
+ * of the color 'x' are atacking the opposite color
  * @return - True if your being checked else false;
  */
 bool Board::isCheck(const Color &personMoving) {
 
 
-    //Now check on the kings, but we haven't recorded their positions.
     if(personMoving == Color::RED_LOWERCASE){
         checkmate_system->isSquareUnderAttack(redKing, Color::RED_LOWERCASE, getBoard());
     } else if(personMoving == Color::BLUE_UPPERCASE){
@@ -525,7 +523,7 @@ bool Board::isCheck(const Color &personMoving) {
         return false;
     }
 
-    std::cout << "Attackers: to king";
+    std::cout << "Attackers: to king \n";
     for(const auto &iter : enemies){
         std:: cout << iter << "\n";
     }
@@ -598,8 +596,6 @@ ChessErrorCode Board::movePieceHelper(const ChessCoordinate &start, const ChessC
 }
 
 
-
-
 /***
  *
  * @param start - The coordinates of the piece you want to move
@@ -614,11 +610,12 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
 
     Color enemyColor;
     bool checked = false;
+
     //Now we need to see if we checkmated the other player. The target piece here has been updated already. So
     //It must have a color.
     if(targetPiece.getColor() == Color::RED_LOWERCASE){
         enemyColor = Color::BLUE_UPPERCASE;
-        checked = isCheck(Color::RED_LOWERCASE);
+        checked = isCheck(Color::BLUE_UPPERCASE);
     } else {
         enemyColor = Color::RED_LOWERCASE;
         checked =isCheck(Color::RED_LOWERCASE);

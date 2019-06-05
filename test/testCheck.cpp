@@ -15,7 +15,9 @@
  */
 
 /*
+
 TEST(TestCheck, check) {
+
 
 
     ChessController a;
@@ -48,12 +50,13 @@ TEST(TestCheck, check) {
     input = "d5,d4";
     a.readInput(input,p1);
 
-    std::cout << a.getBoardView();
+
 
 }
-*/
 
-/*
+ */
+
+
 TEST(CHECK_MATE, foolsMate){
 
     ChessController game;
@@ -74,13 +77,15 @@ TEST(CHECK_MATE, foolsMate){
     EXPECT_EQ(game.readInput(move,p2), ChessErrorCode::VALID_MOVE);
 
     move = "d8,h4";
+
     EXPECT_EQ(game.readInput(move,p2), ChessErrorCode::CHECK_MATED);
 
 
-    std::cout << game.getBoardView();
 
 }
-*/
+
+
+/*
 
 TEST(CHECK_MATE, foolsMateDirect){
     Board a;
@@ -110,9 +115,5 @@ TEST(CHECK_MATE, foolsMateDirect){
     std::cout << a.getBoardView();
 
 
-
-
-
-
-
 }
+ */

@@ -4,6 +4,7 @@
 
 #include <assert.h>
 #include <algorithm>
+#include <iostream>
 #include "CheckMate.h"
 
 
@@ -252,6 +253,7 @@ bool CheckMate::isAttackedVertically(const ChessCoordinate &start, const Color &
 
 }
 
+//King color is the color of the "king" or friendly units.
 bool CheckMate::isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor,
                                      const vector<vector<Piece> > &m_chessBoard) {
 
@@ -269,26 +271,32 @@ bool CheckMate::isAttackedDiagonally(const ChessCoordinate &start, const Color &
     int dirX[4] = {1,-1,1,-1};
     int dirY[4] = {1,-1,-1,1};
 
+    bool isValid = true;
+
 
     for(int i = 0 ; i < 4; i++){
 
         ChessCoordinate startingPosition{start.row,start.col};
-        bool isValid = true;
 
         while( isValid && startingPosition.isValid()){
-            const Piece &tmp = m_chessBoard[startingPosition.row][startingPosition.col];
-
-            if(tmp.getColor() != kingColor) {
-                if (tmp.getPieceUnit() == PieceUnit::QUEEN || tmp.getPieceUnit() == PieceUnit::BISHOP) {
-                    addMove(startingPosition, m_chessBoard);
-                    flag = true;
-                }
-            } if(tmp.getPieceUnit() != PieceUnit::NONE ){
-                isValid = false;
-            }
             startingPosition.row += dirX[i];
             startingPosition.col += dirY[i];
+
+            if(startingPosition.isValid()) {
+                const Piece &tmp = m_chessBoard[startingPosition.row][startingPosition.col];
+                if (tmp.getColor() != kingColor) {
+                    if (tmp.getPieceUnit() == PieceUnit::QUEEN || tmp.getPieceUnit() == PieceUnit::BISHOP) {
+                        addMove(startingPosition, m_chessBoard);
+                        flag = true;
+                    }
+                }
+                if (tmp.getPieceUnit() != PieceUnit::NONE) {
+                    isValid = false;
+                }
+            }
+
         }
+        isValid = true;
 
     }
 
