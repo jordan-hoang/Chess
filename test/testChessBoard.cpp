@@ -332,7 +332,6 @@ TEST(BoardTest, testPromotionAndKillKing){
     board.movePiece({5,1},{6,2});
     board.movePiece({6,2},{7,3});
 
-    std::cout << board.getBoardView();
 
     EXPECT_EQ(board.requestUnit({7,3}), PieceUnit::QUEEN );
 
@@ -684,12 +683,10 @@ TEST(CASTLING, testPathBlocked){
     input="e1,e2";
     EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::VALID_MOVE);
 
-
+    std::cout << chessGame.getBoardView();
 
     input = "a8,a2";
     EXPECT_EQ(chessGame.readInput(input,p1), ChessErrorCode::VALID_MOVE);
-   // std::cout << chessGame.getBoardView();
-
 
     input = "e2,e1";
     EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::VALID_MOVE);

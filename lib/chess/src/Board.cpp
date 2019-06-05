@@ -378,11 +378,12 @@ ChessErrorCode Board::canKingDodge(const ChessCoordinate &kingCoordinate) {
     ChessCoordinate kingMoves[8] = { {-1,1}, {0,1}, {1,1}, {1,0}, {-1,0}, {-1,-1}, {0,-1}, {1,-1} };
     ChessErrorCode  code;
     for(const auto &iter : kingMoves){
-        code = movePiece(kingCoordinate, iter);
+        code = movePieceHelper(kingCoordinate, iter);
         if(code == ChessErrorCode::VALID_MOVE){
+            undoMove();
             return code;
         }
-        undoMove();
+
     }
     return code;
 }
@@ -399,7 +400,7 @@ ChessErrorCode Board::canEliminate(const ChessCoordinate &kingCoordinate, const 
     for(int i = 0; i < boardRef.size(); i++){
         for(int j = 0; j < boardRef.at(i).size(); j++){
             if(getPieceColor({i,j}) == teamColor){
-                result = movePiece({i,j}, {enemyCoordinate});
+                result = movePieceHelper({i,j}, {enemyCoordinate});
                 undoMove();
             }
             if(result == ChessErrorCode::VALID_MOVE){
@@ -446,7 +447,7 @@ ChessErrorCode Board::canBlock(const ChessCoordinate &kingCoordinate, const Colo
         for (int i = 0; i < boardRef.size(); i++) {
             for (int j = 0; j < boardRef.at(i).size(); j++) {
                 if (getPieceColor({i, j}) == teamColor) {
-                    result = movePiece({i, j}, {blockSpots});
+                    result = movePieceHelper({i, j}, {blockSpots});
                     undoMove();
                 }
                 if (result == ChessErrorCode::VALID_MOVE) {
@@ -477,11 +478,11 @@ ChessErrorCode Board::isCheckMate(const Color &enemyColor){
         currentKing = redKing;
     }
 
-
     code = canKingDodge(currentKing);
     if(code == ChessErrorCode::VALID_MOVE)
         return code;
 
+    /*
     if(!canBlockOrEliminate){
         return ChessErrorCode::CHECK_MATED;
     }
@@ -497,9 +498,9 @@ ChessErrorCode Board::isCheckMate(const Color &enemyColor){
     else if(canBlock(currentKing, enemyColor) == ChessErrorCode::VALID_MOVE){
         return ChessErrorCode::VALID_MOVE;
     }
+    */
 
-
-
+    std::cout << "CHECK_MATED";
     return ChessErrorCode::CHECK_MATED;
 
 }
@@ -533,6 +534,72 @@ bool Board::isCheck(const Color &personMoving) {
 
 }
 
+
+ChessErrorCode Board::movePieceHelper(const ChessCoordinate &start, const ChessCoordinate &finish) {
+
+    if(!start.isValid() || !finish.isValid()){
+        return ChessErrorCode::INVALID_MOVE;
+    }
+
+
+    Piece &sourcePiece = requestPiece(start);
+    Piece &targetPiece = requestPiece(finish);
+
+    if( ( sourcePiece.getColor() == targetPiece.getColor() ) || sourcePiece.getPieceUnit() == PieceUnit::NONE    ){
+        return ChessErrorCode::INVALID_PIECE;
+    }
+
+    // If Piece is a Knight path is meaningless since they can jump over units
+    bool pathClear = (sourcePiece.getPieceUnit() == PieceUnit::KNIGHT);
+    if(!pathClear) { pathClear = isPathClear(start,finish); }
+    if(!pathClear) {  return ChessErrorCode::INVALID_MOVE; }
+
+    ////Code for moving the king specifically
+    ////Can possibly cause the game to never end if stalemate is possible. (should disable this code or finish it off)
+    if(sourcePiece.getPieceUnit() == PieceUnit::KING){
+        bool isSquareAttacked = checkmate_system->isSquareUnderAttack(finish,sourcePiece.getColor(), getBoard());
+        if(isSquareAttacked){
+            return ChessErrorCode::INVALID_KING_MOVE;
+        }
+    }
+
+
+    ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start, finish, targetPiece.getColor() );
+    if(ChessCode == ChessErrorCode::ENPASSANT){
+        ChessCode = enPassant(start,finish);
+    }
+
+        //Special case for when user attempts to CASTLE
+    else if(ChessCode == ChessErrorCode::CASTLE) {
+        ChessCode = executeCastle(start, finish);
+        return ChessCode;
+    } else if(ChessCode == ChessErrorCode::VALID_MOVE){
+        //We need to check if the move will place the user in check?
+
+        promotePawnToQueen(sourcePiece, finish);
+        recorder.addMove(start,finish, targetPiece);
+        updatePiece(sourcePiece,targetPiece);
+
+        if(targetPiece.getPieceUnit() == PieceUnit::KING && targetPiece.getColor() == Color::BLUE_UPPERCASE){
+            blueKing = targetPiece.getCoordinate();
+        } else if(targetPiece.getPieceUnit() == PieceUnit::KING && targetPiece.getColor() == Color::RED_LOWERCASE){
+            redKing = targetPiece.getCoordinate();
+        }
+
+        //Checks to see if you are executing a move that would place you in check, if you did, undo it since
+        //Placing yourself in check is illegal.
+        if( isCheck(targetPiece.getColor()) ){
+            undoMove();
+            ChessCode =  ChessErrorCode::INVALID_MOVE;
+        }
+    }
+
+    return ChessCode;
+}
+
+
+
+
 /***
  *
  * @param start - The coordinates of the piece you want to move
@@ -541,6 +608,9 @@ bool Board::isCheck(const Color &personMoving) {
  */
 ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finish) {
 
+    if(!start.isValid() || !finish.isValid()){
+        return ChessErrorCode::INVALID_MOVE;
+    }
 
     Piece &sourcePiece = requestPiece(start);
     Piece &targetPiece = requestPiece(finish);
@@ -590,10 +660,11 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
         //Placing yourself in check is illegal.
         if( isCheck(targetPiece.getColor()) ){
             undoMove();
-            ChessCode =  ChessErrorCode::INVALID_MOVE;
+            return ChessErrorCode::INVALID_MOVE;
         }
 
     }
+
 
     Color enemyColor;
     bool checked = false;
@@ -608,7 +679,7 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     }
 
     if(checked){
-        return isCheckMate(enemyColor);
+       // ChessCode = isCheckMate(enemyColor);
     }
 
     return ChessCode;

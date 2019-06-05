@@ -86,7 +86,7 @@ struct ChessCoordinate {
 
 
 
-    bool isValid(){
+    bool isValid() const{
         if(row < 0 || row >= 8){
             return false;
         }

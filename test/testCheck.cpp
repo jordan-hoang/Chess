@@ -13,6 +13,8 @@
  * Has a quick test for killing pawns diagonally backwards
  *
  */
+
+/*
 TEST(TestCheck, check) {
 
 
@@ -49,4 +51,4 @@ TEST(TestCheck, check) {
     std::cout << a.getBoardView();
 
 }
-
+*/
