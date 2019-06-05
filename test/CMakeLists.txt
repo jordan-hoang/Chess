@@ -1,7 +1,7 @@
 add_subdirectory(lib)
 
 add_executable(runAllTests
-        testChessBoard.cpp
+        #testChessBoard.cpp
         testCheck.cpp
         )
 

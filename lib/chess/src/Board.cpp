@@ -393,20 +393,28 @@ ChessErrorCode Board::canEliminate(const ChessCoordinate &kingCoordinate, const 
     const auto &enemyLocations = checkmate_system->getAttackers(enemyColor);
     const auto enemyCoordinate = enemyLocations.at(0);
 
+    std::cout << "Enemy coordinates are : !!! " <<enemyCoordinate;
+
     ChessErrorCode result = ChessErrorCode::INVALID_MOVE; //Doesn't matter what his is initialized to as long as it isn't valid move
     const Color &teamColor = getPieceColor(kingCoordinate);
+
     const auto &boardRef = getBoard();
 
-    for(int i = 0; i < boardRef.size(); i++){
-        for(int j = 0; j < boardRef.at(i).size(); j++){
-            if(getPieceColor({i,j}) == teamColor){
-                result = movePieceHelper({i,j}, {enemyCoordinate});
-                undoMove();
-            }
-            if(result == ChessErrorCode::VALID_MOVE){
-                return result;
-            }
 
+
+
+
+    for(int i = 0; i < 8; i++){
+        for(int j = 0; j < 8; j++){
+            if(getPieceColor({i,j}) != teamColor){ //WHAT WHY????!
+
+                result = movePieceHelper({i,j}, {enemyCoordinate});
+                if(result == ChessErrorCode::VALID_MOVE){
+                    undoMove();
+                    std::cout << "MOVE FOUND! " << ChessCoordinate{i,j} << enemyCoordinate;
+                    return result;
+                }
+            }
         }
     }
 
@@ -414,6 +422,7 @@ ChessErrorCode Board::canEliminate(const ChessCoordinate &kingCoordinate, const 
 
 
 }
+
 
 ChessErrorCode Board::canBlock(const ChessCoordinate &kingCoordinate, const Color &enemyColor) {
 
@@ -425,7 +434,6 @@ ChessErrorCode Board::canBlock(const ChessCoordinate &kingCoordinate, const Colo
     const auto &boardRef = getBoard();
 
     //The unit must me a rook or bishop.
-
     ChessCoordinate dTravel = kingCoordinate - enemyCoordinate;
     vector<ChessCoordinate> blockingSquares;
 
@@ -437,12 +445,17 @@ ChessErrorCode Board::canBlock(const ChessCoordinate &kingCoordinate, const Colo
         dTravel = dTravel.toOne();
     }
 
+    std::cout << "King is " << kingCoordinate;
+    std::cout << "Dtravel is " << dTravel << "\n";
+
     for(ChessCoordinate i = enemyCoordinate; !(i == kingCoordinate) ; ++i){
         blockingSquares.emplace_back(enemyCoordinate + dTravel);
         ++dTravel;
+
     }
 
 
+    /*
     for(const auto &blockSpots : blockingSquares) {
         for (int i = 0; i < boardRef.size(); i++) {
             for (int j = 0; j < boardRef.at(i).size(); j++) {
@@ -457,7 +470,7 @@ ChessErrorCode Board::canBlock(const ChessCoordinate &kingCoordinate, const Colo
             }
         }
     }
-
+    */
     return ChessErrorCode::INVALID_MOVE;
 
 }
@@ -477,19 +490,24 @@ ChessErrorCode Board::isCheckMate(const Color &enemyColor){
         currentKing = redKing;
     }
 
+
     code = canKingDodge(currentKing);
     if(code == ChessErrorCode::VALID_MOVE)
         return code;
 
-    /*
+
     if(!canBlockOrEliminate){
         return ChessErrorCode::CHECK_MATED;
     }
 
+
+
     if(canEliminate(currentKing, enemyColor) == ChessErrorCode::VALID_MOVE){
+        std::cout << "We can eliminate enemy\n";
         return ChessErrorCode::VALID_MOVE;
     }
 
+    /*
     /////We can't move or kill the piece, and if the piece is a knight it is impossible to block therefore.
     if(requestUnit(enemyLocations.at(0)) == PieceUnit::KNIGHT){
         return ChessErrorCode::CHECK_MATED;
@@ -547,7 +565,7 @@ ChessErrorCode Board::movePieceHelper(const ChessCoordinate &start, const ChessC
         return ChessErrorCode::INVALID_PIECE;
     }
 
-    // If Piece is a Knight path is meaningless since they can jump over units
+    ////If Piece is a Knight path is meaningless since they can jump over units
     bool pathClear = (sourcePiece.getPieceUnit() == PieceUnit::KNIGHT);
     if(!pathClear) { pathClear = isPathClear(start,finish); }
     if(!pathClear) {  return ChessErrorCode::INVALID_MOVE; }
@@ -607,6 +625,11 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     ChessErrorCode ChessCode = movePieceHelper(start, finish);
     Piece &targetPiece = requestPiece(finish);
 
+    if(ChessCode != ChessErrorCode::VALID_MOVE){
+        if(ChessCode == ChessErrorCode::INVALID_KING_MOVE){
+        }
+        return ChessCode;
+    }
 
     Color enemyColor;
     bool checked = false;

@@ -189,6 +189,7 @@ bool CheckMate::isAttackedHorizontally(const ChessCoordinate &start, const Color
         if((*result).getColor() != friendlyColor &&  ((*result).getPieceUnit() == PieceUnit::ROOK ||
                                                       (*result).getPieceUnit() == PieceUnit::QUEEN )){
             addMove((*result).getCoordinate(), m_chessBoard);
+
             return true;
         }
     }
