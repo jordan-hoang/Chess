@@ -36,8 +36,6 @@ CheckMate::CheckMate(const Color playerOne, const Color playerTwo) {
 
 void CheckMate::addMove(const ChessCoordinate &enemyPosition, const vector<vector<Piece> > &m_chessBoard) {
 
-
-
     const auto &friendlyColor = m_chessBoard[enemyPosition.row][enemyPosition.col].getColor();
 
     if(teamAlpha->colorVector != friendlyColor){
@@ -56,7 +54,7 @@ void CheckMate::addMove(const ChessCoordinate &enemyPosition, const vector<vecto
  * @param position - Position of the king
  * @param friendlyColor
  * @param m_chessBoard - The chessBoard.
- * @return
+ * @return True if that square has a unit that can attack it
  */
 bool CheckMate::isSquareUnderAttack(const ChessCoordinate &position, const Color &friendlyColor, const vector<vector<Piece> > &m_chessBoard) {
     clearEnemies();
@@ -97,7 +95,7 @@ bool CheckMate::isSquareUnderAttack(const ChessCoordinate &position, const Color
 /**
  *
  * @param color
- * @return A vector of chessCoordinates with attackers of
+ * @return A vector of chessCoordinates with attackers of a particular color
  */
 const vector<ChessCoordinate>& CheckMate::getAttackers(const Color &color) {
 
@@ -179,10 +177,10 @@ bool CheckMate::isAttackedByPawn(const ChessCoordinate &start, const Color &king
  * @param finish - end/begin of the row
  * @return True if can be attacked else returns false.
  */
-bool CheckMate::isAttackedHorizontally(const ChessCoordinate &start, const Color &friendlyColor,  const vector<vector<Piece> > &m_chessBoard)  {
+bool CheckMate::isAttackedHorizontally(const ChessCoordinate &start, const Color &friendlyColor,  const vector<vector<Piece> > &m_chessBoard) {
 
     const vector<Piece> &handle = m_chessBoard.at(start.row);
-    auto iterBegin = handle.begin() + start.col ;
+    auto iterBegin = handle.begin() + start.col + 1;
     auto iterEnd = handle.end();
 
     //If the piece you are looking for is not None and the piece isn't the attack piece then......
@@ -196,14 +194,13 @@ bool CheckMate::isAttackedHorizontally(const ChessCoordinate &start, const Color
         if((*result).getColor() != friendlyColor &&  ((*result).getPieceUnit() == PieceUnit::ROOK ||
                                                       (*result).getPieceUnit() == PieceUnit::QUEEN )){
             addMove((*result).getCoordinate(), m_chessBoard);
-
             return true;
         }
     }
 
-
     //Checking backwards towards the left, so    --x-----a---- "Piece a would be checking towards x to find a rook or queen---
-    const auto rIter = handle.rbegin() + (7 - start.col) ;
+
+    const auto rIter = handle.rbegin() + (7 - start.col + 1); // + 1 because, you want to be 1 square to the left of that unit.
     const auto resultTwo = std::find_if(rIter, handle.rend(),
                                         [&](auto i ) {return i.getPieceUnit() != PieceUnit::NONE ;} );
 

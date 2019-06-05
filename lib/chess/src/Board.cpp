@@ -569,7 +569,6 @@ ChessErrorCode Board::movePieceHelper(const ChessCoordinate &start, const ChessC
         }
     }
 
-
     ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start, finish, targetPiece.getColor() );
     if(ChessCode == ChessErrorCode::ENPASSANT){
         ChessCode = enPassant(start,finish);

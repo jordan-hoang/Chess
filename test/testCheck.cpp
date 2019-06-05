@@ -132,12 +132,33 @@ TEST(CASTLING, testPathBlockedTwo){
     input = "f1,f2";
     EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::VALID_MOVE); //another bug found here!!!
 
+
+    input = "e2,d4";
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_MOVE);
+
+    //Now we need to test the right side.
+    input = "a2,a4";
+    EXPECT_EQ(chessGame.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+
+    input = "a4,h4";
+    EXPECT_EQ(chessGame.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+
+
+    input = "e3,g3";
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::VALID_MOVE);
+
+
+    input = "g3,g2";
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::VALID_MOVE);
+
+    input = "h4,h2";
+    EXPECT_EQ(chessGame.readInput(input,p1), ChessErrorCode::VALID_MOVE);
+
+    input = "g2,g1";
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_MOVE);
+
     std::cout << chessGame.getBoardView();
 
-    /*
-    input = "e1,e2";
-    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_KING_MOVE);
-    */
 
 }
 
@@ -169,36 +190,4 @@ TEST(CHECK_MATE, foolsMate){
 
 }
 
-
-/*
-
-TEST(CHECK_MATE, foolsMateDirect){
-    Board a;
-
-    ChessCoordinate start;
-    ChessCoordinate finish;
-    start = {1,5};
-    finish = {2,5};
-
-    a.movePiece(start,finish);
-
-    start = {1,6};
-    finish= {3,6};
-
-    a.movePiece(start,finish);
-
-    start={6,4};
-    finish={4,4};
-
-    a.movePiece(start,finish);
-
-    start={7,3};
-    finish={3,7};
-
-    a.movePiece(start,finish);
-
-    std::cout << a.getBoardView();
-
-
-}
- */
+*/
