@@ -393,25 +393,21 @@ ChessErrorCode Board::canEliminate(const ChessCoordinate &kingCoordinate, const 
     const auto &enemyLocations = checkmate_system->getAttackers(enemyColor);
     const auto enemyCoordinate = enemyLocations.at(0);
 
-    std::cout << "Enemy coordinates are : !!! " <<enemyCoordinate;
+    ChessErrorCode result; //Doesn't matter what his is initialized to as long as it isn't valid move
 
-    ChessErrorCode result = ChessErrorCode::INVALID_MOVE; //Doesn't matter what his is initialized to as long as it isn't valid move
+    std::cout << kingCoordinate;
     const Color &teamColor = getPieceColor(kingCoordinate);
 
     const auto &boardRef = getBoard();
 
 
-
-
-
     for(int i = 0; i < 8; i++){
         for(int j = 0; j < 8; j++){
-            if(getPieceColor({i,j}) != teamColor){ //WHAT WHY????!
-
+            if(getPieceColor({i,j}) == teamColor){ //WHAT WHY????! Code is really tricky to read now.
                 result = movePieceHelper({i,j}, {enemyCoordinate});
                 if(result == ChessErrorCode::VALID_MOVE){
                     undoMove();
-                    std::cout << "MOVE FOUND! " << ChessCoordinate{i,j} << enemyCoordinate;
+                    //std::cout << "MOVE FOUND! " << ChessCoordinate{i,j} << enemyCoordinate;
                     return result;
                 }
             }
@@ -479,15 +475,17 @@ ChessErrorCode Board::canBlock(const ChessCoordinate &kingCoordinate, const Colo
 //Color of the enemy
 ChessErrorCode Board::isCheckMate(const Color &enemyColor){
     const auto &enemyLocations = checkmate_system->getAttackers(enemyColor);
+    //Get all enemies attaking this particular unit
+
     assert(enemyLocations.size() != -1);
     bool canBlockOrEliminate = enemyLocations.size() == 1;
 
     ChessErrorCode code;
     ChessCoordinate currentKing;
     if(enemyColor == Color::RED_LOWERCASE){
-        currentKing = blueKing;
-    } else if(enemyColor == Color::BLUE_UPPERCASE){
         currentKing = redKing;
+    } else if(enemyColor == Color::BLUE_UPPERCASE){
+        currentKing = blueKing;
     }
 
 
@@ -500,10 +498,7 @@ ChessErrorCode Board::isCheckMate(const Color &enemyColor){
         return ChessErrorCode::CHECK_MATED;
     }
 
-
-
     if(canEliminate(currentKing, enemyColor) == ChessErrorCode::VALID_MOVE){
-        std::cout << "We can eliminate enemy\n";
         return ChessErrorCode::VALID_MOVE;
     }
 
@@ -522,8 +517,8 @@ ChessErrorCode Board::isCheckMate(const Color &enemyColor){
 }
 
 /**
- * @param personMoving - The color of the pieces that are considered enemies, will check if say pieces
- * of the color 'x' are atacking the opposite color
+ * @param personMoving - The color of the your piece. Say if you pass in a "Blue Unit"
+ * then it will check if Blue king is being checked.
  * @return - True if your being checked else false;
  */
 bool Board::isCheck(const Color &personMoving) {
@@ -536,7 +531,6 @@ bool Board::isCheck(const Color &personMoving) {
     }
 
     const auto& enemies = checkmate_system->getAttackers(personMoving);
-
     if(enemies.empty()){
         return false;
     }
@@ -557,10 +551,8 @@ ChessErrorCode Board::movePieceHelper(const ChessCoordinate &start, const ChessC
         return ChessErrorCode::INVALID_MOVE;
     }
 
-
     Piece &sourcePiece = requestPiece(start);
     Piece &targetPiece = requestPiece(finish);
-
     if( ( sourcePiece.getColor() == targetPiece.getColor() ) || sourcePiece.getPieceUnit() == PieceUnit::NONE    ){
         return ChessErrorCode::INVALID_PIECE;
     }
@@ -591,7 +583,6 @@ ChessErrorCode Board::movePieceHelper(const ChessCoordinate &start, const ChessC
         return ChessCode;
     } else if(ChessCode == ChessErrorCode::VALID_MOVE){
         //We need to check if the move will place the user in check?
-
         promotePawnToQueen(sourcePiece, finish);
         recorder.addMove(start,finish, targetPiece);
         updatePiece(sourcePiece,targetPiece);

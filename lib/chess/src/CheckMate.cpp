@@ -51,6 +51,13 @@ void CheckMate::addMove(const ChessCoordinate &enemyPosition, const vector<vecto
 }
 
 
+/**
+ *
+ * @param position - Position of the king
+ * @param friendlyColor
+ * @param m_chessBoard - The chessBoard.
+ * @return
+ */
 bool CheckMate::isSquareUnderAttack(const ChessCoordinate &position, const Color &friendlyColor, const vector<vector<Piece> > &m_chessBoard) {
     clearEnemies();
 
