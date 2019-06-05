@@ -395,7 +395,6 @@ ChessErrorCode Board::canEliminate(const ChessCoordinate &kingCoordinate, const 
 
     ChessErrorCode result; //Doesn't matter what his is initialized to as long as it isn't valid move
 
-    std::cout << kingCoordinate;
     const Color &teamColor = getPieceColor(kingCoordinate);
 
     const auto &boardRef = getBoard();
@@ -407,7 +406,6 @@ ChessErrorCode Board::canEliminate(const ChessCoordinate &kingCoordinate, const 
                 result = movePieceHelper({i,j}, {enemyCoordinate});
                 if(result == ChessErrorCode::VALID_MOVE){
                     undoMove();
-                    //std::cout << "MOVE FOUND! " << ChessCoordinate{i,j} << enemyCoordinate;
                     return result;
                 }
             }
@@ -617,8 +615,6 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     Piece &targetPiece = requestPiece(finish);
 
     if(ChessCode != ChessErrorCode::VALID_MOVE){
-        if(ChessCode == ChessErrorCode::INVALID_KING_MOVE){
-        }
         return ChessCode;
     }
 
@@ -719,7 +715,6 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
     for(int i = 0; i < 8; ++i){
         for(int j = 0; j < 8; ++j){
             if(_chessBoard[i][j].getPieceUnit() == PieceUnit::KING){
-                std::cout << i << "\n";
                 if(_chessBoard[i][j].getColor() == Color::RED_LOWERCASE){
                     redKing = {i,j};
                 } else if(_chessBoard[i][j].getColor() == Color::BLUE_UPPERCASE) {

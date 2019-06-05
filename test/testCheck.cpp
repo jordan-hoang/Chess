@@ -111,27 +111,28 @@ TEST(CASTLING, testPathBlockedTwo){
     EXPECT_EQ(chessGame.readInput(input,p2),ChessErrorCode::VALID_MOVE);
 
 
-
-    std::cout << chessGame.getBoardView();
-
     input = "a8,a2";
     EXPECT_EQ(chessGame.readInput(input,p1), ChessErrorCode::VALID_MOVE);
 
-    //input = "a1,a2";
-    //EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::VALID_MOVE);
+
+    input = "e2,e1";
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::VALID_MOVE);
+
+
+    input = "e1,e2";
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_KING_MOVE);
+
+    input = "c1,e2";
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::VALID_MOVE);
+
+
+    input = "e1,f1";
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::VALID_MOVE);
+
+    input = "f1,f2";
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::VALID_MOVE); //another bug found here!!!
 
     std::cout << chessGame.getBoardView();
-
-    //input = "e1,e2";
-    //EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::VALID_MOVE);
-
-    //std::cout << chessGame.getBoardView();
-
-
-
-    //input = "a2,h2";
-    //EXPECT_EQ(chessGame.readInput(input,p1), ChessErrorCode::INVALID_MOVE);
-
 
     /*
     input = "e1,e2";

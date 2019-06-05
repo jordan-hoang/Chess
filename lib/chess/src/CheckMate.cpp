@@ -203,7 +203,7 @@ bool CheckMate::isAttackedHorizontally(const ChessCoordinate &start, const Color
 
 
     //Checking backwards towards the left, so    --x-----a---- "Piece a would be checking towards x to find a rook or queen---
-    const auto rIter = handle.rbegin() + start.col ;
+    const auto rIter = handle.rbegin() + (7 - start.col) ;
     const auto resultTwo = std::find_if(rIter, handle.rend(),
                                         [&](auto i ) {return i.getPieceUnit() != PieceUnit::NONE ;} );
 
