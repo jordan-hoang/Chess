@@ -64,6 +64,7 @@ bool CheckMate::isSquareUnderAttack(const ChessCoordinate &position, const Color
     int knightMoveX[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
     int knightMoveY[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
 
+    bool flag = false;
     //Checking if any of these squares has an enemy knight
     for(int i = 0; i < 8; i++){
         int row = knightMoveX[i] + position.row;
@@ -71,21 +72,24 @@ bool CheckMate::isSquareUnderAttack(const ChessCoordinate &position, const Color
         if(row >= 0 && row <= 7 && col >= 0 && col <= 7){
             Piece potentialEnemy = m_chessBoard.at(row).at(col);
             if( potentialEnemy.getColor() != friendlyColor && potentialEnemy.getPieceUnit() == PieceUnit::KNIGHT){
-                return true;
+                flag = true;
             }
         }
     }
 
     if( isAttackedHorizontally(position,  friendlyColor, m_chessBoard) ){
-        return true;
+        flag = true;
     }
 
     if( isAttackedVertically(position, friendlyColor, m_chessBoard) ){
-        return true;
+        flag = true;
     }
 
-    return (isAttackedDiagonally(position, friendlyColor, m_chessBoard));
+    if(isAttackedDiagonally(position,friendlyColor, m_chessBoard)){
+        flag = true;
+    }
 
+    return flag;
 }
 
 
@@ -111,8 +115,6 @@ const vector<ChessCoordinate>& CheckMate::getAttackers(const Color &color) {
     return std::move(garbage);
 
 }
-
-
 
 
 
@@ -181,37 +183,45 @@ bool CheckMate::isAttackedHorizontally(const ChessCoordinate &start, const Color
 
     const vector<Piece> &handle = m_chessBoard.at(start.row);
     auto iterBegin = handle.begin() + start.col + 1;
-    auto iterEnd = handle.end();
+    auto iterEnd = handle.end() ;
 
-    //If the piece you are looking for is not None and the piece isn't the attack piece then......
-    //Stops looking if it finds a piece that isn't none
+    if(iterBegin != iterEnd) { //GUARD IF MAY NOT BE NECCESSARY
 
-    //Checking forwards towards the right, so --x-------a-----b--  "Piece a would look towards 'b' to find a rook or queen"
-    auto result = std::find_if(iterBegin,iterEnd,
-                               [&](auto i ) {return i.getPieceUnit() != PieceUnit::NONE ;} );
+        //If the piece you are looking for is not None and the piece isn't the attack piece then......
+        //Stops looking if it finds a piece that isn't none
 
-    if(result != iterEnd){
-        if((*result).getColor() != friendlyColor &&  ((*result).getPieceUnit() == PieceUnit::ROOK ||
-                                                      (*result).getPieceUnit() == PieceUnit::QUEEN )){
-            addMove((*result).getCoordinate(), m_chessBoard);
-            return true;
+        //Checking forwards towards the right, so --x-------a-----b--  "Piece a would look towards 'b' to find a rook or queen"
+        const auto result = std::find_if(iterBegin, iterEnd,
+                                         [&](const auto i) { return i.getPieceUnit() != PieceUnit::NONE; });
+
+        if (result != iterEnd) {
+            if ((*result).getColor() != friendlyColor && ((*result).getPieceUnit() == PieceUnit::ROOK ||
+                                                          (*result).getPieceUnit() == PieceUnit::QUEEN)) {
+                addMove((*result).getCoordinate(), m_chessBoard);
+                return true;
+            }
         }
+
     }
+
 
     //Checking backwards towards the left, so    --x-----a---- "Piece a would be checking towards x to find a rook or queen---
+    auto rIter = handle.rbegin() + ( handle.size() - start.col); // + 1 because, you want to be 1 square to the left of that unit.
 
-    const auto rIter = handle.rbegin() + (7 - start.col + 1); // + 1 because, you want to be 1 square to the left of that unit.
-    const auto resultTwo = std::find_if(rIter, handle.rend(),
-                                        [&](auto i ) {return i.getPieceUnit() != PieceUnit::NONE ;} );
+    if(rIter != handle.rend()) { //GUARD IF MAY NOT BE NECCESSARY
+        auto resultTwo = std::find_if(rIter, handle.rend(),
+                                      [&](const auto i) { return i.getPieceUnit() != PieceUnit::NONE; });
 
-    if(resultTwo != handle.rend()){
-        if((*resultTwo).getColor() != friendlyColor &&  ((*resultTwo).getPieceUnit() == PieceUnit::ROOK ||
-                                                         (*resultTwo).getPieceUnit() == PieceUnit::QUEEN )){
-            addMove((*resultTwo).getCoordinate(), m_chessBoard);
-            return true;
+        //Found something
+        if (resultTwo != handle.rend()) {
+            if ((*resultTwo).getColor() != friendlyColor && ((*resultTwo).getPieceUnit() == PieceUnit::ROOK ||
+                                                             (*resultTwo).getPieceUnit() == PieceUnit::QUEEN)) {
+                addMove((*resultTwo).getCoordinate(), m_chessBoard);
+                return true;
+            }
+
         }
     }
-
 
     return false;
 }
@@ -222,36 +232,40 @@ bool CheckMate::isAttackedVertically(const ChessCoordinate &start, const Color &
     //We need to check vertically upwards, then vertically downwards, from the position START
     bool flag = false;
 
-    for(int i = start.row ; i < 8 ; i++) {
-        Piece tmp = m_chessBoard.at(i).at(start.col);
-        if(tmp.getPieceUnit() == PieceUnit::ROOK || tmp.getPieceUnit() == PieceUnit::QUEEN){
-            if(tmp.getColor() != friendlyColor){
-                addMove({i,start.col},m_chessBoard);
+
+    int iter = start.row ;
+
+    for (int i = iter + 1; i < 7; i++) {
+        const Piece &tmp = m_chessBoard.at(i).at(start.col);
+        if (tmp.getPieceUnit() == PieceUnit::ROOK || tmp.getPieceUnit() == PieceUnit::QUEEN) {
+            if (tmp.getColor() != friendlyColor && tmp.getColor() != Color::COLORLESS) {
+                addMove({i, start.col}, m_chessBoard);
                 flag = true;
             }
-        } if(tmp.getPieceUnit() != PieceUnit::NONE){  //but we need to stop checking if the piece we encounter is not
+        }
+        if ((tmp.getPieceUnit() != PieceUnit::NONE) ||
+            flag) {  //but we need to stop checking if the piece we encounter is not a rook or queen
             break;
         }
-        if(flag){
-            break;
-        }
+
     }
 
+
     //Now we check downwards, almost duplicated code, only for parameters changed
-    for(int i = start.row ; i >= 0; i--) {
-        Piece tmp = m_chessBoard.at(i).at(start.col);
+    for(int i = start.row - 1; i >= 0; i--) {
+        const Piece &tmp = m_chessBoard.at(i).at(start.col);
         if(tmp.getPieceUnit() == PieceUnit::ROOK || tmp.getPieceUnit() == PieceUnit::QUEEN){
             if(tmp.getColor() != friendlyColor && tmp.getColor() != Color::COLORLESS){
                 addMove({i, start.col}, m_chessBoard);
                 flag =  true; //We checked upwards already so we can just return true
             }
-        } if(tmp.getPieceUnit() != PieceUnit::NONE){  //but we need to stop checking if the piece we encounter is not
-            break;
+
         }
-        if(flag){
+        if(tmp.getPieceUnit() != PieceUnit::NONE || flag){  //but we need to stop checking if the piece we encounter is not
             break;
         }
     }
+
 
     return flag;
 
@@ -266,28 +280,26 @@ bool CheckMate::isAttackedDiagonally(const ChessCoordinate &start, const Color &
     //RED PAWNS Travel upwards, BLUE PAWNS Travel downwards from Piece.cpp
 
     bool flag = false;
-    if(isAttackedByPawn(start,kingColor, m_chessBoard)){
+    if (isAttackedByPawn(start, kingColor, m_chessBoard)) {
         flag = true;
     }
 
     //Check + slope for bishops and queens that can kill you.
     //Check - slope for bishops and queens that can kill you.
     //All possible directions diagonally to check in.
-    int dirX[4] = {1,-1,1,-1};
-    int dirY[4] = {1,-1,-1,1};
+    int dirX[4] = {1, -1, 1, -1};
+    int dirY[4] = {1, -1, -1, 1};
 
     bool isValid = true;
 
+    for (int i = 0; i < 4; i++) {
 
-    for(int i = 0 ; i < 4; i++){
-
-        ChessCoordinate startingPosition{start.row,start.col};
-
-        while( isValid && startingPosition.isValid()){
+        ChessCoordinate startingPosition{start.row, start.col};
+        while (isValid && startingPosition.isValid()) {
             startingPosition.row += dirX[i];
             startingPosition.col += dirY[i];
 
-            if(startingPosition.isValid()) {
+            if (startingPosition.isValid() && isValid) {
                 const Piece &tmp = m_chessBoard[startingPosition.row][startingPosition.col];
                 if (tmp.getColor() != kingColor) {
                     if (tmp.getPieceUnit() == PieceUnit::QUEEN || tmp.getPieceUnit() == PieceUnit::BISHOP) {
@@ -302,13 +314,11 @@ bool CheckMate::isAttackedDiagonally(const ChessCoordinate &start, const Color &
 
         }
         isValid = true;
-
     }
-
     return flag;
 
-}
 
+}
 
 void CheckMate::clearEnemies() {
     teamAlpha->enemyCoordinates.clear();

@@ -378,7 +378,9 @@ ChessErrorCode Board::canKingDodge(const ChessCoordinate &kingCoordinate) {
     ChessCoordinate kingMoves[8] = { {-1,1}, {0,1}, {1,1}, {1,0}, {-1,0}, {-1,-1}, {0,-1}, {1,-1} };
     ChessErrorCode  code;
     for(const auto &iter : kingMoves){
-        code = movePieceHelper(kingCoordinate, iter);
+
+
+        code = movePieceHelper(kingCoordinate, iter + kingCoordinate);
         if(code == ChessErrorCode::VALID_MOVE){
             undoMove();
             return code;
@@ -402,7 +404,7 @@ ChessErrorCode Board::canEliminate(const ChessCoordinate &kingCoordinate, const 
 
     for(int i = 0; i < 8; i++){
         for(int j = 0; j < 8; j++){
-            if(getPieceColor({i,j}) == teamColor){ //WHAT WHY????! Code is really tricky to read now.
+            if(getPieceColor({i,j}) == teamColor){
                 result = movePieceHelper({i,j}, {enemyCoordinate});
                 if(result == ChessErrorCode::VALID_MOVE){
                     undoMove();
