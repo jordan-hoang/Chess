@@ -501,13 +501,14 @@ ChessErrorCode Board::isCheckMate(const Color &enemyColor){
 
 
     /////We can't move or kill the piece, and if the piece is a knight it is impossible to block therefore.
-    if(requestUnit(enemyLocations.at(0)) == PieceUnit::KNIGHT){
+    if(!enemyLocations.empty() && requestUnit(enemyLocations.at(0)) == PieceUnit::KNIGHT){
         return ChessErrorCode::CHECK_MATED;
     }
 
-    if(canBlock(currentKing, enemyColor) == ChessErrorCode::VALID_MOVE){
-       return ChessErrorCode::VALID_MOVE;
-    }
+
+    //if(canBlock(currentKing, enemyColor) == ChessErrorCode::VALID_MOVE){
+    //   return ChessErrorCode::VALID_MOVE;
+    //}
 
 
     return ChessErrorCode::CHECK_MATED;

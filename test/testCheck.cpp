@@ -144,7 +144,7 @@ TEST(CASTLING, testPathBlockedTwo){
     a.emplace_back(otherRow);
 
     */
-    /*
+
 
     ChessController chessGame = game();
 
@@ -322,7 +322,7 @@ TEST(CASTLING, testPathBlockedTwo){
     input = "f3,g3";
     EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_MOVE);
 
-    */
+
 }
 
 
@@ -346,9 +346,7 @@ TEST(CHECK_MATE, foolsMate){
     EXPECT_EQ(game.readInput(move,p2), ChessErrorCode::VALID_MOVE);
 
     move = "d8,h4";
-
-
-    //EXPECT_EQ(game.readInput(move,p2), ChessErrorCode::CHECK_MATED);
+    EXPECT_EQ(game.readInput(move,p2), ChessErrorCode::CHECK_MATED);
 
 
 
