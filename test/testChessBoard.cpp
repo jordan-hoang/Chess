@@ -685,21 +685,9 @@ TEST(CASTLING, testPathBlocked){
     input = "a1,a2";
     EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::VALID_MOVE);
 
-    std::cout << chessGame.getBoardView();
-
-    input = "e1,e2";
-    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_MOVE);
-
-    std::cout << chessGame.getBoardView();
-
-
 
     input = "a2,h2";
-    EXPECT_EQ(chessGame.readInput(input,p1), ChessErrorCode::VALID_MOVE);
-
-
-    input = "e1,e2";
-    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_KING_MOVE);
+    EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_MOVE);
 
 
 }
