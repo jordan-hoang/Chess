@@ -87,14 +87,13 @@ ChessErrorCode Piece::validateKnight(const ChessCoordinate &start, const ChessCo
 
 ChessErrorCode Piece::validateBishop(const ChessCoordinate &start, const ChessCoordinate &finish) const {
 
-    ChessCoordinate rst = finish - start;
+    int diffRow = abs( finish.row - start.row);
+    int diffCol = abs( finish.col - start.col);
 
-    if (rst.row == rst.col && rst.row != 0){
-        return ChessErrorCode::VALID_MOVE; //This method doesn't really need to exist validateDiagonal in Board determines if move is allowed
+    if( diffRow == diffCol ){
+        return ChessErrorCode::VALID_MOVE;
     }
-
     return ChessErrorCode::INVALID_MOVE;
-
 }
 
 ChessErrorCode Piece::validateKing(const ChessCoordinate &start, const ChessCoordinate &finish) const {

@@ -207,6 +207,7 @@ bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &fin
         return isVerticalPathClear(start, finish);
     }
 
+    //For diagonal points we need to calculate the slope so...
     else if( diffRow == diffCol ){
         return isDiagonalPathClear(start, finish);
     }
@@ -583,10 +584,7 @@ ChessErrorCode Board::movePieceHelper(const ChessCoordinate &start, const ChessC
     ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start, finish, targetPiece.getColor() );
     if(ChessCode == ChessErrorCode::ENPASSANT){
         ChessCode = enPassant(start,finish);
-    }
-
-        //Special case for when user attempts to CASTLE
-    else if(ChessCode == ChessErrorCode::CASTLE) {
+    } else if(ChessCode == ChessErrorCode::CASTLE) {
         ChessCode = executeCastle(start, finish);
         return ChessCode;
     } else if(ChessCode == ChessErrorCode::VALID_MOVE){
