@@ -44,15 +44,15 @@ void Board::initializeGame(vector<vector<Piece>> &chessBoard) {
     createBackRank(Color::RED_LOWERCASE,chessBoard, 0);
 
     std::vector<Piece> blackPawn;
-    for(int col = 0; col < 8 ; col++){
+    for(int col = 0; col < 8 ; ++col){
         blackPawn.emplace_back( Piece{PieceUnit::PAWN, Color::RED_LOWERCASE, {1,col} }  );
     }
     chessBoard.push_back(blackPawn);
 
 
-    for (int row = 2; row < 6; row++) {
+    for (int row = 2; row < 6; ++row) {
         std::vector<Piece> tmp;
-        for (int col = 0; col < 8; col++) {
+        for (int col = 0; col < 8; ++col) {
             tmp.emplace_back(Piece{PieceUnit::NONE, Color::COLORLESS, {row,col} } );
         }
         chessBoard.push_back(tmp);
@@ -60,7 +60,7 @@ void Board::initializeGame(vector<vector<Piece>> &chessBoard) {
 
     //Doing blue side
     std::vector<Piece> whitePawn;
-    for(int col = 0 ; col < 8; col++){
+    for(int col = 0 ; col < 8; ++col){
         whitePawn.emplace_back(Piece{PieceUnit::PAWN, Color::BLUE_UPPERCASE, {6,col}});
     }
     chessBoard.push_back(whitePawn);
@@ -115,6 +115,8 @@ void Board::drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &
     }
     stream << '\n';
 
+
+
 }
 
 
@@ -150,7 +152,7 @@ bool Board::isVerticalPathClear(const ChessCoordinate &start, const ChessCoordin
     int end = std::max(start.row,finish.row);
 
     // + 1 for the space in front of it
-    for(int i = begin + 1; i < end ; i++){
+    for(int i = begin + 1; i < end ; ++i){
         if(requestUnit({i,start.col}) != PieceUnit::NONE ){
             return false;
         }
@@ -170,7 +172,7 @@ bool Board::isDiagonalPathClear(const ChessCoordinate &start, const ChessCoordin
     int changeX = ( (finish.col - start.col) > 0 ) ? 1 : -1;
     int changeY = ( (finish.row - start.row) > 0 ) ? 1 : -1;
 
-    for(int i = 0; i < endIter - 1; i++){
+    for(int i = 0; i < endIter - 1; ++i){
         curX += changeX;
         curY += changeY;
         if(requestUnit({curY,curX}) != PieceUnit::NONE   ){
@@ -205,6 +207,7 @@ bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &fin
         return isVerticalPathClear(start, finish);
     }
 
+    //For diagonal points we need to calculate the slope so...
     else if( diffRow == diffCol ){
         return isDiagonalPathClear(start, finish);
     }
@@ -213,260 +216,6 @@ bool Board::isPathClear(const ChessCoordinate &start, const ChessCoordinate &fin
     return false;
 }
 
-
-/**
- * NEEDS TESTING
- * @param start - coordinates of the square you want to check is under attack
- * @param finish - end/begin of the row
- * @return True if can be attacked else returns false.
- */
-bool Board::isAttackedHorizontally(const ChessCoordinate &start, const Color &kingColor,  vector<ChessCoordinate> &enemies) const {
-
-    const vector<Piece> &handle = _chessBoard.at(start.row);
-    auto iterBegin = handle.begin() + start.col ;
-    auto iterEnd = handle.end();
-
-    //If the piece you are looking for is not None and the piece isn't the attack piece then......
-    //Stops looking if it finds a piece that isn't none
-
-    //Checking forwards towards the right, so --x-------a-----b--  "Piece a would look towards 'b' to find a rook or queen"
-    auto result = std::find_if(iterBegin,iterEnd,
-                               [&](auto i ) {return i.getPieceUnit() != PieceUnit::NONE ;} );
-
-    if(result != iterEnd){
-        if((*result).getColor() != kingColor &&  ((*result).getPieceUnit() == PieceUnit::ROOK ||
-                                                  (*result).getPieceUnit() == PieceUnit::QUEEN )){
-            enemies.push_back((*result).getCoordinate());
-            return true;
-        }
-    }
-
-
-    //Checking backwards towards the left, so    --x-----a---- "Piece a would be checking towards x to find a rook or queen---
-    const auto rIter = handle.rbegin() + start.col ;
-    const auto resultTwo = std::find_if(rIter, handle.rend(),
-                                        [&](auto i ) {return i.getPieceUnit() != PieceUnit::NONE ;} );
-
-    if(resultTwo != handle.rend()){
-        if((*resultTwo).getColor() != kingColor &&  ((*resultTwo).getPieceUnit() == PieceUnit::ROOK ||
-                                                     (*resultTwo).getPieceUnit() == PieceUnit::QUEEN )){
-            enemies.push_back((*resultTwo).getCoordinate());
-            return true;
-        }
-    }
-
-
-
-    return false;
-}
-/**
- *
- * @param start - The square you want to check
- * @param kingColor - Color of the king that is trying to castle.
- * @return - If that square can be attacked
- */
-bool Board::isAttackedVertically(const ChessCoordinate &start, const Color &kingColor,  vector<ChessCoordinate> &enemies) const {
-
-    //We need to check vertically upwards, then vertically downwards, from the position START
-    bool flag = false;
-
-    for(int i = start.row ; i < 8 ; i++) {
-        Piece tmp = _chessBoard.at(i).at(start.col);
-        if(tmp.getPieceUnit() == PieceUnit::ROOK || tmp.getPieceUnit() == PieceUnit::QUEEN){
-            if(tmp.getColor() != kingColor){
-                enemies.emplace_back(i, start.col);
-                flag = true;
-            }
-        } if(tmp.getPieceUnit() != PieceUnit::NONE){  //but we need to stop checking if the piece we encounter is not
-            break;
-        }
-        if(flag){
-            break;
-        }
-    }
-
-    //Now we check downwards, almost duplicated code, only for parameters changed
-    for(int i = start.row ; i >= 0; i--) {
-        Piece tmp = _chessBoard.at(i).at(start.col);
-        if(tmp.getPieceUnit() == PieceUnit::ROOK || tmp.getPieceUnit() == PieceUnit::QUEEN){
-            if(tmp.getColor() != kingColor && tmp.getColor() != Color::COLORLESS){
-                enemies.emplace_back(i, start.col);
-                flag =  true; //We checked upwards already so we can just return true
-            }
-        } if(tmp.getPieceUnit() != PieceUnit::NONE){  //but we need to stop checking if the piece we encounter is not
-            break;
-        }
-        if(flag){
-            break;
-        }
-    }
-
-    return flag;
-
-}
-
-bool Board::isAttackedByPawn(const ChessCoordinate &start, const Color &kingColor,  vector<ChessCoordinate> &enemies) const {
-
-    bool flag = false;
-
-    if(kingColor == Color::BLUE_UPPERCASE){
-
-        //bottom left of start and bottom right of start if contain pawn will mean that spot is dangerous
-        ChessCoordinate bottomLeft{start.row - 1, start.col - 1};
-        if(bottomLeft.isValid()){
-            Piece tmp = getPiece(bottomLeft);
-
-            if(tmp.getColor() == Color::RED_LOWERCASE && tmp.getPieceUnit() == PieceUnit::PAWN){
-                enemies.emplace_back(ChessCoordinate{start.row - 1, start.col -1});
-                flag = true;
-            }
-        }
-
-        ChessCoordinate bottomRight{start.row - 1, start.col + 1};
-        if(bottomRight.isValid()) {
-            Piece tmp = getPiece(bottomRight);
-            if (tmp.getColor() == Color::RED_LOWERCASE && tmp.getPieceUnit() == PieceUnit::PAWN) {
-                enemies.emplace_back(ChessCoordinate{start.row - 1, start.col + 1});
-                flag = true;
-            }
-        }
-
-    } else if(kingColor == Color::RED_LOWERCASE){
-        //watch out for pawns coming from above!
-        ChessCoordinate topLeft{start.row + 1, start.col - 1};
-        if(topLeft.isValid()){
-            Piece tmp = getPiece(topLeft);
-            if(tmp.getColor() == Color::BLUE_UPPERCASE && tmp.getPieceUnit() == PieceUnit::PAWN){
-                enemies.emplace_back(ChessCoordinate{start.row + 1, start.col - 1});
-                flag = true;
-            }
-        }
-        ChessCoordinate topRight{start.row + 1, start.col + 1};
-        if(topRight.isValid()){
-            Piece tmp = getPiece(topRight);
-            if(tmp.getPieceUnit() == PieceUnit::PAWN && tmp.getColor() == Color::BLUE_UPPERCASE){
-                enemies.emplace_back(ChessCoordinate{start.row + 1, start.col + 1});
-                flag = true;
-            }
-        }
-    }
-
-    return flag;
-}
-
-bool Board::isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor,  vector<ChessCoordinate> &enemies) const {
-
-    //Need code for bishops and pawns,pawns are special case.
-    //RED PAWNS Travel upwards, BLUE PAWNS Travel downwards from Piece.cpp
-
-    bool flag = false;
-    if(isAttackedByPawn(start,kingColor, enemies)){
-        flag = true;
-    }
-
-
-    //Check + slope for bishops and queens that can kill you.
-    //Check - slope for bishops and queens that can kill you.
-    //All possible directions diagonally to check in.
-    int dirX[4] = {1,-1,1,-1};
-    int dirY[4] = {1,-1,-1,1};
-
-
-    for(int i = 0 ; i < 4; i++){
-
-        ChessCoordinate startingPosition{start.row,start.col};
-        bool isValid = true;
-
-        while( isValid && startingPosition.isValid()){
-            if(getPieceColor(startingPosition) != kingColor) {
-                if ((requestUnit(startingPosition) == PieceUnit::QUEEN) ||
-                    requestUnit(startingPosition) == PieceUnit::BISHOP) {
-                    enemies.emplace_back(startingPosition);
-                    flag = true;
-                }
-            } if(getPiece(startingPosition).getPieceUnit() != PieceUnit::NONE){
-                isValid = false;
-            }
-            startingPosition.row += dirX[i];
-            startingPosition.col += dirY[i];
-        }
-
-    }
-
-
-    return flag;
-}
-
-//Check's if a square is under attack
-bool Board::isSquareUnderAttack(const ChessCoordinate &position, const Color &kingColor,
-                                vector<ChessCoordinate> &enemies) const {
-
-    //Now we need to test the position vertically, horizontally, and attacks from knights.
-    //All possible moves of a knight
-    int knightMoveX[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
-    int knightMoveY[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
-
-    bool flag = false;
-
-    //Checking if any of these squares has an enemy knight
-    for(int i = 0; i < 8; i++){
-        int row = knightMoveX[i] + position.row;
-        int col = knightMoveY[i] + position.col;
-        if(row >= 0 && row <= 7 && col >= 0 && col <= 7){
-            Piece potentialEnemy = _chessBoard.at(row).at(col);
-            if( potentialEnemy.getColor() != kingColor && potentialEnemy.getPieceUnit() == PieceUnit::KNIGHT){
-                flag = true;
-                enemies.emplace_back(ChessCoordinate{row,col});
-            }
-        }
-
-    }
-
-    if( isAttackedHorizontally(position,  kingColor, enemies  ) ){
-        flag = true;
-    }
-    if( isAttackedVertically(position, kingColor, enemies) ){
-        flag = true;
-    }
-    if( isAttackedDiagonally(position,kingColor, enemies)){
-        flag = true;
-    }
-
-    return flag;
-
-
-}
-
-bool Board::isSquareUnderAttack(const ChessCoordinate &position, const Color& kingColor) const {
-    //Now we need to test the position vertically, horizontally, and attacks from knights.
-    //All possible moves of a knight
-    std::vector<ChessCoordinate> enemies;
-
-    int knightMoveX[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
-    int knightMoveY[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
-
-    //Checking if any of these squares has an enemy knight
-    for(int i = 0; i < 8; i++){
-        int row = knightMoveX[i] + position.row;
-        int col = knightMoveY[i] + position.col;
-        if(row >= 0 && row <= 7 && col >= 0 && col <= 7){
-            Piece potentialEnemy = _chessBoard.at(row).at(col);
-            if( potentialEnemy.getColor() != kingColor && potentialEnemy.getPieceUnit() == PieceUnit::KNIGHT){
-                return true;
-            }
-        }
-    }
-
-    if( isAttackedHorizontally(position,  kingColor, enemies  ) ){
-        return true;
-    }
-    if( isAttackedVertically(position, kingColor, enemies) ){
-        return true;
-    }
-
-    return (isAttackedDiagonally(position, kingColor, enemies));
-
-}
 
 
 void Board::promotePawnToQueen(Piece &source, const ChessCoordinate &target){
@@ -483,11 +232,11 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
 
     int dirSquare  = (finish.col - start.col > 0 ) ? 1 : -1;
 
-    bool isAttacked = isSquareUnderAttack({start.row, start.col + dirSquare}, getPieceColor(start));
+    bool isAttacked = checkmate_system->isSquareUnderAttack({start.row, start.col + dirSquare}, getPieceColor(start), getBoard());
     if(isAttacked){
         return ChessErrorCode::INVALID_CASTLE;
     }
-    isAttacked = isSquareUnderAttack({start.row, start.col + dirSquare*2}, getPieceColor(start));
+    isAttacked =  checkmate_system->isSquareUnderAttack({start.row, start.col + dirSquare*2}, getPieceColor(start), getBoard());
     if(isAttacked){
         return ChessErrorCode::INVALID_CASTLE;
     }
@@ -626,29 +375,239 @@ void Board::updatePiece(Piece &source, Piece &destination) {
 }
 
 
+ChessErrorCode Board::canKingDodge(const ChessCoordinate &kingCoordinate) {
+    ChessCoordinate kingMoves[8] = { {-1,1}, {0,1}, {1,1}, {1,0}, {-1,0}, {-1,-1}, {0,-1}, {1,-1} };
+    ChessErrorCode  code;
+    for(const auto &iter : kingMoves){
+
+
+        code = movePieceHelper(kingCoordinate, iter + kingCoordinate);
+        if(code == ChessErrorCode::VALID_MOVE){
+            undoMove();
+            return code;
+        }
+
+    }
+    return code;
+}
+
+//Only 1 enemy that is attacking the king so...
+ChessErrorCode Board::canEliminate(const ChessCoordinate &kingCoordinate, const Color &enemyColor,
+        const vector<ChessCoordinate> &enemyLocations) {
+
+    const auto enemyCoordinate = enemyLocations.at(0);
+    ChessErrorCode result; //Doesn't matter what his is initialized to as long as it isn't valid move
+
+    const Color &teamColor = getPieceColor(kingCoordinate);
+
+
+    for(int i = 0; i < 8; i++){
+        for(int j = 0; j < 8; j++){
+            if(getPieceColor({i,j}) == teamColor){
+                result = movePieceHelper({i,j}, {enemyCoordinate});
+                if(result == ChessErrorCode::VALID_MOVE){
+                    undoMove();
+                    return result;
+                }
+            }
+        }
+    }
+
+    return ChessErrorCode::INVALID_MOVE;
+
+
+}
+
+
+ChessErrorCode Board::canBlock(const ChessCoordinate &kingCoordinate, const Color &enemyColor,
+        const vector<ChessCoordinate> &enemyLocations) {
+
+
+    if(enemyLocations.empty()){
+      return ChessErrorCode::VALID_MOVE;
+    }
+
+    const auto enemyCoordinate = enemyLocations.at(0);
+    ChessErrorCode result = ChessErrorCode::INVALID_MOVE; //Doesn't matter what his is initialized to as long as it isn't valid move
+    const Color &teamColor = getPieceColor(kingCoordinate);
+    const auto &boardRef = getBoard();
+
+    //The unit must me a rook or bishop.
+    ChessCoordinate dTravel = kingCoordinate - enemyCoordinate;
+    vector<ChessCoordinate> blockingSquares;
+
+
+    //A diagonal piece is attacking you!
+    if(dTravel.row == dTravel.col){
+        dTravel.row = dTravel.row / std::abs(dTravel.row);
+        dTravel.col = dTravel.col / std::abs(dTravel.col);
+    } else {
+        dTravel = dTravel.toOne();
+    }
+
+
+    for(ChessCoordinate i = enemyCoordinate; !(i == kingCoordinate) ;){
+        blockingSquares.emplace_back(i + dTravel);
+        i = i + dTravel;
+    }
+
+
+    for(const auto &blockSpots : blockingSquares) {
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (getPieceColor({i, j}) == teamColor && requestUnit({i,j}) != PieceUnit::KING      ) {
+                    result = movePieceHelper( {i, j}, {blockSpots} );
+                }
+                if (result == ChessErrorCode::VALID_MOVE) {
+                    undoMove();
+                    std::cout << "RETURNING VALID MOVE!!!!" << ChessCoordinate{i,j} << " to " << blockSpots << "\n";
+                    return result;
+                }
+            }
+
+        }
+
+    }
+
+
+
+    return ChessErrorCode::INVALID_MOVE; //Represents failure in this case
+}
+
+
+//Color of the enemy
+ChessErrorCode Board::isCheckMate(const Color &enemyColor){
+    //Get all enemies attaking this particular unit
+    const auto enemyLocations = checkmate_system->getAttackers(enemyColor); // Make a copy
+
+
+    bool canBlockOrEliminate = enemyLocations.size() == 1;
+
+    ChessErrorCode code;
+    ChessCoordinate currentKing;
+    if(enemyColor == Color::RED_LOWERCASE){
+        currentKing = redKing;
+    } else if(enemyColor == Color::BLUE_UPPERCASE){
+        currentKing = blueKing;
+    }
+
+
+    code = canKingDodge(currentKing);
+    if(code == ChessErrorCode::VALID_MOVE) {
+        std::cout << "King can dodge\n";
+        return code;
+    }
+
+    if(!canBlockOrEliminate){
+        return ChessErrorCode::CHECK_MATED;
+    }
+
+    if(canEliminate(currentKing, enemyColor, enemyLocations) == ChessErrorCode::VALID_MOVE){
+        std::cout << "King can ELIMINATE\n";
+        return ChessErrorCode::VALID_MOVE;
+    }
+
+
+    /////We can't move or kill the piece, and if the piece is a knight it is impossible to block therefore.
+    if(!enemyLocations.empty() && requestUnit(enemyLocations.at(0)) == PieceUnit::KNIGHT){
+        std::cout << "King CHECKMATED\n";
+        return ChessErrorCode::CHECK_MATED;
+    }
+
+    if(canBlock(currentKing, enemyColor, enemyLocations) == ChessErrorCode::VALID_MOVE){
+        std::cout << "King CAN BLOCK\n";
+        return ChessErrorCode::VALID_MOVE;
+    }
+
+
+    std::cout << "King CHECKMATED\n";
+    return ChessErrorCode::CHECK_MATED;
+
+}
+
+/**
+ * @param personMoving - The color of the your piece. Say if you pass in a "Blue Unit"
+ * then it will check if Blue king is being checked.
+ * @return - True if your being checked else false;
+ */
 bool Board::isCheck(const Color &personMoving) {
 
 
-    vector<ChessCoordinate> enemies = {};
-
-    //Now check on the kings, but we haven't recorded their positions.
     if(personMoving == Color::RED_LOWERCASE){
-        isSquareUnderAttack(redKing, Color::RED_LOWERCASE, enemies);
+        checkmate_system->isSquareUnderAttack(redKing, Color::RED_LOWERCASE, getBoard());
     } else if(personMoving == Color::BLUE_UPPERCASE){
-        isSquareUnderAttack(blueKing, Color::BLUE_UPPERCASE, enemies);
+        checkmate_system->isSquareUnderAttack(blueKing, Color::BLUE_UPPERCASE, getBoard());
     }
 
+    const auto& enemies = checkmate_system->getAttackers(personMoving);
     if(enemies.empty()){
         return false;
     }
 
+    std::cout << "Attackers: to king \n";
     for(const auto &iter : enemies){
         std:: cout << iter << "\n";
     }
 
     return true;
 
+}
 
+
+ChessErrorCode Board::movePieceHelper(const ChessCoordinate &start, const ChessCoordinate &finish) {
+
+    if(!start.isValid() || !finish.isValid()){
+        return ChessErrorCode::INVALID_MOVE;
+    }
+
+    Piece &sourcePiece = requestPiece(start);
+    Piece &targetPiece = requestPiece(finish);
+    if( ( sourcePiece.getColor() == targetPiece.getColor() ) || sourcePiece.getPieceUnit() == PieceUnit::NONE    ){
+        return ChessErrorCode::INVALID_PIECE;
+    }
+
+    ////If Piece is a Knight path is meaningless since they can jump over units
+    bool pathClear = (sourcePiece.getPieceUnit() == PieceUnit::KNIGHT);
+    if(!pathClear) { pathClear = isPathClear(start,finish); }
+    if(!pathClear) {  return ChessErrorCode::INVALID_MOVE; }
+
+    ////Code for moving the king specifically
+    ////Can possibly cause the game to never end if stalemate is possible. (should disable this code or finish it off)
+    if(sourcePiece.getPieceUnit() == PieceUnit::KING){
+        bool isSquareAttacked = checkmate_system->isSquareUnderAttack(finish,sourcePiece.getColor(), getBoard());
+        if(isSquareAttacked){
+            return ChessErrorCode::INVALID_KING_MOVE;
+        }
+    }
+
+    ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start, finish, targetPiece.getColor() );
+    if(ChessCode == ChessErrorCode::ENPASSANT){
+        ChessCode = enPassant(start,finish);
+    } else if(ChessCode == ChessErrorCode::CASTLE) {
+        ChessCode = executeCastle(start, finish);
+        return ChessCode;
+    } else if(ChessCode == ChessErrorCode::VALID_MOVE){
+        //We need to check if the move will place the user in check?
+        promotePawnToQueen(sourcePiece, finish);
+        recorder.addMove(start,finish, targetPiece);
+        updatePiece(sourcePiece,targetPiece);
+
+        if(targetPiece.getPieceUnit() == PieceUnit::KING && targetPiece.getColor() == Color::BLUE_UPPERCASE){
+            blueKing = targetPiece.getCoordinate();
+        } else if(targetPiece.getPieceUnit() == PieceUnit::KING && targetPiece.getColor() == Color::RED_LOWERCASE){
+            redKing = targetPiece.getCoordinate();
+        }
+
+        //Checks to see if you are executing a move that would place you in check, if you did, undo it since
+        //Placing yourself in check is illegal.
+        if( isCheck(targetPiece.getColor()) ){
+            undoMove();
+            ChessCode =  ChessErrorCode::INVALID_MOVE;
+        }
+    }
+
+    return ChessCode;
 }
 
 
@@ -660,66 +619,28 @@ bool Board::isCheck(const Color &personMoving) {
  */
 ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordinate &finish) {
 
-    Piece &sourcePiece = requestPiece(start);
+    ChessErrorCode ChessCode = movePieceHelper(start, finish);
     Piece &targetPiece = requestPiece(finish);
 
-    if( ( sourcePiece.getColor() == targetPiece.getColor() ) || sourcePiece.getPieceUnit() == PieceUnit::NONE    ){
-        return ChessErrorCode::INVALID_PIECE;
-    }
-
-    // If Piece is a Knight path is meaningless since they can jump over units
-    bool pathClear = (sourcePiece.getPieceUnit() == PieceUnit::KNIGHT);
-
-    if(!pathClear) { pathClear = isPathClear(start,finish); }
-    if(!pathClear) {  return ChessErrorCode::INVALID_MOVE; }
-
-    //Code for moving the king specifically
-
-    //////Can possibly cause the game to never end if stalemate is possible. (should disable this code or finish it off)
-    if(sourcePiece.getPieceUnit() == PieceUnit::KING){
-        bool isSquareAttacked = isSquareUnderAttack(finish,sourcePiece.getColor());
-        if(isSquareAttacked){
-            return ChessErrorCode::INVALID_KING_MOVE;
-        }
-    }
-
-
-    ChessErrorCode ChessCode = sourcePiece.checkMovementIsValid(start, finish, targetPiece.getColor() );
-    if(ChessCode == ChessErrorCode::ENPASSANT){
-        ChessCode = enPassant(start,finish);
-    }
-
-    //Special case for when user attempts to CASTLE
-    else if(ChessCode == ChessErrorCode::CASTLE) {
-        ChessCode = executeCastle(start, finish);
+    if(ChessCode != ChessErrorCode::VALID_MOVE){
         return ChessCode;
-    } else if(ChessCode == ChessErrorCode::VALID_MOVE){
-        //We need to check if the move will place the user in check?
+    }
 
-        promotePawnToQueen(sourcePiece, finish);
-        recorder.addMove(start,finish, targetPiece);
-        updatePiece(sourcePiece,targetPiece);
+    Color enemyColor;
+    bool checked = false;
 
-        if(targetPiece.getPieceUnit() == PieceUnit::KING && targetPiece.getColor() == Color::BLUE_UPPERCASE){
-            blueKing = targetPiece.getCoordinate();
-        } else if(targetPiece.getPieceUnit() == PieceUnit::KING && targetPiece.getColor() == Color::RED_LOWERCASE){
-            redKing = targetPiece.getCoordinate();
-        }
+    //Now we need to see if we checkmated the other player. The target piece here has been updated already. So
+    //It must have a color.
+    if(targetPiece.getColor() == Color::RED_LOWERCASE){
+        enemyColor = Color::BLUE_UPPERCASE;
+        checked = isCheck(Color::BLUE_UPPERCASE);
+    } else {
+        enemyColor = Color::RED_LOWERCASE;
+        checked =isCheck(Color::RED_LOWERCASE);
+    }
 
-
-        if( isCheck(targetPiece.getColor()) ){
-            undoMove();
-            ChessCode =  ChessErrorCode::INVALID_MOVE;
-        }
-
-        /*else if(targetPiece.getPieceUnit() == PieceUnit::KING){
-            if(targetPiece.getColor() == Color::BLUE_UPPERCASE){
-                blueKing = targetPiece.getCoordinate();
-            } else {
-                redKing = targetPiece.getCoordinate();
-            }
-        }
-        */
+    if(checked){
+        ChessCode = isCheckMate(enemyColor);
     }
 
 
@@ -751,6 +672,8 @@ ChessErrorCode Board::enPassant(const ChessCoordinate &start, const ChessCoordin
                 ChessMove pawn{pawnMove, getPiece(pastMoveEnd) };
                 ChessCoordinate coordinate{pastMoveEnd};
                 auto chessMove = std::make_unique<MoveEnPassant>(pawn,coordinate);
+
+
                 recorder.addMove( std::move(chessMove) );
 
                 Piece::updatePiece(requestPiece(start), requestPiece(finish));
@@ -774,13 +697,20 @@ Board::Board() {
     redKing  = {0, 4};
     blueKing = {7, 4};
 
+    checkmate_system = std::make_unique<CheckMate>(Color::RED_LOWERCASE, Color::BLUE_UPPERCASE);
+
 }
 
 Board::Board(vector<vector<Piece>> &chessBoard) {
     this->_chessBoard = chessBoard;
 
+    checkmate_system = std::make_unique<CheckMate>(Color::RED_LOWERCASE, Color::BLUE_UPPERCASE);
+
+
+
+
     assert(chessBoard.size() == 8);
-    for(int i = 0; i<7; i++){
+    for(int i = 0; i<7; ++i){
         assert(chessBoard.at(i).size() == 8);
     }
 
@@ -791,10 +721,9 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
     blueKing.col = 3; //Hard coded for testing of 1 function
 
 
-    for(int i = 0; i < 8; i++){
-        for(int j = 0; j < 8; j++){
+    for(int i = 0; i < 8; ++i){
+        for(int j = 0; j < 8; ++j){
             if(_chessBoard[i][j].getPieceUnit() == PieceUnit::KING){
-                std::cout << i << "\n";
                 if(_chessBoard[i][j].getColor() == Color::RED_LOWERCASE){
                     redKing = {i,j};
                 } else if(_chessBoard[i][j].getColor() == Color::BLUE_UPPERCASE) {

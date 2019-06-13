@@ -264,15 +264,14 @@ void ChessController::printListMoves() {
 
 
 //Constructor that generates the game
-ChessController::ChessController() {
+ChessController::ChessController() : _gameBoard(Board()) {
     this->_playerOne = ChessPlayer( "playerOne", Color::RED_LOWERCASE  );
     this->_playerTwo = ChessPlayer( "playerTwo", Color::BLUE_UPPERCASE );
-    this->_gameBoard  = Board();
+
 }
 
 //Constructor used for testing
-ChessController::ChessController(vector<vector<Piece>> a) {
+ChessController::ChessController(vector<vector<Piece>> a) : _gameBoard(Board(a)) {
     this->_playerOne = ChessPlayer( "playerOne", Color::RED_LOWERCASE  );
     this->_playerTwo = ChessPlayer( "playerTwo", Color::BLUE_UPPERCASE );
-    this->_gameBoard = Board(a);
 }

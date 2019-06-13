@@ -2,7 +2,9 @@ add_library(${libchess}
         src/ChessController.cpp
         src/Piece.cpp
         src/Board.cpp
-        src/MoveRecorder.cpp)
+        src/MoveRecorder.cpp
+        src/CheckMate.cpp
+        )
 
 find_package(Boost 1.68 COMPONENTS system REQUIRED)
 

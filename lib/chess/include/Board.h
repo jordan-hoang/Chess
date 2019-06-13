@@ -11,6 +11,7 @@
 #include "MoveRecorder.h"
 #include <unordered_map>
 #include <sstream>
+#include "CheckMate.h"
 
 
 
@@ -37,6 +38,7 @@ public:
     const ChessCoordinate& getBlueKing() const {return blueKing; };
 
 
+
     ChessErrorCode movePiece(const ChessCoordinate &start, const ChessCoordinate &finish);
     void undoMove();
     void printListMove();
@@ -48,10 +50,10 @@ public:
 private:
     vector<vector<Piece> > _chessBoard;
     MoveRecorder recorder;
+    std::unique_ptr<CheckMate> checkmate_system;
+
     ChessCoordinate redKing;
     ChessCoordinate blueKing;
-
-
 
     static void updatePiece(Piece &source, Piece &destination);
 
@@ -65,15 +67,15 @@ private:
     bool isDiagonalPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
     bool isPathClear(const ChessCoordinate &start, const ChessCoordinate &finish) const;
 
-    bool isAttackedHorizontally(const ChessCoordinate &start, const Color &kingColor, vector<ChessCoordinate> &enemies) const;
-    bool isAttackedVertically(const ChessCoordinate &start, const Color &kingColor,  vector<ChessCoordinate> &enemies) const;
-    bool isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor,  vector<ChessCoordinate> &enemies) const;
-    bool isAttackedByPawn(const ChessCoordinate &start, const Color &kingColor,  vector<ChessCoordinate> &enemies) const;
-    bool isSquareUnderAttack(const ChessCoordinate &position, const Color &kingColor, vector<ChessCoordinate> &enemies) const;
-    bool isSquareUnderAttack(const ChessCoordinate &position, const Color &kingColor) const;
+
+    ChessErrorCode movePieceHelper(const ChessCoordinate &start, const ChessCoordinate &finish);
+    ChessErrorCode canKingDodge(const ChessCoordinate &kingCoordinate);
+    ChessErrorCode canBlock(const ChessCoordinate &kingCoordinate, const Color &enemyColor, const vector<ChessCoordinate> &enemyLocations); //Delegate this to CheckMate system perhaps???
+    ChessErrorCode canEliminate(const ChessCoordinate &kingCoordinate, const Color &enemyColor, const vector<ChessCoordinate> &enemyLocations);
+
 
     bool isCheck(const Color &color);
-
+    ChessErrorCode isCheckMate(const Color &enemyColor);
 
 
     ChessErrorCode enPassant(const ChessCoordinate &start, const ChessCoordinate &finish) ;

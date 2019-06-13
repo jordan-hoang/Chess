@@ -60,6 +60,8 @@ int main(){
                     isPlayerOneTurn = true;
                     playerName = "playerOne";
                 }
+            } else if(gameMessage == ChessErrorCode::CHECK_MATED){
+                break;
             } else {
               std::cout << invalidMessage(gameMessage);
             }
@@ -67,5 +69,6 @@ int main(){
         }
 
         std::cout << chessGame.gameOverMessage();
+
 
 }

@@ -21,7 +21,9 @@ enum class ChessErrorCode {
         CASTLE,
         INVALID_CASTLE,
         INVALID_KING_MOVE,
-        ENPASSANT};
+        ENPASSANT,
+        CHECK_MATED
+};
 
 /**
  * The color of the piece
@@ -48,8 +50,43 @@ struct ChessCoordinate {
     bool operator==(const ChessCoordinate a) const {
         return ( row == a.row  && col == a.col );
     }
+    ChessCoordinate operator+(const ChessCoordinate &b) const {
+        return ChessCoordinate{row + b.row, col + b.col};
+    }
+    ChessCoordinate operator-(const ChessCoordinate &b) const {
+        return ChessCoordinate{row - b.row, col - b.col};
+    }
+    ChessCoordinate& operator++(){
+        row++;
+        col++;
+        return *this;
+    }
 
-    bool isValid(){
+    ChessCoordinate toOne(){
+        ChessCoordinate rst = *this;
+        if(rst.row == 0){
+            rst.row = 0;
+        } else{
+            rst.row = 1;
+        }
+        if(rst.col == 0){
+            rst.col = 0;
+        } else{
+            rst.col = 1;
+        }
+        return rst;
+    }
+
+    ChessCoordinate& operator=(const ChessCoordinate &copy){
+        row = copy.row;
+        col = copy.col;
+        return *this;
+    }
+
+
+
+
+    bool isValid() const{
         if(row < 0 || row >= 8){
             return false;
         }

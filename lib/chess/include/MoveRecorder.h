@@ -21,6 +21,8 @@ using std::vector;
 /// You can instead have a vector that stores  a vector of moves and do away with this structure
 /// -Having a vector of vectors is also more flexible and better but lets just use polymorphism for castling
 
+
+
 struct ChessMove {
     pair<ChessCoordinate,ChessCoordinate> move;
     Piece pieceKilled;
