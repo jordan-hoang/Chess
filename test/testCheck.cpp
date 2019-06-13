@@ -144,7 +144,7 @@ TEST(CASTLING, testPathBlockedTwo){
     a.emplace_back(otherRow);
 
     */
-
+    /*
 
     ChessController chessGame = game();
 
@@ -322,6 +322,23 @@ TEST(CASTLING, testPathBlockedTwo){
     input = "f3,g3";
     EXPECT_EQ(chessGame.readInput(input,p2), ChessErrorCode::INVALID_MOVE);
 
+    //*/
+}
+
+TEST(BISHOP, testBishop){
+    ChessController game;
+
+    std::string p1 = "playerOne";
+    std::string p2 = "playerTwo";
+    std::string move;
+
+    move ="f2,f3";
+    EXPECT_EQ(game.readInput(move,p1), ChessErrorCode::VALID_MOVE);
+
+    move = "f1,f2";
+    EXPECT_EQ(game.readInput(move,p1), ChessErrorCode::INVALID_MOVE);
+
+    
 
 }
 
@@ -348,6 +365,7 @@ TEST(CHECK_MATE, foolsMate){
     move = "d8,h4";
     EXPECT_EQ(game.readInput(move,p2), ChessErrorCode::CHECK_MATED);
 
+    std::cout << game.getBoardView();
 
 
 }

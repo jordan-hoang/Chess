@@ -96,7 +96,9 @@ bool CheckMate::isSquareUnderAttack(const ChessCoordinate &position, const Color
 
 
 
-/**
+/** "Warning after running an hypothetical move then running 'undo' it will not restore the previous
+ *   state of attackers. Important to note for isCheckMate we make a copy. Running a hypothetical move
+ *   then undoing will erase the state of CheckMate getAttackers."
  *
  * @param color
  * @return A vector of chessCoordinates with attackers of a particular color
@@ -115,8 +117,6 @@ const vector<ChessCoordinate>& CheckMate::getAttackers(const Color &color) {
     return std::move(garbage);
 
 }
-
-
 
 
 

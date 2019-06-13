@@ -391,10 +391,10 @@ ChessErrorCode Board::canKingDodge(const ChessCoordinate &kingCoordinate) {
 }
 
 //Only 1 enemy that is attacking the king so...
-ChessErrorCode Board::canEliminate(const ChessCoordinate &kingCoordinate, const Color &enemyColor) {
-    const auto &enemyLocations = checkmate_system->getAttackers(enemyColor);
-    const auto enemyCoordinate = enemyLocations.at(0);
+ChessErrorCode Board::canEliminate(const ChessCoordinate &kingCoordinate, const Color &enemyColor,
+        const vector<ChessCoordinate> &enemyLocations) {
 
+    const auto enemyCoordinate = enemyLocations.at(0);
     ChessErrorCode result; //Doesn't matter what his is initialized to as long as it isn't valid move
 
     const Color &teamColor = getPieceColor(kingCoordinate);
@@ -418,11 +418,15 @@ ChessErrorCode Board::canEliminate(const ChessCoordinate &kingCoordinate, const 
 }
 
 
-ChessErrorCode Board::canBlock(const ChessCoordinate &kingCoordinate, const Color &enemyColor) {
+ChessErrorCode Board::canBlock(const ChessCoordinate &kingCoordinate, const Color &enemyColor,
+        const vector<ChessCoordinate> &enemyLocations) {
 
-    const auto &enemyLocations = checkmate_system->getAttackers(enemyColor);
+
+    if(enemyLocations.empty()){
+      return ChessErrorCode::VALID_MOVE;
+    }
+
     const auto enemyCoordinate = enemyLocations.at(0);
-
     ChessErrorCode result = ChessErrorCode::INVALID_MOVE; //Doesn't matter what his is initialized to as long as it isn't valid move
     const Color &teamColor = getPieceColor(kingCoordinate);
     const auto &boardRef = getBoard();
@@ -430,6 +434,7 @@ ChessErrorCode Board::canBlock(const ChessCoordinate &kingCoordinate, const Colo
     //The unit must me a rook or bishop.
     ChessCoordinate dTravel = kingCoordinate - enemyCoordinate;
     vector<ChessCoordinate> blockingSquares;
+
 
     //A diagonal piece is attacking you!
     if(dTravel.row == dTravel.col){
@@ -440,41 +445,42 @@ ChessErrorCode Board::canBlock(const ChessCoordinate &kingCoordinate, const Colo
     }
 
 
-    for(ChessCoordinate i = enemyCoordinate; !(i == kingCoordinate) ; ++i){
-        blockingSquares.emplace_back(enemyCoordinate + dTravel);
-        ++dTravel;
-
+    for(ChessCoordinate i = enemyCoordinate; !(i == kingCoordinate) ;){
+        blockingSquares.emplace_back(i + dTravel);
+        i = i + dTravel;
     }
+
 
     for(const auto &blockSpots : blockingSquares) {
-        for (int i = 0; i < boardRef.size(); i++) {
-            for (int j = 0; j < boardRef.at(i).size(); j++) {
-                if (getPieceColor({i, j}) == teamColor) {
-                    result = movePieceHelper({i, j}, {blockSpots});
-                    undoMove();
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (getPieceColor({i, j}) == teamColor && requestUnit({i,j}) != PieceUnit::KING      ) {
+                    result = movePieceHelper( {i, j}, {blockSpots} );
                 }
                 if (result == ChessErrorCode::VALID_MOVE) {
+                    undoMove();
+                    std::cout << "RETURNING VALID MOVE!!!!" << ChessCoordinate{i,j} << " to " << blockSpots << "\n";
                     return result;
                 }
-
             }
+
         }
+
     }
 
-    //
 
 
-    return ChessErrorCode::INVALID_MOVE;
-
+    return ChessErrorCode::INVALID_MOVE; //Represents failure in this case
 }
 
 
 //Color of the enemy
 ChessErrorCode Board::isCheckMate(const Color &enemyColor){
-    const auto &enemyLocations = checkmate_system->getAttackers(enemyColor);
     //Get all enemies attaking this particular unit
+    const auto enemyLocations = checkmate_system->getAttackers(enemyColor); // Make a copy
 
-    assert(enemyLocations.size() != -1);
+
     bool canBlockOrEliminate = enemyLocations.size() == 1;
 
     ChessErrorCode code;
@@ -487,30 +493,34 @@ ChessErrorCode Board::isCheckMate(const Color &enemyColor){
 
 
     code = canKingDodge(currentKing);
-    if(code == ChessErrorCode::VALID_MOVE)
+    if(code == ChessErrorCode::VALID_MOVE) {
+        std::cout << "King can dodge\n";
         return code;
-
+    }
 
     if(!canBlockOrEliminate){
         return ChessErrorCode::CHECK_MATED;
     }
 
-    if(canEliminate(currentKing, enemyColor) == ChessErrorCode::VALID_MOVE){
+    if(canEliminate(currentKing, enemyColor, enemyLocations) == ChessErrorCode::VALID_MOVE){
+        std::cout << "King can ELIMINATE\n";
         return ChessErrorCode::VALID_MOVE;
     }
 
 
     /////We can't move or kill the piece, and if the piece is a knight it is impossible to block therefore.
     if(!enemyLocations.empty() && requestUnit(enemyLocations.at(0)) == PieceUnit::KNIGHT){
+        std::cout << "King CHECKMATED\n";
         return ChessErrorCode::CHECK_MATED;
     }
 
+    if(canBlock(currentKing, enemyColor, enemyLocations) == ChessErrorCode::VALID_MOVE){
+        std::cout << "King CAN BLOCK\n";
+        return ChessErrorCode::VALID_MOVE;
+    }
 
-    //if(canBlock(currentKing, enemyColor) == ChessErrorCode::VALID_MOVE){
-    //   return ChessErrorCode::VALID_MOVE;
-    //}
 
-
+    std::cout << "King CHECKMATED\n";
     return ChessErrorCode::CHECK_MATED;
 
 }
@@ -634,6 +644,7 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
     if(checked){
         ChessCode = isCheckMate(enemyColor);
     }
+
 
     return ChessCode;
 

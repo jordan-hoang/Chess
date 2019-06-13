@@ -86,7 +86,15 @@ ChessErrorCode Piece::validateKnight(const ChessCoordinate &start, const ChessCo
 }
 
 ChessErrorCode Piece::validateBishop(const ChessCoordinate &start, const ChessCoordinate &finish) const {
-    return ChessErrorCode::VALID_MOVE; //This method doesn't really need to exist validateDiagonal in Board determines if move is allowed
+
+    ChessCoordinate rst = finish - start;
+
+    if (rst.row == rst.col && rst.row != 0){
+        return ChessErrorCode::VALID_MOVE; //This method doesn't really need to exist validateDiagonal in Board determines if move is allowed
+    }
+
+    return ChessErrorCode::INVALID_MOVE;
+
 }
 
 ChessErrorCode Piece::validateKing(const ChessCoordinate &start, const ChessCoordinate &finish) const {
