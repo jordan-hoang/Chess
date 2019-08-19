@@ -2,15 +2,14 @@
 // Created by jordan on 25/04/19.
 //
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
+
 
 #include <ChessController.h>
 #include <boost/algorithm/string/constants.hpp>
 #include <boost/algorithm/string.hpp>
 #include <iostream>
-
+#include "include/glad/glad.h"
+#include <GLFW/glfw3.h>
 
 
 const unsigned int SCR_WIDTH = 800;
