@@ -1,6 +1,6 @@
 add_executable(chessGame
         Main.cpp
-        )
+        graphicalMain.cpp)
 
 set_target_properties(chessGame
         PROPERTIES

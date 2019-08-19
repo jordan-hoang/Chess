@@ -430,7 +430,6 @@ ChessErrorCode Board::canBlock(const ChessCoordinate &kingCoordinate, const Colo
     const auto enemyCoordinate = enemyLocations.at(0);
     ChessErrorCode result = ChessErrorCode::INVALID_MOVE; //Doesn't matter what his is initialized to as long as it isn't valid move
     const Color &teamColor = getPieceColor(kingCoordinate);
-    const auto &boardRef = getBoard();
 
     //The unit must me a rook or bishop.
     ChessCoordinate dTravel = kingCoordinate - enemyCoordinate;
