@@ -13,8 +13,7 @@
 
 
 #include <GLFW/glfw3.h>
-#include "glad/glad.h"
-
+#include <GL/glew.h>
 
 #include "Shader.h"
 #include "Texture.h"
