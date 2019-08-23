@@ -22,7 +22,7 @@ include_directories(${GLUT_INCLUDE_DIRS})
 target_link_libraries(chessGame
         glfw
         gladlib
-        GLEW::GLEW
+        ${SOIL}
         ${libchess}
         ${libcolor}
         ${CMAKE_THREAD_LIBS_INIT}
