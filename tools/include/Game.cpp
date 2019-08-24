@@ -3,8 +3,10 @@
 //
 
 #include "Game.h"
+#include "ResourceManager.h"
+#include "SpriteRenderer.h"
 
-
+SpriteRenderer *Renderer;
 
 Game::Game(GLuint width, GLuint height):
    State(GAME_ACTIVE), Keys(), Width(width), Height(height), chessGame()
@@ -14,11 +16,25 @@ Game::Game(GLuint width, GLuint height):
 
 Game::~Game()
 {
-
+    delete Renderer;
 }
 
 void Game::init()
 {
+    // Load shaders
+    ResourceManager::LoadShader("../../tools/shaders/sprite.frag", "../../tools/shaders/sprite.vs", nullptr, "sprite");
+
+
+    // Configure shaders
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width), static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
+    ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
+    ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
+    // Load textures
+    ResourceManager::LoadTexture("../../textures/awesomeface.png", GL_TRUE, "face");
+    // Set render-specific controls
+
+    Shader shadey = ResourceManager::GetShader("sprite");
+    Renderer = new SpriteRenderer(shadey);
 
 }
 

@@ -36,7 +36,7 @@ target_link_libraries(chessGame
         ${libchess}
         ${libcolor}
         ${CMAKE_THREAD_LIBS_INIT}
-        ${GLEW_LIBRARIES}
+        GLEW::GLEW
         )
 
 
