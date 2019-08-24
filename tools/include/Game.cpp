@@ -24,17 +24,18 @@ void Game::init()
     // Load shaders
     ResourceManager::LoadShader("../../tools/shaders/sprite.vs", "../../tools/shaders/sprite.frag", nullptr, "sprite");
 
-
     // Configure shaders
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width), static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width), static_cast<GLfloat>(this->Height), 0.0f, 0.0f, 1.0f);
     ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
     ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
     // Load textures
     ResourceManager::LoadTexture("../../textures/awesomeface.png", GL_TRUE, "face");
     // Set render-specific controls
 
-    Shader shadey = ResourceManager::GetShader("sprite");
-    Renderer = new SpriteRenderer(shadey);
+    Shader myShader;
+    myShader = ResourceManager::GetShader("sprite");
+    Renderer = new SpriteRenderer(myShader);
+
 
 }
 
@@ -51,5 +52,8 @@ void Game::ProcessInput(GLfloat dt)
 
 void Game::Render()
 {
+    Texture2D myTexture;
+    myTexture = ResourceManager::GetTexture("face");
+    Renderer->DrawSprite(myTexture, glm::vec2(200, 200), glm::vec2(300, 400), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
 }

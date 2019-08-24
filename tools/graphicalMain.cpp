@@ -11,6 +11,7 @@
 
 #include "include/ResourceManager.h"
 #include "include/Game.h"
+#define GLEW_STATIC
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -42,6 +43,7 @@ int main(int argc, char *argv[])
     glewInit();
     glGetError(); // Call it once to catch glewInit() bug, all other errors are now from our application.
 
+    glfwSetKeyCallback(window, key_callback);
 
     glViewport(0, 0, SCREEN_WIDTH, SCR_HEIGHT);
     glEnable(GL_CULL_FACE);
@@ -51,8 +53,7 @@ int main(int argc, char *argv[])
     chess.init();
 
     // DeltaTime variables
-    GLfloat deltaTime = 0.0f;
-    GLfloat lastFrame = 0.0f;
+
 
     // Start Game within Menu State
     chess.State = GAME_ACTIVE;
@@ -61,17 +62,13 @@ int main(int argc, char *argv[])
     while (!glfwWindowShouldClose(window))
     {
         // Calculate delta time
-        GLfloat currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+
         glfwPollEvents();
 
         //deltaTime = 0.001f;
         // Manage user input
-        chess.ProcessInput(deltaTime);
 
-        // Update Game state
-        chess.Update(deltaTime);
+
 
         // Render
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

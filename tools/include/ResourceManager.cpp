@@ -30,6 +30,7 @@ Shader ResourceManager::GetShader(std::string name)
 
 Texture2D ResourceManager::LoadTexture(const GLchar *file, GLboolean alpha, std::string name)
 {
+
     Textures[name] = loadTextureFromFile(file, alpha);
     return Textures[name];
 }
