@@ -22,7 +22,7 @@ Game::~Game()
 void Game::init()
 {
     // Load shaders
-    ResourceManager::LoadShader("../../tools/shaders/sprite.frag", "../../tools/shaders/sprite.vs", nullptr, "sprite");
+    ResourceManager::LoadShader("../../tools/shaders/sprite.vs", "../../tools/shaders/sprite.frag", nullptr, "sprite");
 
 
     // Configure shaders
