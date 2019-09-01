@@ -18,6 +18,10 @@ const unsigned int SCR_HEIGHT = 600;
 
 
 
+
+void cursorPositionCallback(GLFWwindow *window, double xPos, double yPos);
+void mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 
@@ -39,6 +43,14 @@ int main(int argc, char *argv[])
     GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "ChessGame", nullptr, nullptr);
     glfwMakeContextCurrent(window);
 
+    ///
+    glfwSetCursorPosCallback(window, cursorPositionCallback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
+    glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, 1);
+    ///
+
+
+
     glewExperimental = GL_TRUE;
     glewInit();
     glGetError(); // Call it once to catch glewInit() bug, all other errors are now from our application.
@@ -58,16 +70,14 @@ int main(int argc, char *argv[])
     // Start Game within Menu State
     chess.State = GAME_ACTIVE;
 
+    double xPos = 0;
+    double yPos = 0;
 
     while (!glfwWindowShouldClose(window))
     {
         // Calculate delta time
 
         glfwPollEvents();
-
-        //deltaTime = 0.001f;
-        // Manage user input
-
 
 
         // Render
@@ -96,5 +106,21 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         else if (action == GLFW_RELEASE)
             std::cout << "released";
             //.Keys[key] = GL_FALSE;
+    }
+}
+
+void cursorPositionCallback(GLFWwindow *window, double xPos, double yPos){
+    //std::cout << xPos << " : " << yPos << "\n";
+}
+
+void mouse_button_callback(GLFWwindow *window, int button, int action, int mods){
+    double xPos = 0;
+    double yPos = -1;
+    int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+    if(state == GLFW_PRESS && action == GLFW_MOUSE_BUTTON_LEFT){
+        glfwGetCursorPos(window, &xPos, &yPos);
+        std::cout << "Cursor Position at ( " << xPos << " : " << yPos << " )" << std::endl;
+        chess.ProcessInput(xPos,yPos);
+
     }
 }

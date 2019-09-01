@@ -22,7 +22,6 @@ class Game {
 public:
 
     GameState State;
-    GLboolean Keys[1024];
     GLuint Width, Height;
     ChessController chessGame;
 
@@ -31,7 +30,7 @@ public:
 
 
     void init();
-    void ProcessInput(GLfloat dt);
+    void ProcessInput(double xPos, double yPos);
     void Update(GLfloat dt);
     void Render();
 

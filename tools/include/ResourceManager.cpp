@@ -37,7 +37,13 @@ Texture2D ResourceManager::LoadTexture(const GLchar *file, GLboolean alpha, std:
 
 Texture2D ResourceManager::GetTexture(std::string name)
 {
-    return Textures[name];
+    auto texture_result = Textures.find(name);
+    if(texture_result == Textures.end()){
+        std::cout << "Error! texture is not in the map, see ResourceManger.cpp\n";
+    }
+
+
+    return (*texture_result).second;
 }
 
 void ResourceManager::Clear()
