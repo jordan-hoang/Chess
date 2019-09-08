@@ -1,6 +1,7 @@
 //
 // Created by jordan on 23/08/19.
 //
+// Note code came from learnopengl.com
 
 #ifndef CHESS_SPRITERENDERER_H
 #define CHESS_SPRITERENDERER_H

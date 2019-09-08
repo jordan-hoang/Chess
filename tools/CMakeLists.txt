@@ -5,7 +5,7 @@ add_executable(chessGame
 
 
 find_package(OpenGL REQUIRED)
-find_package(glfw3 3.3 REQUIRED)
+find_package(glfw3 3.2 REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(GLUT REQUIRED)
 
