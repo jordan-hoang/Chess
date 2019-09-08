@@ -15,6 +15,10 @@ REQ:
    boost >= 1.68  
    C++17  
 
+
+
+Note: A good amount of the openGL code came from https://learnopengl.com/
+
 For openGL ver.  
   glfw3.3  
   SOIL  
