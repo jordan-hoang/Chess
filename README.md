@@ -26,3 +26,8 @@ For openGL ver.
   glew  
   glut  
   
+  You can get SOIL from google or from here https://github.com/kbranigan/Simple-OpenGL-Image-Library
+  just make and install
+  
+  *Only has been tested on linux.
+  
