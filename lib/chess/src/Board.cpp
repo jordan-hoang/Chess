@@ -21,7 +21,7 @@ void Board::createBackRank(Color color, vector<vector<Piece>> &boardView,int row
     tmp.reserve(8);
 
 
-    if (color == Color::BLACK_UPPERCASE) {
+    if (color == Color::BLACK) {
         tmp.emplace_back(Piece{PieceUnit::ROOK, color, {row, 0}, "brook"} );
         tmp.emplace_back(Piece{PieceUnit::KNIGHT, color, {row, 1}, "bknight" });
         tmp.emplace_back(Piece{PieceUnit::BISHOP, color, {row, 2}, "bbishop"} );
@@ -32,7 +32,7 @@ void Board::createBackRank(Color color, vector<vector<Piece>> &boardView,int row
         tmp.emplace_back(Piece{PieceUnit::BISHOP, color, {row, 5}, "bbishop"});
         tmp.emplace_back(Piece{PieceUnit::KNIGHT, color, {row, 6},"bknight"});
         tmp.emplace_back(Piece{PieceUnit::ROOK, color, {row, 7},"brook"});
-    } else if (color == Color::WHITE_LOWERCASE){
+    } else if (color == Color::WHITE){
         tmp.emplace_back(Piece{PieceUnit::ROOK, color, {row, 0}, "wrook"} );
         tmp.emplace_back(Piece{PieceUnit::KNIGHT, color, {row, 1}, "wknight" });
         tmp.emplace_back(Piece{PieceUnit::BISHOP, color, {row, 2}, "wbishop"} );
@@ -55,13 +55,13 @@ void Board::initializeGame(vector<vector<Piece>> &chessBoard) {
 
 
     //Doing red side
-    createBackRank(Color::WHITE_LOWERCASE, chessBoard, 0);
+    createBackRank(Color::BLACK, chessBoard, 0);
 
-    std::vector<Piece> blackPawn;
+    std::vector<Piece> whitePawn;
     for(int col = 0; col < 8 ; ++col){
-        blackPawn.emplace_back( Piece{PieceUnit::PAWN, Color::WHITE_LOWERCASE, {1, col}, "bpawn" }  );
+        whitePawn.emplace_back(Piece{PieceUnit::PAWN, Color::BLACK, {1, col}, "bpawn" }  );
     }
-    chessBoard.push_back(blackPawn);
+    chessBoard.push_back(whitePawn);
 
 
     for (int row = 2; row < 6; ++row) {
@@ -73,12 +73,12 @@ void Board::initializeGame(vector<vector<Piece>> &chessBoard) {
     }
 
     //Doing blue side
-    std::vector<Piece> whitePawn;
+    std::vector<Piece> blackPawn;
     for(int col = 0 ; col < 8; ++col){
-        whitePawn.emplace_back(Piece{PieceUnit::PAWN, Color::BLACK_UPPERCASE, {6, col}, "wpawn"});
+        blackPawn.emplace_back(Piece{PieceUnit::PAWN, Color::WHITE, {6, col}, "wpawn"});
     }
-    chessBoard.push_back(whitePawn);
-    createBackRank(Color::BLACK_UPPERCASE, chessBoard, 7);
+    chessBoard.push_back(blackPawn);
+    createBackRank(Color::WHITE, chessBoard, 7);
 
 }
 /**
@@ -91,10 +91,10 @@ void Board::drawRow(const vector<Piece> &listPieceId, std::stringstream &stream)
         //Since printing out color doesn't work, we will make 1 side lower case
         switch(iter.getColor())
         {
-            case Color::WHITE_LOWERCASE:
+            case Color::BLACK:
                 stream  << (char)tolower(search->second);
                 break;
-            case Color::BLACK_UPPERCASE:
+            case Color::WHITE:
                 stream << search->second;
                 break;
             default:
@@ -117,10 +117,10 @@ void Board::drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &
         //Since printing out color doesn't work, we will make 1 side lower case
         switch(iter.getColor())
         {
-            case Color::WHITE_LOWERCASE:
+            case Color::BLACK:
                 stream  << (char)tolower(search->second);
                 break;
-            case Color::BLACK_UPPERCASE:
+            case Color::WHITE:
                 stream << search->second;
                 break;
             default:
@@ -280,9 +280,9 @@ ChessErrorCode Board::executeCastle(const ChessCoordinate &start, const ChessCoo
 
 
 
-    if(targetPiece.getColor() == Color::WHITE_LOWERCASE){
+    if(targetPiece.getColor() == Color::BLACK){
         redKing = targetPiece.getCoordinate();
-    } else if(targetPiece.getColor() == Color::BLACK_UPPERCASE){
+    } else if(targetPiece.getColor() == Color::WHITE){
         blueKing = targetPiece.getCoordinate();
     } else if(targetPiece.getColor() == Color::COLORLESS){
         assert(-1 && " undoMove of king failure");
@@ -380,9 +380,11 @@ void Board::updatePiece(Piece &source, Piece &destination) {
     destination.setPieceId(source.getPieceUnit());
     destination.setPieceColor(source.getColor());
     destination.setHasMoved(true);
+    destination.setName(source.getName());
 
     source.setPieceId(PieceUnit::NONE);
     source.setPieceColor(Color::COLORLESS);
+    source.setName("");
     source.setHasMoved(false);
 }
 
@@ -497,9 +499,9 @@ ChessErrorCode Board::isCheckMate(const Color &enemyColor){
 
     ChessErrorCode code;
     ChessCoordinate currentKing;
-    if(enemyColor == Color::WHITE_LOWERCASE){
+    if(enemyColor == Color::BLACK){
         currentKing = redKing;
-    } else if(enemyColor == Color::BLACK_UPPERCASE){
+    } else if(enemyColor == Color::WHITE){
         currentKing = blueKing;
     }
 
@@ -545,10 +547,10 @@ ChessErrorCode Board::isCheckMate(const Color &enemyColor){
 bool Board::isCheck(const Color &personMoving) {
 
 
-    if(personMoving == Color::WHITE_LOWERCASE){
-        checkmate_system->isSquareUnderAttack(redKing, Color::WHITE_LOWERCASE, getBoard());
-    } else if(personMoving == Color::BLACK_UPPERCASE){
-        checkmate_system->isSquareUnderAttack(blueKing, Color::BLACK_UPPERCASE, getBoard());
+    if(personMoving == Color::BLACK){
+        checkmate_system->isSquareUnderAttack(redKing, Color::BLACK, getBoard());
+    } else if(personMoving == Color::WHITE){
+        checkmate_system->isSquareUnderAttack(blueKing, Color::WHITE, getBoard());
     }
 
     const auto& enemies = checkmate_system->getAttackers(personMoving);
@@ -604,9 +606,9 @@ ChessErrorCode Board::movePieceHelper(const ChessCoordinate &start, const ChessC
         recorder.addMove(start,finish, targetPiece);
         updatePiece(sourcePiece,targetPiece);
 
-        if(targetPiece.getPieceUnit() == PieceUnit::KING && targetPiece.getColor() == Color::BLACK_UPPERCASE){
+        if(targetPiece.getPieceUnit() == PieceUnit::KING && targetPiece.getColor() == Color::WHITE){
             blueKing = targetPiece.getCoordinate();
-        } else if(targetPiece.getPieceUnit() == PieceUnit::KING && targetPiece.getColor() == Color::WHITE_LOWERCASE){
+        } else if(targetPiece.getPieceUnit() == PieceUnit::KING && targetPiece.getColor() == Color::BLACK){
             redKing = targetPiece.getCoordinate();
         }
 
@@ -642,12 +644,12 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
 
     //Now we need to see if we checkmated the other player. The target piece here has been updated already. So
     //It must have a color.
-    if(targetPiece.getColor() == Color::WHITE_LOWERCASE){
-        enemyColor = Color::BLACK_UPPERCASE;
-        checked = isCheck(Color::BLACK_UPPERCASE);
+    if(targetPiece.getColor() == Color::BLACK){
+        enemyColor = Color::WHITE;
+        checked = isCheck(Color::WHITE);
     } else {
-        enemyColor = Color::WHITE_LOWERCASE;
-        checked =isCheck(Color::WHITE_LOWERCASE);
+        enemyColor = Color::BLACK;
+        checked =isCheck(Color::BLACK);
     }
 
     if(checked){
@@ -709,14 +711,14 @@ Board::Board() {
     redKing  = {0, 4};
     blueKing = {7, 4};
 
-    checkmate_system = std::make_unique<CheckMate>(Color::WHITE_LOWERCASE, Color::BLACK_UPPERCASE);
+    checkmate_system = std::make_unique<CheckMate>(Color::BLACK, Color::WHITE);
 
 }
 
 Board::Board(vector<vector<Piece>> &chessBoard) {
     this->_chessBoard = chessBoard;
 
-    checkmate_system = std::make_unique<CheckMate>(Color::WHITE_LOWERCASE, Color::BLACK_UPPERCASE);
+    checkmate_system = std::make_unique<CheckMate>(Color::BLACK, Color::WHITE);
 
 
 
@@ -736,9 +738,9 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
     for(int i = 0; i < 8; ++i){
         for(int j = 0; j < 8; ++j){
             if(_chessBoard[i][j].getPieceUnit() == PieceUnit::KING){
-                if(_chessBoard[i][j].getColor() == Color::WHITE_LOWERCASE){
+                if(_chessBoard[i][j].getColor() == Color::BLACK){
                     redKing = {i,j};
-                } else if(_chessBoard[i][j].getColor() == Color::BLACK_UPPERCASE) {
+                } else if(_chessBoard[i][j].getColor() == Color::WHITE) {
                     blueKing = {i,j};
                 }
             }
@@ -766,9 +768,9 @@ void Board::undoMove() {
 
     Piece& movedPiece = requestPiece(lastMove->move.second);
     if(movedPiece.getPieceUnit() == PieceUnit::KING){
-        if(movedPiece.getColor() == Color::WHITE_LOWERCASE){
+        if(movedPiece.getColor() == Color::BLACK){
             redKing = lastMove->move.first;
-        } else if(movedPiece.getColor() == Color::BLACK_UPPERCASE){
+        } else if(movedPiece.getColor() == Color::WHITE){
             blueKing = lastMove->move.first;
         } else if(movedPiece.getColor() == Color::COLORLESS){
             assert(-1 && " undoMove of king failure");

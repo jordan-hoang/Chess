@@ -61,7 +61,7 @@
 #include "gtest/gtest-spi.h"
 
 GTEST_DISABLE_MSC_WARNINGS_PUSH_(4251 \
-/* class A needs to have dll-interface to be used by clients of class B */)
+/* class A needs to have dll-interface to be used by clients of class BLACK */)
 
 namespace testing {
 
@@ -113,7 +113,7 @@ GTEST_API_ bool ShouldUseColor(bool stdout_is_tty);
 GTEST_API_ std::string FormatTimeInMillisAsSeconds(TimeInMillis ms);
 
 // Converts the given time in milliseconds to a date string in the ISO 8601
-// format, without the timezone information.  N.B.: due to the use the
+// format, without the timezone information.  N.BLACK.: due to the use the
 // non-reentrant localtime() function, this function is not thread safe.  Do
 // not use it in any code that can be called from multiple threads.
 GTEST_API_ std::string FormatEpochTimeInMillisAsIso8601(TimeInMillis ms);

@@ -21,7 +21,7 @@
 ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const {
 
     //+ means goes up -1 means goes down the chess board
-    int directionTravel = (this->_pieceColor == Color::WHITE_LOWERCASE) ? 1 : -1;
+    int directionTravel = (this->_pieceColor == Color::BLACK) ? 1 : -1;
 
     int difY = finish.row - start.row;
     int difX = finish.col - start.col;
@@ -150,12 +150,19 @@ void Piece::updatePiece(Piece &source, Piece &destination) {
     destination._pieceId = source._pieceId;
     destination._pieceColor = source._pieceColor;
     destination._hasMoved = true;
+    destination._name = source.getName();
 
     source._pieceId = PieceUnit::NONE;
     source._pieceColor = Color::COLORLESS;
     source._hasMoved = false; //Empty squares "can't move"
+    source._name = "";
 
 }
+
+void Piece::setName(std::string name) {
+    this->_name = name;
+}
+
 
 /***
  * Check's to see if that piece can move in that way.

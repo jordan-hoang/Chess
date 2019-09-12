@@ -17,7 +17,7 @@ struct ChessPlayer {
     Color playerColor;
     bool isChecked;
 
-    ChessPlayer() : playerName(""), playerColor(Color::WHITE_LOWERCASE), isChecked(false){};
+    ChessPlayer() : playerName(""), playerColor(Color::BLACK), isChecked(false){};
     explicit ChessPlayer( std::string playerName, Color color) :
         playerName(std::move(playerName)),playerColor(color),isChecked(false){};
 

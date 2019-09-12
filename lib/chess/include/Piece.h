@@ -28,7 +28,7 @@ enum class ChessErrorCode {
 /**
  * The color of the piece
  */
-enum class Color{ WHITE_LOWERCASE,BLACK_UPPERCASE,COLORLESS };
+enum class Color{ BLACK,WHITE,COLORLESS };
 
 /**
  * The unit of a piece
@@ -132,6 +132,8 @@ class Piece {
         void setHasMoved(bool hasMoved);
         void setPiece(const Piece &a);
         void setCoordinate(const ChessCoordinate &a) {this->_coordinate = a; }; //Should not be used only made for testing
+        void setName(std::string name);
+
 
         enum ChessErrorCode checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const Color &targetColor) const   ;
         static void updatePiece(Piece &source, Piece &destination);
