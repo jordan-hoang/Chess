@@ -17,7 +17,7 @@ struct ChessPlayer {
     Color playerColor;
     bool isChecked;
 
-    ChessPlayer() : playerName(""),playerColor(Color::RED_LOWERCASE), isChecked(false){};
+    ChessPlayer() : playerName(""), playerColor(Color::WHITE_LOWERCASE), isChecked(false){};
     explicit ChessPlayer( std::string playerName, Color color) :
         playerName(std::move(playerName)),playerColor(color),isChecked(false){};
 
@@ -41,6 +41,9 @@ class ChessController {
         std::string gameOverMessage() const;
         const std::string getBoardView() const;
         const std::string getReverseBoardView() const;
+        const vector<vector<Piece> > &getChessBoard() const;
+
+
         std::string helpMessage() const;
         void undoMove();
         void printListMoves(); //Debugging

@@ -25,6 +25,10 @@ public:
     GLuint Width, Height;
     ChessController chessGame;
 
+    std::string input = "";
+    std::string player = "playerOne";
+
+
     Game(GLuint width, GLuint height);
     ~Game();
 
@@ -33,6 +37,10 @@ public:
     void ProcessInput(double xPos, double yPos);
     void Update(GLfloat dt);
     void Render();
+
+    void buildInput(std::string input);
+    void endTurn();
+
 
 
 };

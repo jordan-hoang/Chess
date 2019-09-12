@@ -73,10 +73,6 @@ void SpriteRenderer::DrawScaledImage(Texture2D &texture, glm::vec2 position, glm
 }
 
 
-
-
-
-
 void SpriteRenderer::initRenderData()
 {
     // Configure VAO/VBO

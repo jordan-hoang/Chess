@@ -19,7 +19,6 @@ const unsigned int SCR_HEIGHT = 600;
 
 
 
-void cursorPositionCallback(GLFWwindow *window, double xPos, double yPos);
 void mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -44,7 +43,7 @@ int main(int argc, char *argv[])
     glfwMakeContextCurrent(window);
 
     ///
-    glfwSetCursorPosCallback(window, cursorPositionCallback);
+
     glfwSetMouseButtonCallback(window, mouse_button_callback);
     glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, 1);
     ///
@@ -100,18 +99,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         glfwSetWindowShouldClose(window, GL_TRUE);
     if (key >= 0 && key < 1024)
     {
-        if (action == GLFW_PRESS)
-            std::cout << "Pressed";
-            //Breakout.Keys[key] = GL_TRUE;
-        else if (action == GLFW_RELEASE)
-            std::cout << "released";
+        if (action == GLFW_PRESS) {
+            //std::cout << "Pressed";
+
+        }
+        else if (action == GLFW_RELEASE) {
+            //std::cout << "released";
             //.Keys[key] = GL_FALSE;
+        }
     }
 }
 
-void cursorPositionCallback(GLFWwindow *window, double xPos, double yPos){
-    //std::cout << xPos << " : " << yPos << "\n";
-}
 
 void mouse_button_callback(GLFWwindow *window, int button, int action, int mods){
     double xPos = 0;
@@ -119,8 +117,6 @@ void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
     int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
     if(state == GLFW_PRESS && action == GLFW_MOUSE_BUTTON_LEFT){
         glfwGetCursorPos(window, &xPos, &yPos);
-        std::cout << "Cursor Position at ( " << xPos << " : " << yPos << " )" << std::endl;
         chess.ProcessInput(xPos,yPos);
-
     }
 }
