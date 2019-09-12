@@ -6,7 +6,7 @@
 #define CHESS_CHECKMATE_H
 
 
-#include "Piece.h"
+#include <Piece.h>
 #include <vector>
 #include <memory>
 
