@@ -1,14 +1,6 @@
-
 add_executable(chessGame
         Main.cpp
-        graphicalMain.cpp)
-
-
-find_package(OpenGL REQUIRED)
-find_package(glfw3 3.2 REQUIRED)
-find_package(GLEW REQUIRED)
-find_package(GLUT REQUIRED)
-
+        )
 
 set_target_properties(chessGame
         PROPERTIES
@@ -18,32 +10,12 @@ set_target_properties(chessGame
         )
 
 
-
-SET(SOIL SOIL)
-link_directories(/usr/local/lib/) #Path to SOIL
-
-include_directories(${GLUT_INCLUDE_DIRS})
-
-
-
-
-
 target_link_libraries(chessGame
-        glfw
-        gladlib
-        ${OPENGL_LIBRARIES}
-        ${SOIL}
         ${libchess}
         ${libcolor}
         ${CMAKE_THREAD_LIBS_INIT}
-        GLEW::GLEW
         )
-
-
 
 install(TARGETS chessGame
         RUNTIME DESTINATION bin
         )
-
-
-add_subdirectory(include)
