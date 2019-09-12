@@ -28,7 +28,7 @@ enum class ChessErrorCode {
 /**
  * The color of the piece
  */
-enum class Color{ RED_LOWERCASE,BLUE_UPPERCASE,COLORLESS };
+enum class Color{ BLACK,WHITE,COLORLESS };
 
 /**
  * The unit of a piece
@@ -110,6 +110,7 @@ class Piece {
         Color _pieceColor;
         bool _hasMoved = false;
         ChessCoordinate _coordinate;
+        std::string _name = "error101";
 
 
         enum ChessErrorCode validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const;
@@ -124,14 +125,17 @@ class Piece {
         const enum Color getColor() const { return _pieceColor; };
         const bool getHasMoved() const { return _hasMoved; } ;
         const ChessCoordinate getCoordinate() const { return _coordinate; };
+        const std::string& getName() const;
 
         void setPieceId(PieceUnit pieceId);
         void setPieceColor(Color pieceColor);
         void setHasMoved(bool hasMoved);
         void setPiece(const Piece &a);
         void setCoordinate(const ChessCoordinate &a) {this->_coordinate = a; }; //Should not be used only made for testing
+        void setName(std::string name);
 
-    enum ChessErrorCode checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const Color &targetColor) const   ;
+
+        enum ChessErrorCode checkMovementIsValid(const ChessCoordinate &start, const ChessCoordinate &finish,const Color &targetColor) const   ;
         static void updatePiece(Piece &source, Piece &destination);
         void setPiece(PieceUnit pieceUnit, Color color);
 
@@ -143,8 +147,8 @@ class Piece {
             _pieceId(unit), _pieceColor(color),_hasMoved(false),_coordinate({-1,-1}){}
 
 
-    Piece(PieceUnit unit, Color color, ChessCoordinate coordinate ) :
-            _pieceId(unit), _pieceColor(color),_hasMoved(false),_coordinate(coordinate){}
+    Piece(PieceUnit unit, Color color, ChessCoordinate coordinate, std::string name) :
+            _pieceId(unit), _pieceColor(color),_hasMoved(false),_coordinate(coordinate), _name(name){}
 
 };
 

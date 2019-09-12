@@ -69,7 +69,7 @@
 #include "gtest/gtest-typed-test.h"
 
 GTEST_DISABLE_MSC_WARNINGS_PUSH_(4251 \
-/* class A needs to have dll-interface to be used by clients of class B */)
+/* class A needs to have dll-interface to be used by clients of class BLACK */)
 
 // Depending on the platform, different string classes are available.
 // On Linux, in addition to ::std::string, Google also makes use of

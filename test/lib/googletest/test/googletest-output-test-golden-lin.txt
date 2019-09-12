@@ -214,27 +214,27 @@ Stack trace: (omitted)
 
 googletest-output-test_.cc:#: Failure
 Failed
-This failure is expected, and should contain trace point A and B.
+This failure is expected, and should contain trace point A and BLACK.
 Google Test trace:
-googletest-output-test_.cc:#: B
+googletest-output-test_.cc:#: BLACK
 googletest-output-test_.cc:#: A
 Stack trace: (omitted)
 
 googletest-output-test_.cc:#: Failure
 Failed
-This failure is expected, and should contain trace point A, B, and C.
+This failure is expected, and should contain trace point A, BLACK, and C.
 Google Test trace:
 googletest-output-test_.cc:#: C
-googletest-output-test_.cc:#: B
+googletest-output-test_.cc:#: BLACK
 googletest-output-test_.cc:#: A
 Stack trace: (omitted)
 
 googletest-output-test_.cc:#: Failure
 Failed
-This failure is expected, and should contain trace point A, B, and D.
+This failure is expected, and should contain trace point A, BLACK, and D.
 Google Test trace:
 googletest-output-test_.cc:#: D
-googletest-output-test_.cc:#: B
+googletest-output-test_.cc:#: BLACK
 googletest-output-test_.cc:#: A
 Stack trace: (omitted)
 
@@ -243,28 +243,28 @@ Stack trace: (omitted)
 (expecting 6 failures)
 googletest-output-test_.cc:#: Failure
 Failed
-Expected failure #1 (in thread B, only trace B alive).
+Expected failure #1 (in thread BLACK, only trace BLACK alive).
 Google Test trace:
-googletest-output-test_.cc:#: Trace B
+googletest-output-test_.cc:#: Trace BLACK
 Stack trace: (omitted)
 
 googletest-output-test_.cc:#: Failure
 Failed
-Expected failure #2 (in thread A, trace A & B both alive).
+Expected failure #2 (in thread A, trace A & BLACK both alive).
 Google Test trace:
 googletest-output-test_.cc:#: Trace A
 Stack trace: (omitted)
 
 googletest-output-test_.cc:#: Failure
 Failed
-Expected failure #3 (in thread B, trace A & B both alive).
+Expected failure #3 (in thread BLACK, trace A & BLACK both alive).
 Google Test trace:
-googletest-output-test_.cc:#: Trace B
+googletest-output-test_.cc:#: Trace BLACK
 Stack trace: (omitted)
 
 googletest-output-test_.cc:#: Failure
 Failed
-Expected failure #4 (in thread B, only trace A alive).
+Expected failure #4 (in thread BLACK, only trace A alive).
 Stack trace: (omitted)
 
 googletest-output-test_.cc:#: Failure

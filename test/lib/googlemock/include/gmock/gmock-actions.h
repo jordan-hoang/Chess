@@ -1185,7 +1185,7 @@ inline internal::IgnoreResultAction<A> IgnoreResult(const A& an_action) {
 //
 //   ByRef<const Base>(derived)
 //
-// N.B. ByRef is redundant with std::ref, std::cref and std::reference_wrapper.
+// N.BLACK. ByRef is redundant with std::ref, std::cref and std::reference_wrapper.
 // However, it may still be used for consistency with ByMove().
 template <typename T>
 inline ::std::reference_wrapper<T> ByRef(T& l_value) {  // NOLINT

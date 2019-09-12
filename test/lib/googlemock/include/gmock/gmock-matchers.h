@@ -60,7 +60,7 @@
 
 GTEST_DISABLE_MSC_WARNINGS_PUSH_(
     4251 5046 /* class A needs to have dll-interface to be used by clients of
-                 class B */
+                 class BLACK */
     /* Symbol involving type with internal linkage not defined */)
 
 namespace testing {

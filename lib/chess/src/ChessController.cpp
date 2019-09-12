@@ -109,7 +109,7 @@ std::string ChessController::gameOverMessage() const {
     if(piece.getPieceUnit() != PieceUnit::KING){
         assert(-1 && "This function shouldn't be called yet! game hasn't ended");
     }
-    else if( piece.getColor() == Color::RED_LOWERCASE ){
+    else if( piece.getColor() == Color::BLACK ){
         stream =  "Blue wins!";
     } else {
         stream = "Red wins";
@@ -122,10 +122,10 @@ std::string ChessController::gameOverMessage() const {
 void ChessController::initializeSide(const std::string &playerOne, const std::string &playerTwo) {
 
     this->_playerOne.playerName  = playerOne;
-    this->_playerOne.playerColor = Color::RED_LOWERCASE;
+    this->_playerOne.playerColor = Color::BLACK;
 
     this->_playerTwo.playerName  = playerTwo;
-    this->_playerTwo.playerColor = Color::BLUE_UPPERCASE;
+    this->_playerTwo.playerColor = Color::WHITE;
 
 }
 
@@ -214,6 +214,9 @@ ChessErrorCode ChessController::executeMoveHelper(std::string &moveFrom, std::st
     return ChessErrorCode::VALID_MOVE;
 }
 
+const vector<vector<Piece> >& ChessController::getChessBoard() const {
+    return _gameBoard.getBoard();
+}
 
 /**
  * @param input - Takes in a chess move. First specify the location of a piece then specify the
@@ -265,13 +268,13 @@ void ChessController::printListMoves() {
 
 //Constructor that generates the game
 ChessController::ChessController() : _gameBoard(Board()) {
-    this->_playerOne = ChessPlayer( "playerOne", Color::RED_LOWERCASE  );
-    this->_playerTwo = ChessPlayer( "playerTwo", Color::BLUE_UPPERCASE );
+    this->_playerOne = ChessPlayer( "playerOne", Color::BLACK  );
+    this->_playerTwo = ChessPlayer( "playerTwo", Color::WHITE );
 
 }
 
 //Constructor used for testing
 ChessController::ChessController(vector<vector<Piece>> a) : _gameBoard(Board(a)) {
-    this->_playerOne = ChessPlayer( "playerOne", Color::RED_LOWERCASE  );
-    this->_playerTwo = ChessPlayer( "playerTwo", Color::BLUE_UPPERCASE );
+    this->_playerOne = ChessPlayer( "playerOne", Color::BLACK  );
+    this->_playerTwo = ChessPlayer( "playerTwo", Color::WHITE );
 }

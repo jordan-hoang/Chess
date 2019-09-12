@@ -43,9 +43,9 @@ struct ChessMove {
             ChessCoordinate blueKingStart = {7,4};
             ChessCoordinate redKingStart = {0,4};
 
-            if(moveTo.getColor() == Color::RED_LOWERCASE &&  redKingStart == start){
+            if(moveTo.getColor() == Color::BLACK && redKingStart == start){
                 moveTo.setHasMoved(false);
-            }else if(moveTo.getColor() == Color::BLUE_UPPERCASE &&  blueKingStart == start){
+            }else if(moveTo.getColor() == Color::WHITE && blueKingStart == start){
                 moveTo.setHasMoved(false);
             }else if(moveTo.getColor() == Color::COLORLESS ){
 
