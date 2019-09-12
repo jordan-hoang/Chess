@@ -1383,8 +1383,8 @@ out-of-order, Google Mock will report an error.
 
 Sometimes requiring everything to occur in a predetermined order can
 lead to brittle tests. For example, we may care about `A` occurring
-before both `B` and `C`, but aren't interested in the relative order
-of `B` and `C`. In this case, the test should reflect our real intent,
+before both `BLACK` and `C`, but aren't interested in the relative order
+of `BLACK` and `C`. In this case, the test should reflect our real intent,
 instead of being overly constraining.
 
 Google Mock allows you to impose an arbitrary DAG (directed acyclic
@@ -1399,7 +1399,7 @@ different names for the expectations in the chains.  Here's how it
 works:
 
 If we view `EXPECT_CALL()` statements as nodes in a graph, and add an
-edge from node A to node B wherever A must occur before B, we can get
+edge from node A to node BLACK wherever A must occur before BLACK, we can get
 a DAG. We use the term "sequence" to mean a directed path in this
 DAG. Now, if we decompose the DAG into sequences, we just need to know
 which sequences each `EXPECT_CALL()` belongs to in order to be able to
@@ -1418,7 +1418,7 @@ written. For example,
 
   EXPECT_CALL(foo, A())
       .InSequence(s1, s2);
-  EXPECT_CALL(bar, B())
+  EXPECT_CALL(bar, BLACK())
       .InSequence(s1);
   EXPECT_CALL(bar, C())
       .InSequence(s2);
@@ -1426,18 +1426,18 @@ written. For example,
       .InSequence(s2);
 ```
 
-specifies the following DAG (where `s1` is `A -> B`, and `s2` is `A ->
+specifies the following DAG (where `s1` is `A -> BLACK`, and `s2` is `A ->
 C -> D`):
 
 ```
-       +---> B
+       +---> BLACK
        |
   A ---|
        |
        +---> C ---> D
 ```
 
-This means that A must occur before B and C, and C must occur before
+This means that A must occur before BLACK and C, and C must occur before
 D. There's no restriction about the order other than these.
 
 ## Controlling When an Expectation Retires ##
@@ -2579,7 +2579,7 @@ call to `Foo()`.
 ## Mocking Destructors ##
 
 Sometimes you want to make sure a mock object is destructed at the
-right time, e.g. after `bar->A()` is called but before `bar->B()` is
+right time, e.g. after `bar->A()` is called but before `bar->BLACK()` is
 called. We already know that you can specify constraints on the order
 of mock function calls, so all we need to do is to mock the destructor
 of the mock function.
@@ -2616,10 +2616,10 @@ object dies to testing when its `Die()` method is called:
   {
     InSequence s;
 
-    // Expects *foo to die after bar->A() and before bar->B().
+    // Expects *foo to die after bar->A() and before bar->BLACK().
     EXPECT_CALL(*bar, A());
     EXPECT_CALL(*foo, Die());
-    EXPECT_CALL(*bar, B());
+    EXPECT_CALL(*bar, BLACK());
   }
 ```
 

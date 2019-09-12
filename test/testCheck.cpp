@@ -28,7 +28,7 @@ ChessController game(){
     vector<vector<Piece>> a;
 
     vector<Piece> backRow;
-    Color c = Color::BLUE_UPPERCASE;
+    Color c = Color::WHITE;
 
 
     backRow.emplace_back(Piece{PieceUnit::ROOK,c});
@@ -49,15 +49,15 @@ ChessController game(){
     }
 
     vector<Piece> otherRow;
-    otherRow.emplace_back(Piece{PieceUnit::ROOK,Color::RED_LOWERCASE});
+    otherRow.emplace_back(Piece{PieceUnit::ROOK,Color::BLACK});
     otherRow.emplace_back( Piece(PieceUnit::NONE, Color::COLORLESS) );
     otherRow.emplace_back( Piece(PieceUnit::NONE, Color::COLORLESS) );
-    otherRow.emplace_back(Piece{PieceUnit::KING,Color::RED_LOWERCASE});
+    otherRow.emplace_back(Piece{PieceUnit::KING,Color::BLACK});
     for(int i = 0; i < 3; i++){
         otherRow.emplace_back( Piece(PieceUnit::NONE, Color::COLORLESS) );
     }
 
-    otherRow.emplace_back(Piece{PieceUnit::ROOK,Color::RED_LOWERCASE});
+    otherRow.emplace_back(Piece{PieceUnit::ROOK,Color::BLACK});
 
     a.emplace_back(otherRow);
 
