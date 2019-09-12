@@ -94,10 +94,12 @@ void Game::ProcessInput(double xPos, double yPos)
 
     int lower_bound = 0;
     int upper_bound = 75;
+
+    char tmp = '1';
     for(int i = 0; i < 8; i++){
-        char tmp = '1';
+
         if(yPos > lower_bound && yPos < upper_bound) {
-            input_string+=tmp;
+            input_string += tmp;
             break;
         }
         tmp++;
@@ -113,20 +115,27 @@ void Game::ProcessInput(double xPos, double yPos)
 void Game::buildInput(std::string in) {
     if(this->input.size() == 0){
         this->input += in + ',';
+    } else{
+        this->input += in;
     }
 
+    std::cout << this->input << "\n";
 
     if(this->input.size() == 5){
-        this->chessGame.readInput(input, "playerOne");
-
+        this->chessGame.readInput(input, this->player);
+        this->input = ""; //Reset the input
+        endTurn();
     }
-
 
 
 }
 
 void Game::endTurn() {
-
+    if(this->player == "playerOne"){
+        player = "playerTwo";
+    } else{
+        player = "playerOne";
+    }
 
 }
 

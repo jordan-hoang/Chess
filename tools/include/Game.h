@@ -23,10 +23,8 @@ public:
 
     GameState State;
     GLuint Width, Height;
-    ChessController chessGame;
 
-    std::string input = "";
-    std::string player = "playerOne";
+
 
 
     Game(GLuint width, GLuint height);
@@ -41,6 +39,10 @@ public:
     void buildInput(std::string input);
     void endTurn();
 
+private:
+    std::string input = "";
+    std::string player = "playerOne";
+    ChessController chessGame;
 
 
 };
