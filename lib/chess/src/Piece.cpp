@@ -21,7 +21,7 @@
 ChessErrorCode Piece::validatePawn(const ChessCoordinate &start, const ChessCoordinate &finish, const Color &target) const {
 
     //+ means goes up -1 means goes down the chess board
-    int directionTravel = (this->_pieceColor == Color::RED_LOWERCASE) ? 1 : -1;
+    int directionTravel = (this->_pieceColor == Color::WHITE_LOWERCASE) ? 1 : -1;
 
     int difY = finish.row - start.row;
     int difX = finish.col - start.col;
@@ -189,6 +189,9 @@ ChessErrorCode Piece::checkMovementIsValid(const ChessCoordinate &start, const C
 
 }
 
+const std::string& Piece::getName() const {
+    return this->_name;
+}
 
 Piece::Piece() {
     this->_pieceColor = Color::COLORLESS;
