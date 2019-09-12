@@ -109,8 +109,9 @@ void Game::ProcessInput(double xPos, double yPos)
 
     buildInput(input_string);
 
-
 }
+
+
 
 void Game::buildInput(std::string in) {
     if(this->input.size() == 0){
@@ -122,9 +123,16 @@ void Game::buildInput(std::string in) {
     std::cout << this->input << "\n";
 
     if(this->input.size() == 5){
-        this->chessGame.readInput(input, this->player);
+        ChessErrorCode code = this->chessGame.readInput(input, this->player);
         this->input = ""; //Reset the input
-        endTurn();
+
+
+        if(code == ChessErrorCode::VALID_MOVE || code == ChessErrorCode::CASTLE || code == ChessErrorCode::ENPASSANT)
+            endTurn();
+        else if(code == ChessErrorCode::CHECK_MATED){
+            //end the game here.
+        }
+
     }
 
 

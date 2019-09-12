@@ -41,7 +41,7 @@ public:
 
 private:
     std::string input = "";
-    std::string player = "playerOne";
+    std::string player = "playerTwo";
     ChessController chessGame;
 
 
