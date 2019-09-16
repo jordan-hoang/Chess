@@ -1,6 +1,13 @@
-//
-// Created by jordan on 18/08/19.
-//
+/*******************************************************************
+** This code is part of Breakout.
+**
+** Breakout is free software: you can redistribute it and/or modify
+** it under the terms of the CC BY 4.0 license as published by
+** Creative Commons, either version 4 of the License, or (at your
+** option) any later version.
+ * Modified by jordan
+******************************************************************/
+
 
 #include "Texture.h"
 #include <iostream>
