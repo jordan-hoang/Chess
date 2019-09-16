@@ -122,7 +122,7 @@ void Game::buildInput(std::string in) {
 
     std::cout << this->input << "\n";
 
-    if(this->input.size() == 5){
+    if(this->input.size() >= 5){
         ChessErrorCode code = this->chessGame.readInput(input, this->player);
         this->input = ""; //Reset the input
 

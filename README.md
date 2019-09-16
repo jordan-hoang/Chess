@@ -4,7 +4,7 @@ About
 ---
 A open-gl/text-based Linux game.
 To see the rules on how to play the game click
-<a href=-"https://en.wikipedia.org/wiki/Chess"> here</a>.
+<a href="https://en.wikipedia.org/wiki/Chess"> here</a>.
 Can only be played locally and requires 2 players to have a game.
 
 
@@ -30,5 +30,4 @@ Credits
 ---
 https://learnopengl.com/
 
->asd
-   
+
