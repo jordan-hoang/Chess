@@ -2,13 +2,19 @@
 // Created by jordan on 30/04/19.
 //
 
+// A Class that keeps track of all the moves that were made in a game.
+// Is implemented like a stack, used when you want to undo a move or a state.
+// Keeps track of only moves so it doesn't store the previous state of the board,
+// Takes less space, also perhaps you can output the moves to a txt file then you would be able to
+// save replays of old games.
+
 #include "MoveRecorder.h"
 #include <sstream>
 #include <Board.h>
 
 MoveRecorder::MoveRecorder() = default;
 
-//Add
+//Adds a move the the moveRecorder.
 void MoveRecorder::addMove(ChessCoordinate startPos,  ChessCoordinate finishPos, Piece killed) {
 
     std::unique_ptr<ChessMove> tmp(new ChessMove());
@@ -25,8 +31,6 @@ void MoveRecorder::addMove(std::unique_ptr<ChessCastle> chessMove) {
 void MoveRecorder::addMove(std::unique_ptr<ChessMove> chessMove) {
     m_listOfGameMoves.emplace_back( std::move(chessMove) );
 }
-
-
 
 
 void MoveRecorder::removeLastMove() {
