@@ -6,7 +6,8 @@ A open-gl/text-based Linux game.
 To see the rules on how to play the game click
 <a href="https://en.wikipedia.org/wiki/Chess"> here</a>.
 Can only be played locally and requires 2 players to have a game.
-
+Chess logic is in lib/chess
+OpenGL stuff is in tools directory. (Directory ordering is a lil weird right now)
 
 
 Screenshots
