@@ -8,7 +8,6 @@ To see the rules on how to play the game click
 Can only be played locally and requires 2 players to have a game.
 There is a graphical based version in the other branch.
 
-
 Screenshots
 ---
 <img src="s_chessSample.png">

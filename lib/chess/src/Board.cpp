@@ -587,6 +587,7 @@ ChessErrorCode Board::movePieceHelper(const ChessCoordinate &start, const ChessC
 
     ////Code for moving the king specifically
     ////Can possibly cause the game to never end if stalemate is possible. (should disable this code or finish it off)
+    ////(Case that it happens is very rare, almost never happens. Implement some day in the future).
     if(sourcePiece.getPieceUnit() == PieceUnit::KING){
         bool isSquareAttacked = checkmate_system->isSquareUnderAttack(finish,sourcePiece.getColor(), getBoard());
         if(isSquareAttacked){
