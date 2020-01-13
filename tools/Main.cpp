@@ -6,7 +6,7 @@
 
 
 #include <ChessController.h>
-#include <boost/algorithm/string/constants.hpp>
+
 #include <boost/algorithm/string.hpp>
 #include <iostream>
 
@@ -15,7 +15,7 @@ std::string takeUserInput(){
 
     std::string rst;
     std::cin >> rst;
-    return std::move(rst);
+    return rst;
 }
 
 std::string invalidMessage(ChessErrorCode code){
@@ -47,6 +47,7 @@ int main(){
     std::string playerName = "playerOne";
 
 
+    std::cout << "Hello, ♜ ф or \u0444!\n";
         while(!chessGame.isGameFinished()){
             std::cout << chessGame.getBoardView();
             std::string userInput = takeUserInput();

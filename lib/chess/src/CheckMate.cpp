@@ -64,7 +64,6 @@ bool CheckMate::isSquareUnderAttack(const ChessCoordinate &position, const Color
     int knightMoveX[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
     int knightMoveY[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
 
-    bool flag = false;
     //Checking if any of these squares has an enemy knight
     for(int i = 0; i < 8; i++){
         int row = knightMoveX[i] + position.row;
@@ -72,33 +71,30 @@ bool CheckMate::isSquareUnderAttack(const ChessCoordinate &position, const Color
         if(row >= 0 && row <= 7 && col >= 0 && col <= 7){
             Piece potentialEnemy = m_chessBoard.at(row).at(col);
             if( potentialEnemy.getColor() != friendlyColor && potentialEnemy.getPieceUnit() == PieceUnit::KNIGHT){
-                flag = true;
+                return true;
             }
         }
     }
 
     if( isAttackedHorizontally(position,  friendlyColor, m_chessBoard) ){
-        flag = true;
+        return true;
     }
 
     if( isAttackedVertically(position, friendlyColor, m_chessBoard) ){
-        flag = true;
+        return true;
     }
 
     if(isAttackedDiagonally(position,friendlyColor, m_chessBoard)){
-        flag = true;
+        return true;
     }
 
-    return flag;
+    return false;
 }
 
 
 
 
-
-/** "Warning after running an hypothetical move then running 'undo' it will not restore the previous
- *   state of attackers. Important to note for isCheckMate we make a copy. Running a hypothetical move
- *   then undoing will erase the state of CheckMate getAttackers."
+/**
  *
  * @param color
  * @return A vector of chessCoordinates with attackers of a particular color
@@ -112,7 +108,6 @@ const vector<ChessCoordinate>& CheckMate::getAttackers(const Color &color) {
     }
 
 
-    assert(-1 && "Invalid attackerColor");
     vector<ChessCoordinate> garbage;
     return std::move(garbage);
 
@@ -174,7 +169,6 @@ bool CheckMate::isAttackedByPawn(const ChessCoordinate &start, const Color &king
 }
 
 /**
- * NEEDS TESTING
  * @param start - coordinates of the square you want to check is under attack
  * @param finish - end/begin of the row
  * @return True if can be attacked else returns false.
@@ -276,8 +270,6 @@ bool CheckMate::isAttackedVertically(const ChessCoordinate &start, const Color &
 bool CheckMate::isAttackedDiagonally(const ChessCoordinate &start, const Color &kingColor,
                                      const vector<vector<Piece> > &m_chessBoard) {
 
-    //Need code for bishops and pawns,pawns are special case.
-    //RED PAWNS Travel upwards, BLUE PAWNS Travel downwards from Piece.cpp
 
     bool flag = false;
     if (isAttackedByPawn(start, kingColor, m_chessBoard)) {

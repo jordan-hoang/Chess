@@ -88,21 +88,26 @@ void Board::drawRow(const vector<Piece> &listPieceId, std::stringstream &stream)
     for(Piece iter: listPieceId){
         auto search = PieceLookUp.find( iter.getPieceUnit() );
 
+
+
         //Since printing out color doesn't work, we will make 1 side lower case
         switch(iter.getColor())
         {
-            case Color::BLACK:
-                stream  << (char)tolower(search->second);
+            case Color::BLACK:  //You need to add 6 to the unicode
+                stream  << (search->second );
+                stream << " | ";
                 break;
             case Color::WHITE:
                 stream << search->second;
+                stream << " | ";
                 break;
             default:
-                stream << search->second ;
+                stream << "  | ";
         }
 
     }
-    stream << '\n';
+    stream << " | ";
+    stream << "\n\n";
 }
 /**
  * Draw's a row backward. Helper method for getReverseBoardView().
@@ -118,7 +123,7 @@ void Board::drawRowReverse(const vector<Piece> &listPieceId, std::stringstream &
         switch(iter.getColor())
         {
             case Color::BLACK:
-                stream  << (char)tolower(search->second);
+                stream  << search->second;
                 break;
             case Color::WHITE:
                 stream << search->second;
@@ -309,7 +314,7 @@ const std::string Board::getBoardView() const {
 
     std::stringstream stream;
 
-    stream << "   abcdefgh\n___________\n";
+    stream << "   a b c d e f g h\n___________\n";
 
     int num = 1;
     for(const vector<Piece> &row : _chessBoard){
@@ -388,7 +393,7 @@ void Board::updatePiece(Piece &source, Piece &destination) {
     source.setHasMoved(false);
 }
 
-
+// Checks to see if the king can move out of the way.
 ChessErrorCode Board::canKingDodge(const ChessCoordinate &kingCoordinate) {
     ChessCoordinate kingMoves[8] = { {-1,1}, {0,1}, {1,1}, {1,0}, {-1,0}, {-1,-1}, {0,-1}, {1,-1} };
     ChessErrorCode  code;
@@ -657,7 +662,6 @@ ChessErrorCode Board::movePiece(const ChessCoordinate &start, const ChessCoordin
         ChessCode = isCheckMate(enemyColor);
     }
 
-
     return ChessCode;
 
 }
@@ -689,7 +693,6 @@ ChessErrorCode Board::enPassant(const ChessCoordinate &start, const ChessCoordin
 
 
                 recorder.addMove( std::move(chessMove) );
-
                 Piece::updatePiece(requestPiece(start), requestPiece(finish));
                 //May be bug here.... at line 692
                 _chessBoard[pastMoveEnd.row][pastMoveEnd.col] = Piece{PieceUnit::NONE, Color::COLORLESS, pastMoveEnd, ""};
@@ -720,9 +723,6 @@ Board::Board(vector<vector<Piece>> &chessBoard) {
     this->_chessBoard = chessBoard;
 
     checkmate_system = std::make_unique<CheckMate>(Color::BLACK, Color::WHITE);
-
-
-
 
     assert(chessBoard.size() == 8);
     for(int i = 0; i<7; ++i){
@@ -789,12 +789,12 @@ void Board::printListMove() {
 }
 
 
-const std::unordered_map<PieceUnit, char> Board::PieceLookUp = {
-        {PieceUnit::NONE,         '-'},
-        {PieceUnit::PAWN,         'P'},
-        {PieceUnit::KNIGHT,       'N'},
-        {PieceUnit::BISHOP,       'B'},
-        {PieceUnit::ROOK,         'R'},
-        {PieceUnit::KING,         'K'},
-        {PieceUnit::QUEEN,        'Q'},
+const std::unordered_map<PieceUnit, std::string> Board::PieceLookUp = {
+        {PieceUnit::NONE,         "-"},
+        {PieceUnit::PAWN,         "\u2659"},
+        {PieceUnit::KNIGHT,       "\u2658"},
+        {PieceUnit::BISHOP,       "\u2657"},
+        {PieceUnit::ROOK,         "\u2656"},
+        {PieceUnit::KING,         "\u2654"},
+        {PieceUnit::QUEEN,        "\u2655"},
 };
