@@ -8,8 +8,8 @@ To see the rules on how to play the game click
 Can only be played locally and requires 2 players to have a game.
 There is a graphical based version in the other branch. A newer better designed version is in the other branch.
 
-
-DEPRECIATED see chessV2, which is a redesign of chess.
+(Kept for historical purposes?)
+DEPRECIATED see chessV2, which is a better design of chess.
 
 
 Requirements
